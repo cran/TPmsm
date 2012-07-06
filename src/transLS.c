@@ -110,7 +110,11 @@ static void crossValid(
 		int *unique0 = (int*)malloc( *len*sizeof(int) ); // allocate memory block
 		double *a = (double*)malloc( *len*3*sizeof(double) ); // allocate memory block
 		if (*b < 1) {
+			#ifdef _OPENMP
 			unsigned int iseed = (unsigned int)time(NULL) ^ (unsigned int)omp_get_thread_num(); // save per thread seed
+			#else
+			unsigned int iseed = (unsigned int)time(NULL);
+			#endif
 			srand(iseed); // set seed
 		}
 		#ifdef _OPENMP
@@ -475,7 +479,11 @@ SEXP TransPROBLS(
 			int *index1 = (int*)malloc( len*sizeof(int) ); // allocate memory block
 			double *WORK0 = (double*)malloc( len*sizeof(double) ); // allocate memory block
 			int *WORK1 = (int*)malloc( len*sizeof(int) ); // allocate memory block
+			#ifdef _OPENMP
 			unsigned int iseed = (unsigned int)time(NULL) ^ (unsigned int)omp_get_thread_num(); // save per thread seed
+			#else
+			unsigned int iseed = (unsigned int)time(NULL);
+			#endif
 			srand(iseed); // set seed
 			#ifdef _OPENMP
 			#pragma omp for

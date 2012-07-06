@@ -344,7 +344,11 @@ SEXP TransPROBIPCW1(
 		int *index0 = (int*)malloc( len*sizeof(int) ); // allocate memory block
 		int *index1 = (int*)malloc( len*sizeof(int) ); // allocate memory block
 		double *WORK = (double*)malloc( len*sizeof(double) ); // allocate memory block
+		#ifdef _OPENMP
 		unsigned int iseed = (unsigned int)time(NULL) ^ (unsigned int)omp_get_thread_num(); // save per thread seed
+		#else
+		unsigned int iseed = (unsigned int)time(NULL);
+		#endif
 		srand(iseed); // set seed
 		#ifdef _OPENMP
 		#pragma omp single

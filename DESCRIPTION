@@ -2,8 +2,8 @@ Package: TPmsm
 Type: Package
 Depends: R (>= 2.12.0),graphics,grDevices,KernSmooth
 Title: Estimation of transitions probabilities in multistate models
-Version: 1.0
-Date: 2012-06-07
+Version: 1.0.1
+Date: 2012-07-06
 Author: Artur Agostinho Araujo, Javier Roca-Pardinas <roca@uvigo.es>
         and Luis Meira-Machado <lmachado@math.uminho.pt>
 Maintainer: Artur Agostinho Araujo <b5498@math.uminho.pt>
@@ -12,6 +12,6 @@ Description: Estimation of transition probabilities for the
 License: GPL
 LazyLoad: yes
 LazyData: yes
-Packaged: 2012-07-03 22:50:05 UTC; Owner
+Packaged: 2012-07-06 21:01:19 UTC; Owner
 Repository: CRAN
-Date/Publication: 2012-07-05 17:09:32
+Date/Publication: 2012-07-11 14:55:12

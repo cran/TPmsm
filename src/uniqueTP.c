@@ -62,8 +62,8 @@ Description:
 Parameters:
 	len[in]			pointer to length of X.
 	X[in]			pointer to X first element.
-	nx[in]			pointer to x length.
-	x[in]			pointer to x value.
+	nx[in]			pointer to length of x.
+	x[in]			pointer to x first element.
 	UX[out]			pointer to unique vector.
 	n[out]			pointer to length of UX.
 
