@@ -1,17 +1,18 @@
+\encoding{UTF-8}
 \name{image.TPCmsm}
 \alias{image.TPCmsm}
-\title{Image method for a TPCmsm object}
+\title{image method for a TPCmsm object}
 \description{
-	Image method for an object of class 'TPCmsm'.
+	image method for an object of class 'TPCmsm'.
 	Creates a grid of colored or gray-scale rectangles with colors corresponding to the values of the transition probabilities.
 }
-\usage{\S3method{image}{TPCmsm}(x, plot.type="tc", tr.choice, xlim, ylim, zlim, col, xlab, ylab, main, sub,
-key.title, key.axes, las=1, conf.int=FALSE, legend=TRUE, curvlab, contour=TRUE,
-nlevels, levels, ...)}
+\usage{\S3method{image}{TPCmsm}(x, image.type="tc", tr.choice, xlim, ylim, zlim=c(0, 1), col, xlab, ylab,
+main, sub, key.title, key.axes, las=1, conf.int=FALSE, legend=TRUE, curvlab,
+contour=TRUE, nlevels=20, levels=pretty(zlim, nlevels), ...)}
 
 \arguments{
 	\item{x}{An object of class 'TPCmsm'.}
-	\item{plot.type}{A character string specifying the type of plot.
+	\item{image.type}{A character string specifying the type of image.
 		If 'tc' the image with time in the x axis, covariate in the y axis and transition probability in the z axis is drawn.
 		If 'ct' the image with covariate in the x axis, time in the y axis and transition probability in the z axis is drawn.
 		Defaults to 'tc'.}
@@ -21,8 +22,8 @@ nlevels, levels, ...)}
 	\item{ylim}{Limits of y-axis for the plot.}
 	\item{zlim}{Limits of z-axis for the plot. Defaults to \code{c(0, 1)}.}
 	\item{col}{Vector of colour. Defaults to \code{heat.colors(nlevels)[nlevels:1]}.}
-	\item{xlab}{x-axis label. If \code{plot.type="tc"} defaults to "Time". If \code{plot.type="ct"} defaults to "Covariate".}
-	\item{ylab}{y-axis label. If \code{plot.type="tc"} defaults to "Covariate". If \code{plot.type="ct"} defaults to "Time".}
+	\item{xlab}{x-axis label. If \code{image.type="tc"} defaults to "Time". If \code{image.type="ct"} defaults to "Covariate".}
+	\item{ylab}{y-axis label. If \code{image.type="tc"} defaults to "Covariate". If \code{image.type="ct"} defaults to "Time".}
 	\item{main}{The main title for the plot. By default no main title is added.}
 	\item{sub}{A sub title for the plot. By default no sub title is added.}
 	\item{key.title}{Statements which add titles for the plot key.}
@@ -38,7 +39,13 @@ nlevels, levels, ...)}
 	\item{\dots}{Further arguments for image.}
 }
 
-\details{
+\value{
+	No value is returned.
+}
+
+\author{Artur Agostinho Araújo, Javier Roca-Pardiñas and Luís Meira Machado}
+
+\note{
 	The device is divided by the number of transitions specified by argument \code{tr.choice}.
 	Being the number of columns equal to the number of transitions.
 	If argument \code{conf.int=TRUE} the device is further divided to make room for the confidence regions.
@@ -48,35 +55,40 @@ nlevels, levels, ...)}
 	And the lower row provides the lower side of the confidence region.
 }
 
-\value{
-	No value is returned.
-}
-
-\author{Artur Agostinho Araujo, Javier Roca-Pardinas and Luis Meira Machado}
-
 \references{
-	Luis Meira-Machado, Jacobo de Una-Alvarez and Somnath Datta. Conditional Transition Probabilities in a non-Markov Illness-death Model. Discussion Papers in Statistics and Operation Research n 11/03, 2011. Department of Statistics and Operations Research, University of Vigo (ISSN: 1888-5756, Deposito Legal VG 1402 - 2007). This file can be downloaded from: \url{http://webs.uvigo.es/depc05/reports/12_05.pdf}
+	Meira-Machado L., de Uña-Álvarez J. and Datta S. Conditional Transition Probabilities in a non-Markov Illness-death Model. Discussion Papers in Statistics and Operation Research n 11/03, 2011. Department of Statistics and Operations Research, University of Vigo (ISSN: 1888-5756, Deposito Legal VG 1402 - 2007). This file can be downloaded from: \url{http://webs.uvigo.es/depc05/reports/12_05.pdf}
 }
 
 \seealso{
-	\code{\link{image}},
-	\code{\link{contour}}.
+	\code{\link{contour}},
+	\code{\link{image}}.
 }
 
 \examples{
+# set the number of threads
+nth <- threadsTP(2)
+
 # Create survTP object
 data(heartTP)
-heartTP_obj <- with( heartTP, survTP(time1, event1, Stime, event, age) )
+heartTP_obj <- with( heartTP, survTP(time1, event1, Stime, event, age=age) )
 
 # Compute LIN conditional transition probabilities with confidence band
-TPCmsm_obj <- transLIN(heartTP_obj, s=57, t=310, x=0, conf=TRUE, n.boot=1000,
+TPCmsm_obj <- transLIN(heartTP_obj, s=57, t=310, x=0, conf=TRUE, n.boot=100,
 method.boot="basic")
 
 # Plot image with Time in the x-axis
-image(TPCmsm_obj, plot.type="tc", tr.choice=c("1 1", "1 2", "2 2"), conf.int=TRUE,
+image(TPCmsm_obj, image.type="tc", tr.choice=c("1 1", "1 2", "2 2"), conf.int=TRUE,
 ylab="Age")
 
 # Plot image with Time in the y-axis
-image(TPCmsm_obj, plot.type="ct", tr.choice=c("1 1", "1 2", "1 3"), conf.int=TRUE,
+image(TPCmsm_obj, image.type="ct", tr.choice=c("1 1", "1 2", "1 3"), conf.int=TRUE,
 xlab="Age")
+
+# restore the number of threads
+threadsTP(nth)
 }
+
+\keyword{hplot}
+\keyword{methods}
+\keyword{multivariate}
+\keyword{survival}

@@ -13,15 +13,13 @@ static void expt(
 	doubleCP t1,
 	doubleCP t2)
 {
-	double v1, v2, u1, u2, a, b;
-	v1 = runif(0, 1);
-	v2 = runif(0, 1);
-	u1 = v1;
-	a = *pcorr*(2*v1-1)-1;
-	b = R_pow_di(1-*pcorr*(2*v1-1), 2)+*pcorr*4*v2*(2*v1-1);
-	u2 = 2*v2/(sqrt(b)-a);
-	*t1 = -(1/pdistpar[0])*log(1-u1);
-	*t2 = -(1/pdistpar[1])*log(1-u2);
+	double u1, u2, v, a;
+	u1 = runif(0, 1);
+	v = runif(0, 1);
+	a = *pcorr*(2*u1-1);
+	u2 = 2*v/( 1-a+sqrt(R_pow_di(1-a, 2)+4*a*v) );
+	*t1 = -pdistpar[0]*log(1-u1);
+	*t2 = -pdistpar[1]*log(1-u2);
 	return;
 } // expt
 
@@ -32,13 +30,12 @@ static void weibullt(
 	doubleCP t2)
 {
 	register int i;
-	double u, u2[4], v;
-	u = runif(0, 1);
-	for (i = 0; i < 4; i++) u2[i] = runif(0, 1);
-	if (u2[3] > *pcorr) v = -log(u2[2]);
-	else v = -log(u2[0])-log(u2[1]);
-	*t1 = R_pow(u, *pcorr/pdistpar[0])*R_pow(v, 1/pdistpar[0])*pdistpar[1];
-	*t2 = R_pow(1-u, *pcorr/pdistpar[2])*R_pow(v, 1/pdistpar[2])*pdistpar[3];
+	double u[5], v;
+	for (i = 0; i < 5; i++) u[i] = runif(0, 1);
+	if (u[4] > *pcorr) v = -log(u[3]);
+	else v = -log(u[1])-log(u[2]);
+	*t1 = R_pow(u[0], *pcorr/pdistpar[0])*R_pow(v, 1/pdistpar[0])*pdistpar[1];
+	*t2 = R_pow(1-u[0], *pcorr/pdistpar[2])*R_pow(v, 1/pdistpar[2])*pdistpar[3];
 	return;
 } // weibullt
 
@@ -54,7 +51,9 @@ static void rexp0(
 	CdoubleCP pcenspar,
 	doubleCP c)
 {
-	*c = rexp(1 / *pcenspar);
+	double u;
+	u = runif(0, 1);
+	*c = -*pcenspar*log(1-u);
 	return;
 } // rexp0
 
@@ -87,7 +86,7 @@ static void cens2(
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Generates bivariate censored gap times from some known copula functions.
@@ -99,11 +98,10 @@ Parameters:
 	distpar			vector of parameters for the distribution.
 	modelcens		model for censorship.
 	censpar			parameter for the censorship distribution.
-	censtime1		if TRUE time1 is censored, if FALSE time1 is not censored.
-	todataframe		if TRUE returns a data.frame, if FALSE returns an object of class 'survBIV'.
+	state2prob		the proportion of individuals entering state2.
 
 Return value:
-	Returns a data.frame or an object of class 'survBIV'.
+	Returns an object of class 'survTP'.
 */
 
 SEXP dgpTP(
@@ -113,8 +111,7 @@ SEXP dgpTP(
 	SEXP distpar,
 	SEXP modelcens,
 	SEXP censpar,
-	SEXP state2prob,
-	SEXP todataframe)
+	SEXP state2prob)
 {
 	CintCP pn = INTEGER_POINTER(n);
 	CdoubleCP pcorr = NUMERIC_POINTER(corr);
@@ -151,8 +148,6 @@ SEXP dgpTP(
 	if (*pstate2prob < 0 || *pstate2prob > 1) error("Argument 'state2.prob' must be greater or equal to 0 and lower or equal to 1");
 	void (*func)(doubleCP, intCP, doubleCP, intCP, CintCP, Tfunc, CdoubleCP, CdoubleCP, Cfunc, CdoubleCP, CdoubleCP);
 	func = cens2;
-	if ( !IS_LOGICAL(todataframe) ) error("Argument 'to.data.frame' must be logical");
-	CintCP ptodataframe = LOGICAL_POINTER(todataframe);
 	SEXP T1, E1, S, E;
 	PROTECT( T1 = NEW_NUMERIC(*pn) );
 	PROTECT( E1 = NEW_INTEGER(*pn) );
@@ -183,10 +178,6 @@ SEXP dgpTP(
 	PROTECT( classdf = NEW_CHARACTER(1) );
 	SET_STRING_ELT( classdf, 0, mkChar("data.frame") );
 	SET_CLASS(data, classdf);
-	if (*ptodataframe) {
-		UNPROTECT(8);
-		return data;
-	}
 	SEXP list;
 	PROTECT( list = NEW_LIST(1) );
 	SET_ELEMENT(list, 0, data);

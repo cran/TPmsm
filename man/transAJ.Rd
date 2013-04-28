@@ -1,3 +1,4 @@
+\encoding{UTF-8}
 \name{transAJ}
 \alias{transAJ}
 \title{Aalen-Johansen transition probabilities}
@@ -12,7 +13,7 @@ conf.level=0.95, method.boot="percentile")}
 	\item{state.names}{A vector of characters giving the state names.}
 	\item{conf}{Provides pointwise confidence bands. Defaults to \code{FALSE}.}
 	\item{n.boot}{The number of bootstrap samples. Defaults to 1000 samples.}
-	\item{conf.level}{Level of confidence. Defaults to 0.95 (correponding to 95\%).}
+	\item{conf.level}{Level of confidence. Defaults to 0.95 (corresponding to 95\%).}
 	\item{method.boot}{The method used to compute bootstrap confidence bands. Possible options are "percentile" and "basic". Defaults to "percentile".}
 }
 
@@ -36,12 +37,12 @@ conf.level=0.95, method.boot="percentile")}
 	\item{conf.level}{Level of confidence used to compute the confidence band.}
 }
 
-\author{Artur Agostinho Araujo, Javier Roca-Pardinas and Luis Meira Machado}
+\author{Artur Agostinho Araújo, Javier Roca-Pardiñas and Luís Meira Machado}
 
 \references{
-	Aalen OO, Johansen S . An Empirical Transition Matrix for Nonhomogeneous Markov Chains Based on Censored Observations. Scandinavian Journal of Statistics, 1978, 5: 141-150.
+	Aalen O. O., Johansen S. (1978) An Empirical Transition Matrix for Nonhomogeneous Markov Chains Based on Censored Observations. \emph{Scandinavian Journal of Statistics}, \bold{5}, 141-150.
 
-	Davison, A.C. and Hinkley, D.V. (1997) "Bootstrap Methods and Their Application", Chapter 5. Cambridge University Press.
+	Davison, A. C. and Hinkley, D. V. (1997) Bootstrap Methods and their Application, Chapter 5. Cambridge University Press.
 }
 
 %\note{
@@ -60,6 +61,9 @@ conf.level=0.95, method.boot="percentile")}
 }
 
 \examples{
+# set the number of threads
+nth <- threadsTP(2)
+
 # Create survTP object
 data(heartTP)
 heartTP_obj <- with(heartTP, survTP(time1, event1, Stime, event))
@@ -70,4 +74,11 @@ transAJ(object=heartTP_obj, s=33, t=412)
 # Compute transition probabilities with confidence band
 transAJ(object=heartTP_obj, s=33, t=412, conf=TRUE, conf.level=0.9,
 method.boot="percentile")
+
+# restore the number of threads
+threadsTP(nth)
 }
+
+\keyword{dplot}
+\keyword{nonparametric}
+\keyword{survival}

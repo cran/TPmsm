@@ -1,31 +1,28 @@
-survTP <- function(time1, event1, Stime, event, covariate=NULL) {
+survTP <- function(time1, event1, Stime, event, ...) {
 	if ( missing(time1) ) stop("Argument 'time1' is missing, with no default")
 	if ( missing(event1) ) stop("Argument 'event1' is missing, with no default")
 	if ( missing(Stime) ) stop("Argument 'Stime' is missing, with no default")
 	if ( missing(event) ) stop("Argument 'event' is missing, with no default")
-	if ( !is.numeric(time1) ) stop("Argument 'time1' is not numeric")
-	if ( !( is.logical(event1) | is.numeric(event1) ) ) stop("Argument event1 must be logical or numeric")
-	if ( !is.numeric(Stime) ) stop("Argument 'Stime' is not numeric")
-	if ( !( is.logical(event) | is.numeric(event) ) ) stop("Argument event must be logical or numeric")
-	len <- length(time1)
-	if ( is.null(covariate) ) {
-		if ( len != length(event1) | len != length(Stime) | len != length(event) ) stop("Arguments 'time1', 'event1', 'Stime' and 'event' must have the same length")
-	} else {
-		if ( !is.numeric(covariate) ) stop("Argument 'covariate' is not numeric")
-		if ( len != length(event1) | len != length(Stime) | len != length(event) | len != length(covariate) ) stop("Arguments 'time1', 'event1', 'Stime', 'event' and 'covariate' must have the same length")
+	Message <- dataCheck(time1, event1, Stime, event, names=c("time1", "event1", "Stime", "event"), arg=TRUE)
+	if ( !is.null(Message) ) stop(Message)
+	data <- list("time1"=as.double(time1), "event1"=as.integer(event1), "Stime"=as.double(Stime), "event"=as.integer(event), ...)
+	datalen <- length(data)
+	if (datalen > 4) {
+		datanames <- names(data)
+		for (i in 5:datalen) {
+			if ( !is.numeric(data[[i]]) ) stop("All additional arguments must be numeric")
+			if ( length(data[[i]]) != length(time1) ) stop("All additional arguments must have the same length as arguments 'time1', 'event1', 'Stime' and 'event'")
+			if (datanames[i] == "") datanames[i] <- paste("covariate", i-4, sep=".")
+			if ( !is.double(data[[i]]) ) data[[i]] <- as.double(data[[i]])
+		}
+		names(data) <- datanames
 	}
-	if ( any( (event1 != 0 & event1 != 1) | (event1 != FALSE & event1 != TRUE) ) ) stop("Argument 'event1' must be 0 or 1 if numeric and TRUE or FALSE if logical")
-	if ( any( (event != 0 & event != 1) | (event != FALSE & event != TRUE) ) ) stop("Argument 'event' must be 0 or 1 if numeric and TRUE or FALSE if logical")
-	if ( any(time1 < 0 | Stime < 0) ) stop("Arguments 'time1' and 'Stime' must be greater than 0")
-	if ( any(Stime < time1) ) stop("Argument 'Stime' must be greater or equal to argument 'time1'")
-	if ( any(!event1 & Stime != time1) ) stop("Arguments 'Stime' and 'time1' must be equal when argument 'event1' equals 0 or FALSE")
-	if ( any(!event1 & event) ) stop("Argument 'event' must be equal to 0 or FALSE when argument 'event1' equals 0 or FALSE")
-	if ( any(time1 == Stime & event1 & !event) ) stop("When arguments 'Stime' and 'time1' are equal and argument 'event1' equals 1 or TRUE, argument 'event' must equal 1 or TRUE")
+	attr(data, "row.names") <- as.integer( 1:length(time1) )
+	attr(data, "class") <- "data.frame"
 	object <- vector(mode="list", length=1)
-	if ( is.null(covariate) ) object[[1]] <- data.frame( "time1"=as.double(time1), "event1"=as.integer(event1), "Stime"=as.double(Stime), "event"=as.integer(event) )
-	else object[[1]] <- data.frame( "time1"=as.double(time1), "event1"=as.integer(event1), "Stime"=as.double(Stime), "event"=as.integer(event), "covariate"=as.double(covariate) )
-	class(object) <- "survTP"
+	object[[1]] <- data
+	attr(object, "class") <- "survTP"
 	return(object)
 }
 
-is.survTP <- function(object) inherits(object, "survTP")
+is.survTP <- function(x) inherits(x, "survTP")

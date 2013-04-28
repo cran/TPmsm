@@ -1,14 +1,17 @@
 
+#include <stdint.h>
 #include <stdlib.h>
 #include <Rdefines.h>
 #include "defines.h"
+#include "rthreads.h"
 
 #define toTPmsm0 \
 	SEXP a3d, h; \
 	a3d = VECTOR_ELT(lst, 0); \
 	h = VECTOR_ELT(lst, 1); \
-	register int i; \
-	int nt = GET_LENGTH(UT); \
+	register int i, j; \
+	register int64_t k; \
+	const int nt = GET_LENGTH(UT); \
 	SEXP mest; \
 	PROTECT( mest = allocMatrix(REALSXP, nt, 5) ); \
 
@@ -16,7 +19,6 @@
 	const char *name1 = CHAR( STRING_ELT(statenames, 0) ); \
 	const char *name2 = CHAR( STRING_ELT(statenames, 1) ); \
 	const char *name3 = CHAR( STRING_ELT(statenames, 2) ); \
-	int j, k; \
 	i = strlen(name1), j = strlen(name2), k = strlen(name3); \
 	char *name11 = (char*)malloc( (i+i+2)*sizeof(char) ); \
 	strcpy(name11, name1); \
@@ -95,24 +97,14 @@ SEXP toTPmsm1222(
 {
 	toTPmsm0
 	#ifdef _OPENMP
-	#pragma omp parallel for private(i)
+	#pragma omp parallel for num_threads(global_num_threads) private(i, j, k)
 	#endif
 	for (i = 0; i < nt; i++) {
-		if (REAL(a3d)[i] < 0) REAL(mest)[i] = 0;
-		else if (REAL(a3d)[i] > 1) REAL(mest)[i] = 1;
-		else REAL(mest)[i] = REAL(a3d)[i];
-		if (REAL(a3d)[i+nt] < 0) REAL(mest)[i+nt] = 0;
-		else if (REAL(a3d)[i+nt] > 1) REAL(mest)[i+nt] = 1;
-		else REAL(mest)[i+nt] = REAL(a3d)[i+nt];
-		REAL(mest)[i+nt*2] = 1-REAL(mest)[i]-REAL(mest)[i+nt];
-		if (REAL(mest)[i+nt*2] < 0) {
-			REAL(mest)[i+nt] = 1-REAL(mest)[i];
-			REAL(mest)[i+nt*2] = 0;
+		for (k = i, j = 0; j < 4; j++) {
+			REAL(mest)[k] = REAL(a3d)[k];
+			k += nt; // k = i+nt*j
 		}
-		if (REAL(a3d)[i+nt*2] < 0) REAL(mest)[i+nt*3] = 0;
-		else if (REAL(a3d)[i+nt*2] > 1) REAL(mest)[i+nt*3] = 1;
-		else REAL(mest)[i+nt*3] = REAL(a3d)[i+nt*2];
-		REAL(mest)[i+nt*4] = 1-REAL(mest)[i+nt*3];
+		REAL(mest)[k] = 1-REAL(mest)[k-nt]; // k = i+nt*4, k-nt = i+nt*3
 	}
 	toTPmsm1
 } // toTPmsm1222
@@ -126,24 +118,15 @@ SEXP toTPmsm1323(
 {
 	toTPmsm0
 	#ifdef _OPENMP
-	#pragma omp parallel for private(i)
+	#pragma omp parallel for num_threads(global_num_threads) private(i, j, k)
 	#endif
 	for (i = 0; i < nt; i++) {
-		if (REAL(a3d)[i] < 0) REAL(mest)[i] = 0;
-		else if (REAL(a3d)[i] > 1) REAL(mest)[i] = 1;
-		else REAL(mest)[i] = REAL(a3d)[i];
-		if (REAL(a3d)[i+nt] < 0) REAL(mest)[i+nt*2] = 0;
-		else if (REAL(a3d)[i+nt] > 1) REAL(mest)[i+nt*2] = 1;
-		else REAL(mest)[i+nt*2] = REAL(a3d)[i+nt];
-		REAL(mest)[i+nt] = 1-REAL(mest)[i]-REAL(mest)[i+nt*2];
-		if (REAL(mest)[i+nt] < 0) {
-			REAL(mest)[i+nt*2] = 1-REAL(mest)[i];
-			REAL(mest)[i+nt] = 0;
+		for (k = i, j = 0; j < 3; j++) {
+			REAL(mest)[k] = REAL(a3d)[k];
+			k += nt; // k = i+nt*j
 		}
-		if (REAL(a3d)[i+nt*2] < 0) REAL(mest)[i+nt*4] = 0;
-		else if (REAL(a3d)[i+nt*2] > 1) REAL(mest)[i+nt*4] = 1;
-		else REAL(mest)[i+nt*4] = REAL(a3d)[i+nt*2];
-		REAL(mest)[i+nt*3] = 1-REAL(mest)[i+nt*4];
+		REAL(mest)[k+nt] = REAL(a3d)[k]; // k+nt = i+nt*4, k = i+nt*3
+		REAL(mest)[k] = 1-REAL(a3d)[k];
 	}
 	toTPmsm1
 } // toTPmsm1323

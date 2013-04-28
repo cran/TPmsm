@@ -1,9 +1,10 @@
+\encoding{UTF-8}
 \name{transKMW}
 \alias{transKMW}
 \title{Kaplan-Meier weighted transition probabilities}
 \description{Provides estimates for the transition probabilities based on Kaplan-Meier weighted estimators, KMW.}
 \usage{transKMW(object, s, t, state.names=c("1", "2", "3"), conf=FALSE, n.boot=1000,
-conf.level=0.95, method.boot="percentile", method.est=1)}
+conf.level=0.95, method.boot="percentile", method.est=3)}
 
 \arguments{
 	\item{object}{An object of class \code{survTP}.}
@@ -12,14 +13,33 @@ conf.level=0.95, method.boot="percentile", method.est=1)}
 	\item{state.names}{A vector of characters giving the state names.}
 	\item{conf}{Provides pointwise confidence bands. Defaults to \code{FALSE}.}
 	\item{n.boot}{The number of bootstrap samples. Defaults to 1000 samples.}
-	\item{conf.level}{Level of confidence. Defaults to 0.95 (correponding to 95\%).}
+	\item{conf.level}{Level of confidence. Defaults to 0.95 (corresponding to 95\%).}
 	\item{method.boot}{The method used to compute bootstrap confidence bands. Possible options are "percentile" and "basic". Defaults to "percentile".}
 	\item{method.est}{The method used to compute the estimate. Possible options are 1, 2, 3 or 4.}
 }
 
-%\details{
-%%  ~~ If necessary, more details than the description above ~~
-%}
+\details{
+	If \code{method.est=1} then \eqn{p_{11}(s,t)}, \eqn{p_{12}(s,t)} and \eqn{p_{22}(s,t)} are estimated according to the following expressions:\cr\cr
+	\eqn{p_{11}(s,t)=\frac{1-P(Z \leq t)}{1-P(Z \leq s)}},\cr\cr
+	\eqn{p_{12}(s,t)=\frac{P(Z \leq t)-P(Z \leq s)-P(s<Z \leq t, T \leq t)}{1-P(Z \leq s)}},\cr\cr
+	\eqn{p_{22}(s,t) =\frac{P(Z \leq s)-P(Z \leq s,T \leq t)}{P(Z \leq s)-P(T \leq s)}}.\cr\cr
+	Then, \eqn{p_{13}(s,t)=1-p_{11}(s,t)-p_{12}(s,t)} and \eqn{p_{23}(s,t)=1-p_{22}(s,t)}.\cr\cr
+	If \code{method.est=2} then \eqn{p_{11}(s,t)}, \eqn{p_{12}(s,t)} and \eqn{p_{22}(s,t)} are estimated according to the following expressions:\cr\cr
+	\eqn{p_{11}(s,t)=\frac{P(Z>t)}{P(Z>s)}},\cr\cr
+	\eqn{p_{12}(s,t)=\frac{P(s<Z \leq t,T>t)}{P(Z>s)}},\cr\cr
+	\eqn{p_{22}(s,t) =\frac{P(Z \leq s,T>t)}{P(Z \leq s,T>s)}}.\cr\cr
+	Then, \eqn{p_{13}(s,t)=1-p_{11}(s,t)-p_{12}(s,t)} and \eqn{p_{23}(s,t)=1-p_{22}(s,t)}.\cr\cr
+	If \code{method.est=3} then \eqn{p_{11}(s,t)}, \eqn{p_{13}(s,t)} and \eqn{p_{23}(s,t)} are estimated according to the following expressions:\cr\cr
+	\eqn{p_{11}(s,t)=\frac{1-P(Z \leq t)}{1-P(Z \leq s)}},\cr\cr
+	\eqn{p_{13}(s,t)=\frac{P(Z>s,T \leq t)}{1-P(Z \leq s)}},\cr\cr
+	\eqn{p_{23}(s,t) =\frac{P(Z \leq s,s<T \leq t)}{P(Z \leq s)-P(T \leq s)}}.\cr\cr
+	Then, \eqn{p_{12}(s,t)=1-p_{11}(s,t)-p_{13}(s,t)} and \eqn{p_{22}(s,t)=1-p_{23}(s,t)}.\cr\cr
+	If \code{method.est=4} then \eqn{p_{11}(s,t)}, \eqn{p_{13}(s,t)} and \eqn{p_{23}(s,t)} are estimated according to the following expressions:\cr\cr
+	\eqn{p_{11}(s,t)=\frac{P(Z>t)}{P(Z>s)}},\cr\cr
+	\eqn{p_{13}(s,t)=\frac{P(Z>s,T \leq t)}{P(Z>s)}},\cr\cr
+	\eqn{p_{23}(s,t) =\frac{P(Z \leq s,s<T \leq t)}{P(Z \leq s,T>s)}}.\cr\cr
+	Then, \eqn{p_{12}(s,t)=1-p_{11}(s,t)-p_{13}(s,t)} and \eqn{p_{22}(s,t)=1-p_{23}(s,t)}.
+}
 
 \value{
 	An object of class \code{TPmsm}. There are methods for \code{contour}, \code{image}, \code{print} and \code{plot}.
@@ -37,12 +57,12 @@ conf.level=0.95, method.boot="percentile", method.est=1)}
 	\item{conf.level}{Level of confidence used to compute the confidence band.}
 }
 
-\author{Artur Agostinho Araujo, Javier Roca-Pardinas and Luis Meira Machado}
+\author{Artur Agostinho Araújo, Javier Roca-Pardiñas and Luís Meira Machado}
 
 \references{
-	Meira Machado LF, de Una-Alvarez J, Cadarso-Suarez C (2006). "Nonparametric estimation of transition probabilities in a non-Markov illness-death model", \emph{Lifetime Data Anal}, \bold{12}, 325-344.
+	Meira Machado L. F., de Uña-Álvarez J., Cadarso-Suárez C. (2006). Nonparametric estimation of transition probabilities in a non-Markov illness-death model, \emph{Lifetime Data Anal}, \bold{12}, 325-344.
 
-	Davison, A.C. and Hinkley, D.V. (1997) "Bootstrap Methods and Their Application", Chapter 5. Cambridge University Press.
+	Davison, A. C. and Hinkley, D. V. (1997) Bootstrap Methods and their Application, Chapter 5. Cambridge University Press.
 }
 
 %\note{
@@ -61,6 +81,9 @@ conf.level=0.95, method.boot="percentile", method.est=1)}
 }
 
 \examples{
+# set the number of threads
+nth <- threadsTP(2)
+
 # Create survTP object
 data(heartTP)
 heartTP_obj <- with(heartTP, survTP(time1, event1, Stime, event))
@@ -71,4 +94,11 @@ transKMW(object=heartTP_obj, s=33, t=412)
 # Compute transition probabilities with confidence band
 transKMW(object=heartTP_obj, s=33, t=412, conf=TRUE, conf.level=0.9,
 method.boot="basic", method.est=2)
+
+# restore the number of threads
+threadsTP(nth)
 }
+
+\keyword{dplot}
+\keyword{nonparametric}
+\keyword{survival}

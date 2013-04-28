@@ -1,8 +1,9 @@
+\encoding{UTF-8}
 \name{plot.TPCmsm}
 \alias{plot.TPCmsm}
-\title{Plot method for a TPCmsm object}
+\title{plot method for a TPCmsm object}
 \description{
-	Plot method for an object of class 'TPCmsm'.
+	plot method for an object of class 'TPCmsm'.
 	It draws the estimated transition probabilities in a basic scatterplot.
 }
 \usage{\S3method{plot}{TPCmsm}(x, plot.type="t", tr.choice, xlab, ylab, col, lty, xlim, ylim,
@@ -12,8 +13,8 @@ legend.bty="n", ...)}
 \arguments{
 	\item{x}{An object of class 'TPCmsm'.}
 	\item{plot.type}{A character string specifying the type of plot.
-		If 't' the scatterplot of transition probability versus time is ploted.
-		If 'c' the scatterplot of transition probability versus covariate is ploted.}
+		If 't' the scatterplot of transition probability versus time is plotted.
+		If 'c' the scatterplot of transition probability versus covariate is plotted.}
 	\item{tr.choice}{Character vector of the form 'c("from to", "from to")' specifying which transitions should be plotted.
 		Default, all the transition probabilities are plotted.}
 	\item{xlab}{x-axis label.}
@@ -36,24 +37,27 @@ legend.bty="n", ...)}
 	No value is returned.
 }
 
-\author{Artur Agostinho Araujo, Javier Roca-Pardinas and Luis Meira Machado}
+\author{Artur Agostinho Araújo, Javier Roca-Pardiñas and Luís Meira Machado}
 
 \references{
-	Luis Meira-Machado, Jacobo de Una-Alvarez and Somnath Datta. Conditional Transition Probabilities in a non-Markov Illness-death Model. Discussion Papers in Statistics and Operation Research n 11/03, 2011. Department of Statistics and Operations Research, University of Vigo (ISSN: 1888-5756, Deposito Legal VG 1402 - 2007). This file can be downloaded from: \url{http://webs.uvigo.es/depc05/reports/12_05.pdf}
+	Meira-Machado L., de Uña-Álvarez J. and Datta S. Conditional Transition Probabilities in a non-Markov Illness-death Model. Discussion Papers in Statistics and Operation Research n 11/03, 2011. Department of Statistics and Operations Research, University of Vigo (ISSN: 1888-5756, Deposito Legal VG 1402 - 2007). This file can be downloaded from: \url{http://webs.uvigo.es/depc05/reports/12_05.pdf}
 }
 
 \seealso{
-	\code{\link{plot.default}},
-	\code{\link{legend}}.
+	\code{\link{legend}},
+	\code{\link{plot.default}}.
 }
 
 \examples{
+# set the number of threads
+nth <- threadsTP(2)
+
 # Create survTP object
 data(heartTP)
-heartTP_obj <- with( heartTP, survTP(time1, event1, Stime, event, age) )
+heartTP_obj <- with( heartTP, survTP(time1, event1, Stime, event, age=age) )
 
 # Compute IPCW conditional transition probabilities with confidence band
-TPCmsm_obj <- transIPCW(heartTP_obj, s=57, t=310, x=c(0, 15), conf=TRUE, n.boot=1000,
+TPCmsm_obj <- transIPCW(heartTP_obj, s=57, t=310, x=c(0, 15), conf=TRUE, n.boot=100,
 method.boot="percentile", method.est=2)
 
 # Build time plots
@@ -85,4 +89,11 @@ for ( i in seq_len( length(tr.choice) ) ) {
 par(mfrow=c(1, 1), cex=1.2)
 title( xlab="Age", ylab=paste("P(", TPCmsm_obj$s, ", ", TPCmsm_obj$t, " | Age)", sep=""), line=3)
 par(par.orig)
+
+# restore the number of threads
+threadsTP(nth)
 }
+
+\keyword{hplot}
+\keyword{methods}
+\keyword{survival}

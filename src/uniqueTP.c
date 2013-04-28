@@ -5,7 +5,7 @@
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Concatenates vectors T1 and S and then computes the unique
@@ -54,7 +54,7 @@ static void uniqueTS(
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Concatenates X and x and computes it's unique vector.
@@ -91,7 +91,7 @@ static void uniqueX(
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Concatenates vectors T1 and S and then computes the unique
@@ -126,7 +126,7 @@ SEXP uniqueTIME(
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Concatenates X and x and computes it's unique vector.

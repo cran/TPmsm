@@ -2,13 +2,16 @@
 /*** LIN1 TRANSITION PROBABILITIES ***/
 /*************************************/
 
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 #include <stdlib.h>
 #include <time.h>
 #include <Rdefines.h>
 #include "defines.h"
 #include "boot.h"
 #include "get.h"
+#include "rthreads.h"
 #include "sort.h"
 
 #define isurv_body \
@@ -25,12 +28,13 @@
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes the transition probabilities:
 		p11(s,t) = P(Z>t|Z>s) = P(Z>t)/P(Z>s)
 		p12(s,t) = P(Z<=t,T>t|Z>s) = P(s<Z<=t,T>t)/P(Z>s)
+		p13(s,t) = 1-p11(s,t)-p12(s,t)
 		p22(s,t) = P(Z<=t,T>t|Z<=s,T>s) = P(Z<=s,T>t)/P(Z<=s,T>s)
 
 Parameters:
@@ -44,7 +48,7 @@ Parameters:
 	nt[in]			pointer to length of UT and number of rows of P.
 	UT[in]			pointer to unique times vector.
 	nb[in]			pointer to number of rows of P.
-	P[out]			pointer to a (nb)x(nt)x3 probability array.
+	P[out]			pointer to a (nb)x(nt)x4 probability array.
 	b[in]			pointer to row index.
 
 Return value:
@@ -69,7 +73,7 @@ static void transLIN1I(
 	CintCP nt,
 	Cdouble UT[*nt],
 	CintCP nb,
-	double P[*nb*(*nt)*3],
+	double P[*nb*(*nt)*4],
 	CintCP b)
 {
 	register int i = 0;
@@ -84,8 +88,8 @@ static void transLIN1I(
 		p[0] = n/surv;
 		p[1] = j-sum[0];
 		while (T1[index0[j]] > UT[i]) {
-			P[*b+*nb*i] = p[0];
-			P[*b+*nb*(i+*nt)] = p[1];
+			P[*b+*nb*i] = p[0]; // save p11(s,t) factor
+			P[*b+*nb*(i+*nt)] = p[1]; // save p12(s,t) term
 			i++;
 		}
 		r = E1[index0[j]]; // initialize event count
@@ -99,8 +103,8 @@ static void transLIN1I(
 	p[0] = (*len-j)/surv;
 	p[1] = j-sum[0];
 	for (; i < *nt; i++) { // needed for bootstrap
-		P[*b+*nb*i] = p[0];
-		P[*b+*nb*(i+*nt)] = p[1];
+		P[*b+*nb*i] = p[0]; // save p11(s,t) factor
+		P[*b+*nb*(i+*nt)] = p[1]; // save p12(s,t) term
 	}
 	j = 0;
 	getIndexI(S, index1, &UT[0], len, &j, &e); // determine first index
@@ -120,8 +124,8 @@ static void transLIN1I(
 		p[0] = sum[0]/surv;
 		while (S[index1[j]] > UT[i]) {
 			P[*b+*nb*(i+*nt)] -= sum[1];
-			P[*b+*nb*(i+*nt)] /= surv;
-			P[*b+*nb*(i+*nt*2)] = p[0];
+			P[*b+*nb*(i+*nt)] /= surv; // compute and save p12(s,t) factor
+			P[*b+*nb*(i+*nt*3)] = p[0]; // save p22(s,t) factor
 			i++;
 		}
 		n = *len-j; // count individuals at risk
@@ -140,20 +144,28 @@ static void transLIN1I(
 	p[0] = sum[0]/surv;
 	for (; i < *nt; i++) { // needed for bootstrap
 		P[*b+*nb*(i+*nt)] -= sum[1];
-		P[*b+*nb*(i+*nt)] /= surv;
-		P[*b+*nb*(i+*nt*2)] = p[0];
+		P[*b+*nb*(i+*nt)] /= surv; // compute and save p12(s,t) factor
+		P[*b+*nb*(i+*nt*3)] = p[0]; // save p22(s,t) factor
 	}
 	for (i = *nt-1; i >= 0; i--) {
-		P[*b+*nb*(i+*nt)] /= P[*b];
-		P[*b+*nb*i] /= P[*b];
-		P[*b+*nb*(i+*nt*2)] /= P[*b+*nb*(*nt*2)];
+		P[*b+*nb*(i+*nt)] /= P[*b]; // compute and save p12(s,t)
+		if (P[*b+*nb*(i+*nt)] < 0) P[*b+*nb*(i+*nt)] = 0;
+		P[*b+*nb*i] /= P[*b]; // compute and save p11(s,t)
+		if (P[*b+*nb*i] > 1) P[*b+*nb*i] = 1;
+		P[*b+*nb*(i+*nt*2)] = 1-P[*b+*nb*i]-P[*b+*nb*(i+*nt)]; // compute and save p13(s,t)
+		if (P[*b+*nb*(i+*nt*2)] < 0) {
+			P[*b+*nb*(i+*nt)] = 1-P[*b+*nb*i]; // compute and save p12(s,t)
+			P[*b+*nb*(i+*nt*2)] = 0; // save p13(s,t)
+		}
+		P[*b+*nb*(i+*nt*3)] /= P[*b+*nb*(*nt*3)]; // compute and save p22(s,t)
+		if (P[*b+*nb*(i+*nt*3)] > 1) P[*b+*nb*(i+*nt*3)] = 1;
 	}
 	return;
 } // transLIN1I
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes a transition probability vector based
@@ -166,7 +178,7 @@ Parameters:
 
 Return value:
 	Returns a list where the first element is a
-		(nboot)x(nt)x3 array of transition probabilities,
+		(nboot)x(nt)x4 array of transition probabilities,
 		and the second element is NULL.
 */
 
@@ -183,10 +195,10 @@ SEXP TransPROBLIN1(
 	E = VECTOR_ELT(data, 3);
 	int len = GET_LENGTH(T1), nt = GET_LENGTH(UT);
 	SEXP P, list;
-	PROTECT( P = alloc3DArray(REALSXP, *INTEGER(nboot), nt, 3) );
+	PROTECT( P = alloc3DArray(REALSXP, *INTEGER(nboot), nt, 4) );
 	PROTECT( list = NEW_LIST(2) );
 	#ifdef _OPENMP
-	#pragma omp parallel if(*INTEGER(nboot) > 1)
+	#pragma omp parallel if(*INTEGER(nboot) > 1) num_threads(global_num_threads)
 	#endif
 	{
 		int b;

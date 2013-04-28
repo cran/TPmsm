@@ -1,3 +1,4 @@
+\encoding{UTF-8}
 \name{transPAJ}
 \alias{transPAJ}
 \title{Presmoothed Aalen-Johansen transition probabilities}
@@ -12,7 +13,7 @@ conf.level=0.95, method.boot="percentile")}
 	\item{state.names}{A vector of characters giving the state names.}
 	\item{conf}{Provides pointwise confidence bands. Defaults to \code{FALSE}.}
 	\item{n.boot}{The number of bootstrap samples. Defaults to 1000 samples.}
-	\item{conf.level}{Level of confidence. Defaults to 0.95 (correponding to 95\%).}
+	\item{conf.level}{Level of confidence. Defaults to 0.95 (corresponding to 95\%).}
 	\item{method.boot}{The method used to compute bootstrap confidence bands. Possible options are "percentile" and "basic". Defaults to "percentile".}
 }
 
@@ -36,12 +37,12 @@ conf.level=0.95, method.boot="percentile")}
 	\item{conf.level}{Level of confidence used to compute the confidence band.}
 }
 
-\author{Artur Agostinho Araujo, Javier Roca-Pardinas and Luis Meira Machado}
+\author{Artur Agostinho Araújo, Javier Roca-Pardiñas and Luís Meira Machado}
 
 \references{
-	Ana Moreira, Jacobo de Una-Alvarez and Luis Meira-Machado. Presmoothing the Aalen-Johansen estimator of transition probabilities. Discussion Papers in Statistics and Operation Research n 11/03, 2011. Department of Statistics and Operations Research, University of Vigo (ISSN: 1888-5756, Deposito Legal VG 1402 - 2007). This file can be downloaded from: \url{http://webs.uvigo.es/depc05/reports/11_03.pdf}
+	Moreira A., de Uña-Álvarez J. and Meira-Machado L. Presmoothing the Aalen-Johansen estimator of transition probabilities. Discussion Papers in Statistics and Operation Research n 11/03, 2011. Department of Statistics and Operations Research, University of Vigo (ISSN: 1888-5756, Deposito Legal VG 1402 - 2007). This file can be downloaded from: \url{http://webs.uvigo.es/depc05/reports/11_03.pdf}
 
-	Davison, A.C. and Hinkley, D.V. (1997) "Bootstrap Methods and Their Application", Chapter 5. Cambridge University Press.
+	Davison, A. C. and Hinkley, D. V. (1997) Bootstrap Methods and their Application, Chapter 5. Cambridge University Press.
 }
 
 %\note{
@@ -60,6 +61,9 @@ conf.level=0.95, method.boot="percentile")}
 }
 
 \examples{
+# set the number of threads
+nth <- threadsTP(2)
+
 # Create survTP object
 data(heartTP)
 heartTP_obj <- with(heartTP, survTP(time1, event1, Stime, event))
@@ -70,4 +74,12 @@ transPAJ(object=heartTP_obj, s=33, t=412)
 # Compute transition probabilities with confidence band
 transPAJ(object=heartTP_obj, s=33, t=412, conf=TRUE, conf.level=0.9,
 method.boot="percentile")
+
+# restore the number of threads
+threadsTP(nth)
 }
+
+\keyword{dplot}
+\keyword{models}
+\keyword{regression}
+\keyword{survival}

@@ -6,7 +6,7 @@
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes the predicted values.
@@ -49,7 +49,7 @@ static void predict(
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes the deviance of the fitted model.
@@ -83,7 +83,7 @@ static void deviance(
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes the predicted values from the logistic regression,

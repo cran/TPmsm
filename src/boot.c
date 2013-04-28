@@ -4,7 +4,7 @@
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes bootstrap index.
@@ -28,7 +28,7 @@ void boot_i(
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes bootstrap indexes.
@@ -60,7 +60,7 @@ void boot_ii(
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Initializes index without bootstrap.
@@ -84,7 +84,7 @@ void indx_i(
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Initializes indexes without bootstrap.

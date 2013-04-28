@@ -1,15 +1,18 @@
 
+#include <stdint.h>
 #include <stdlib.h>
 #include <Rdefines.h>
 #include "defines.h"
 #include "quantile.h"
+#include "rthreads.h"
 
 #define BtoTPmsm0 \
 	SEXP a3d, h; \
 	a3d = VECTOR_ELT(lst, 0); \
 	h = VECTOR_ELT(lst, 1); \
-	register int i, j, k; \
-	int nt = GET_LENGTH(UT); \
+	register int i, j; \
+	register int64_t k; \
+	const int nt = GET_LENGTH(UT); \
 	SEXP mest; \
 	PROTECT( mest = allocMatrix(REALSXP, nt, 5) ); \
 	int n = 2, nb = INTEGER( GET_DIM(a3d) )[0]; \
@@ -20,8 +23,22 @@
 	PROTECT( minf = allocMatrix(REALSXP, nt, 5) ); \
 	PROTECT( msup = allocMatrix(REALSXP, nt, 5) ); \
 
-
 #define BtoTPmsm1 \
+	for (i = 0; i < nt; i++) { \
+		for (k = i, j = 0; j < 5; j++) { \
+			P[0] = 2*REAL(mest)[k]-REAL(msup)[k]; \
+			if (P[0] < 0) REAL(minf)[k] = 0; \
+			else if (P[0] > 1) REAL(minf)[k] = 1; \
+			else REAL(minf)[k] = P[0]; \
+			P[1] = 2*REAL(mest)[k]-REAL(minf)[k]; \
+			if (P[1] < 0) REAL(msup)[k] = 0; \
+			else if (P[1] > 1) REAL(msup)[k] = 1; \
+			else REAL(msup)[k] = P[1]; \
+			k += nt; /* k = i+nt*j */ \
+		} \
+	} \
+
+#define BtoTPmsm2 \
 	const char *name1 = CHAR( STRING_ELT(statenames, 0) ); \
 	const char *name2 = CHAR( STRING_ELT(statenames, 1) ); \
 	const char *name3 = CHAR( STRING_ELT(statenames, 2) ); \
@@ -108,59 +125,27 @@ SEXP BtoTPmsm1222(
 {
 	BtoTPmsm0
 	#ifdef _OPENMP
-	#pragma omp parallel for private(i, j, k, Q)
+	#pragma omp parallel for num_threads(global_num_threads) private(i, j, k, Q)
 	#endif
 	for (i = 0; i < nt; i++) {
-		if (REAL(a3d)[nb*i] < 0) REAL(mest)[i] = 0;
-		else if (REAL(a3d)[nb*i] > 1) REAL(mest)[i] = 1;
-		else REAL(mest)[i] = REAL(a3d)[nb*i];
-		if (REAL(a3d)[nb*(i+nt)] < 0) REAL(mest)[i+nt] = 0;
-		else if (REAL(a3d)[nb*(i+nt)] > 1) REAL(mest)[i+nt] = 1;
-		else REAL(mest)[i+nt] = REAL(a3d)[nb*(i+nt)];
-		REAL(mest)[i+nt*2] = 1-REAL(mest)[i]-REAL(mest)[i+nt];
-		if (REAL(mest)[i+nt*2] < 0) {
-			REAL(mest)[i+nt] = 1-REAL(mest)[i];
-			REAL(mest)[i+nt*2] = 0;
+		for (k = i, j = 0; j < 4; j++) {
+			REAL(mest)[k] = REAL(a3d)[nb*k]; // must be computed before quantile_d
+			quantile_d(&nb, &REAL(a3d)[nb*k], &n, P, Q); // sorts the array internally
+			REAL(minf)[k] = Q[0];
+			REAL(msup)[k] = Q[1];
+			k += nt; // k = i+nt*j
 		}
-		if (REAL(a3d)[nb*(i+nt*2)] < 0) REAL(mest)[i+nt*3] = 0;
-		else if (REAL(a3d)[nb*(i+nt*2)] > 1) REAL(mest)[i+nt*3] = 1;
-		else REAL(mest)[i+nt*3] = REAL(a3d)[nb*(i+nt*2)];
-		REAL(mest)[i+nt*4] = 1-REAL(mest)[i+nt*3];
-		for (j = 0; j < 3; j++) {
-			quantile_d(&nb, &REAL(a3d)[nb*(i+nt*j)], &n, P, Q);
-			k = i+nt*( j+(j==2) );
-			if (Q[0] < 0) REAL(minf)[k] = 0;
-			else if (Q[0] > 1) REAL(minf)[k] = 1;
-			else REAL(minf)[k] = Q[0];
-			if (Q[1] < 0) REAL(msup)[k] = 0;
-			else if (Q[1] > 1) REAL(msup)[k] = 1;
-			else REAL(msup)[k] = Q[1];
-		}
-		REAL(minf)[i+nt*2] = 1-REAL(msup)[i]-REAL(msup)[i+nt];
-		if (REAL(minf)[i+nt*2] < 0) REAL(minf)[i+nt*2] = 0;
-		REAL(msup)[i+nt*2] = 1-REAL(minf)[i]-REAL(minf)[i+nt];
-		if (REAL(msup)[i+nt*2] < 0) REAL(msup)[i+nt*2] = 0;
-		REAL(minf)[i+nt*4] = 1-REAL(msup)[i+nt*3];
-		REAL(msup)[i+nt*4] = 1-REAL(minf)[i+nt*3];
+		REAL(mest)[k] = 1-REAL(mest)[k-nt]; // k = i+nt*4, k-nt = i+nt*3
+		REAL(minf)[k] = 1-Q[1];
+		REAL(msup)[k] = 1-Q[0];
 	}
 	if (strcmp(CHAR( STRING_ELT(methodboot, 0) ), "basic") == 0) {
 		#ifdef _OPENMP
-		#pragma omp parallel for private(i, j, P)
+		#pragma omp parallel for num_threads(global_num_threads) private(i, j, k, P)
 		#endif
-		for (i = 0; i < nt; i++) {
-			for (j = 0; j < 3; j++) {
-				P[0] = 2*REAL(mest)[i+nt*j]-REAL(msup)[i+nt*j];
-				P[1] = 2*REAL(mest)[i+nt*j]-REAL(minf)[i+nt*j];
-				if (P[0] < 0) REAL(minf)[i+nt*j] = 0;
-				else if (P[0] > 1) REAL(minf)[i+nt*j] = 1;
-				else REAL(minf)[i+nt*j] = P[0];
-				if (P[1] < 0) REAL(msup)[i+nt*j] = 0;
-				else if (P[1] > 1) REAL(msup)[i+nt*j] = 1;
-				else REAL(msup)[i+nt*j] = P[1];
-			}
-		}
+		BtoTPmsm1
 	}
-	BtoTPmsm1
+	BtoTPmsm2
 } // BtoTPmsm1222
 
 SEXP BtoTPmsm1323(
@@ -175,57 +160,29 @@ SEXP BtoTPmsm1323(
 {
 	BtoTPmsm0
 	#ifdef _OPENMP
-	#pragma omp parallel for private(i, j, k, Q)
+	#pragma omp parallel for num_threads(global_num_threads) private(i, j, k, Q)
 	#endif
 	for (i = 0; i < nt; i++) {
-		if (REAL(a3d)[nb*i] < 0) REAL(mest)[i] = 0;
-		else if (REAL(a3d)[nb*i] > 1) REAL(mest)[i] = 1;
-		else REAL(mest)[i] = REAL(a3d)[nb*i];
-		if (REAL(a3d)[nb*(i+nt)] < 0) REAL(mest)[i+nt*2] = 0;
-		else if (REAL(a3d)[nb*(i+nt)] > 1) REAL(mest)[i+nt*2] = 1;
-		else REAL(mest)[i+nt*2] = REAL(a3d)[nb*(i+nt)];
-		REAL(mest)[i+nt] = 1-REAL(mest)[i]-REAL(mest)[i+nt*2];
-		if (REAL(mest)[i+nt] < 0) {
-			REAL(mest)[i+nt*2] = 1-REAL(mest)[i];
-			REAL(mest)[i+nt] = 0;
+		for (k = i, j = 0; j < 3; j++) {
+			REAL(mest)[k] = REAL(a3d)[nb*k]; // must be computed before quantile_d
+			quantile_d(&nb, &REAL(a3d)[nb*k], &n, P, Q); // sorts the array internally
+			REAL(minf)[k] = Q[0];
+			REAL(msup)[k] = Q[1];
+			k += nt; // k = i+nt*j
 		}
-		if (REAL(a3d)[nb*(i+nt*2)] < 0) REAL(mest)[i+nt*4] = 0;
-		else if (REAL(a3d)[nb*(i+nt*2)] > 1) REAL(mest)[i+nt*4] = 1;
-		else REAL(mest)[i+nt*4] = REAL(a3d)[nb*(i+nt*2)];
-		REAL(mest)[i+nt*3] = 1-REAL(mest)[i+nt*4];
-		for (j = 0; j < 3; j++) {
-			quantile_d(&nb, &REAL(a3d)[nb*(i+nt*j)], &n, P, Q);
-			k = i+nt*( j+(j==1)+2*(j==2) );
-			if (Q[0] < 0) REAL(minf)[k] = 0;
-			else if (Q[0] > 1) REAL(minf)[k] = 1;
-			else REAL(minf)[k] = Q[0];
-			if (Q[1] < 0) REAL(msup)[k] = 0;
-			else if (Q[1] > 1) REAL(msup)[k] = 1;
-			else REAL(msup)[k] = Q[1];
-		}
-		REAL(minf)[i+nt] = 1-REAL(msup)[i]-REAL(msup)[i+nt*2];
-		if (REAL(minf)[i+nt] < 0) REAL(minf)[i+nt] = 0;
-		REAL(msup)[i+nt] = 1-REAL(minf)[i]-REAL(minf)[i+nt*2];
-		if (REAL(msup)[i+nt] < 0) REAL(msup)[i+nt] = 0;
-		REAL(minf)[i+nt*3] = 1-REAL(msup)[i+nt*4];
-		REAL(msup)[i+nt*3] = 1-REAL(minf)[i+nt*4];
+		REAL(mest)[k+nt] = REAL(a3d)[nb*k]; // k+nt = i+nt*4, k = i+nt*3
+		quantile_d(&nb, &REAL(a3d)[nb*k], &n, P, Q);
+		REAL(minf)[k+nt] = Q[0];
+		REAL(msup)[k+nt] = Q[1];
+		REAL(mest)[k] = 1-REAL(mest)[k+nt];
+		REAL(minf)[k] = 1-Q[1];
+		REAL(msup)[k] = 1-Q[0];
 	}
 	if (strcmp(CHAR( STRING_ELT(methodboot, 0) ), "basic") == 0) {
 		#ifdef _OPENMP
-		#pragma omp parallel for private(i, j, P)
+		#pragma omp parallel for num_threads(global_num_threads) private(i, j, k, P)
 		#endif
-		for (i = 0; i < nt; i++) {
-			for (j = 0; j < 3; j++) {
-				P[0] = 2*REAL(mest)[i+nt*j]-REAL(msup)[i+nt*j];
-				P[1] = 2*REAL(mest)[i+nt*j]-REAL(minf)[i+nt*j];
-				if (P[0] < 0) REAL(minf)[i+nt*j] = 0;
-				else if (P[0] > 1) REAL(minf)[i+nt*j] = 1;
-				else REAL(minf)[i+nt*j] = P[0];
-				if (P[1] < 0) REAL(msup)[i+nt*j] = 0;
-				else if (P[1] > 1) REAL(msup)[i+nt*j] = 1;
-				else REAL(msup)[i+nt*j] = P[1];
-			}
-		}
+		BtoTPmsm1
 	}
-	BtoTPmsm1
+	BtoTPmsm2
 } // BtoTPmsm1323

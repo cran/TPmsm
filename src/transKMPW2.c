@@ -2,25 +2,29 @@
 /*** KMPW2 TRANSITION PROBABILITIES ***/
 /*************************************/
 
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 #include <stdlib.h>
 #include <time.h>
 #include <Rdefines.h>
 #include "defines.h"
 #include "boot.h"
 #include "get.h"
+#include "rthreads.h"
 #include "sort.h"
 #include "logistic.h"
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes the transition probabilities:
-		p11(s,t) = P(Z>t|Z>s) = P(Z>t)/P(Z>s)
-		p13(s,t) = P(T<=t|Z>s) = P(Z>s,T<=t)/P(Z>s)
-		p23(s,t) = P(T<=t|Z<=s,T>s) = P(Z<=s,s<T<=t)/P(Z<=s,T>s)
+		p11(s,t) = P(Z>t|Z>s) = {1-P(Z<=t)}/{1-P(Z<=s)}
+		p12(s,t) = 1-p11(s,t)-p13(s,t)
+		p13(s,t) = P(T<=t|Z>s) = P(Z>s,T<=t)/{1-P(Z<=s)}
+		p23(s,t) = P(T<=t|Z<=s,T>s) = P(Z<=s,s<T<=t)/{P(Z<=s)-P(T<=s)}
 
 Parameters:
 	len[in]			pointer to length of T1, M0, S and M.
@@ -33,7 +37,7 @@ Parameters:
 	nt[in]			pointer to length of UT and number of rows of P.
 	UT[in]			pointer to unique times vector.
 	nb[in]			pointer to number of rows of P.
-	P[out]			pointer to a (nb)x(nt)x3 probability array.
+	P[out]			pointer to a (nb)x(nt)x4 probability array.
 	b[in]			pointer to row index.
 
 Return value:
@@ -58,7 +62,7 @@ static void transKMPW3I(
 	CintCP nt,
 	Cdouble UT[*nt],
 	CintCP nb,
-	double P[*nb*(*nt)*3],
+	double P[*nb*(*nt)*4],
 	CintCP b)
 {
 	register int i;
@@ -74,7 +78,7 @@ static void transKMPW3I(
 	}
 	getIndexI(T1, index0, &UT[*nt-1], len, &j, &e); // determine last index
 	for (i = 0; j < e; j++) { // loop through the sample until last index is reached
-		while (T1[index0[j]] > UT[i]) P[*b+*nb*i++] = aux[3]; // save transition probability
+		while (T1[index0[j]] > UT[i]) P[*b+*nb*i++] = aux[3];
 		aux[2] = M0[index0[j]]/(*len-j); // compute needed factor
 		aux[1] = 1-aux[2]; // factor needed for the computation
 		aux[2] *= aux[0]; // compute and save weight
@@ -94,8 +98,8 @@ static void transKMPW3I(
 	getIndexI(S, index1, &UT[*nt-1], len, &j, &e); // determine last index
 	for (i = 0, p[0] = 0, p[1] = 0; j < e; j++) { // loop through the sample until last index is reached
 		while (S[index1[j]] > UT[i]) {
-			P[*b+*nb*(i+*nt)] = p[0]; // save probability
-			P[*b+*nb*(i+*nt*2)] = p[1]; // save probability
+			P[*b+*nb*(i+*nt*2)] = p[0];
+			P[*b+*nb*(i+*nt*3)] = p[1];
 			i++;
 		}
 		aux[2] = M[index1[j]]/(*len-j); // compute needed factor
@@ -106,24 +110,31 @@ static void transKMPW3I(
 		else p[0] += aux[2]; // compute probability
 	}
 	for (; i < *nt; i++) {
-		P[*b+*nb*(i+*nt)] = p[0];
-		P[*b+*nb*(i+*nt*2)] = p[1];
+		P[*b+*nb*(i+*nt*2)] = p[0];
+		P[*b+*nb*(i+*nt*3)] = p[1];
 	}
 	for (i = *nt-1; i >= 0; i--) {
-		P[*b+*nb*(i+*nt)] /= P[*b];
-		P[*b+*nb*(i+*nt*2)] /= 1-P[*b]-aux[3];
-		P[*b+*nb*i] /= P[*b];
+		P[*b+*nb*(i+*nt*2)] /= P[*b]; // compute and save p13(s,t)
+		P[*b+*nb*(i+*nt*3)] /= 1-P[*b]-aux[3]; // compute and save p23(s,t)
+		if (P[*b+*nb*(i+*nt*3)] > 1) P[*b+*nb*(i+*nt*3)] = 1;
+		P[*b+*nb*i] /= P[*b]; // compute and save p11(s,t)
+		P[*b+*nb*(i+*nt)] = 1-P[*b+*nb*i]-P[*b+*nb*(i+*nt*2)]; // compute and save p12(s,t)
+		if (P[*b+*nb*(i+*nt)] < 0) {
+			P[*b+*nb*(i+*nt*2)] = 1-P[*b+*nb*i]; // compute and save p13(s,t)
+			P[*b+*nb*(i+*nt)] = 0; // compute and save p12(s,t)
+		}
 	}
 	return;
 } // transKMPW3I
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes the transition probabilities:
 		p11(s,t) = P(Z>t|Z>s) = P(Z>t)/P(Z>s)
+		p12(s,t) = 1-p11(s,t)-p13(s,t)
 		p13(s,t) = P(T<=t|Z>s) = P(Z>s,T<=t)/P(Z>s)
 		p23(s,t) = P(T<=t|Z<=s,T>s) = P(Z<=s,s<T<=t)/P(Z<=s,T>s)
 
@@ -138,7 +149,7 @@ Parameters:
 	nt[in]			pointer to length of UT and number of rows of P.
 	UT[in]			pointer to unique times vector.
 	nb[in]			pointer to number of rows of P.
-	P[out]			pointer to a (nb)x(nt)x3 probability array.
+	P[out]			pointer to a (nb)x(nt)x4 probability array.
 	b[in]			pointer to row index.
 
 Return value:
@@ -163,7 +174,7 @@ static void transKMPW4I(
 	CintCP nt,
 	Cdouble UT[*nt],
 	CintCP nb,
-	double P[*nb*(*nt)*3],
+	double P[*nb*(*nt)*4],
 	CintCP b)
 {
 	register int i;
@@ -179,7 +190,7 @@ static void transKMPW4I(
 	}
 	getIndexI(T1, index0, &UT[*nt-1], len, &j, &e); // determine last index
 	for (i = 0; j < e; j++) { // loop through the sample until last index is reached
-		while (T1[index0[j]] > UT[i]) P[*b+*nb*i++] = aux[3]; // save transition probability
+		while (T1[index0[j]] > UT[i]) P[*b+*nb*i++] = aux[3];
 		aux[2] = M0[index0[j]]/(*len-j); // compute needed factor
 		aux[1] = 1-aux[2]; // factor needed for the computation
 		aux[2] *= aux[0]; // compute and save weight
@@ -204,8 +215,8 @@ static void transKMPW4I(
 	getIndexI(S, index1, &UT[*nt-1], len, &j, &e); // determine last index
 	for (i = 0, p[0] = 0, p[1] = 0; j < e; j++) { // loop through the sample until last index is reached
 		while (S[index1[j]] > UT[i]) {
-			P[*b+*nb*(i+*nt)] = p[0]; // save probability
-			P[*b+*nb*(i+*nt*2)] = p[1]; // save probability
+			P[*b+*nb*(i+*nt*2)] = p[0]; // save probability
+			P[*b+*nb*(i+*nt*3)] = p[1]; // save probability
 			i++;
 		}
 		aux[2] = M[index1[j]]/(*len-j); // compute needed factor
@@ -216,8 +227,8 @@ static void transKMPW4I(
 		else p[0] += aux[2]; // compute probability
 	}
 	for (; i < *nt; i++) {
-		P[*b+*nb*(i+*nt)] = p[0];
-		P[*b+*nb*(i+*nt*2)] = p[1];
+		P[*b+*nb*(i+*nt*2)] = p[0];
+		P[*b+*nb*(i+*nt*3)] = p[1];
 	}
 	for (; j < *len; j++) { // loop through the sample until last index is reached
 		aux[2] = M[index1[j]]/(*len-j); // compute needed factor
@@ -227,16 +238,21 @@ static void transKMPW4I(
 		if (T1[index1[j]] <= UT[0]) p[1] += aux[2]; // compute probability
 	}
 	for (i = *nt-1; i >= 0; i--) {
-		P[*b+*nb*(i+*nt)] /= P[*b];
-		P[*b+*nb*i] /= P[*b];
-		P[*b+*nb*(i+*nt*2)] /= p[1];
+		P[*b+*nb*(i+*nt*2)] /= P[*b]; // compute and save p13(s,t)
+		P[*b+*nb*i] /= P[*b]; // compute and save p11(s,t)
+		P[*b+*nb*(i+*nt)] = 1-P[*b+*nb*i]-P[*b+*nb*(i+*nt*2)]; // compute and save p12(s,t)
+		if (P[*b+*nb*(i+*nt)] < 0) {
+			P[*b+*nb*(i+*nt*2)] = 1-P[*b+*nb*i]; // compute and save p13(s,t)
+			P[*b+*nb*(i+*nt)] = 0; // compute and save p12(s,t)
+		}
+		P[*b+*nb*(i+*nt*3)] /= p[1]; // compute and save p23(s,t)
 	}
 	return;
 } // transKMPW4I
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes a transition probability vector based
@@ -250,7 +266,7 @@ Parameters:
 
 Return value:
 	Returns a list where the first element is a
-		(nboot)x(nt)x3 array of transition probabilities,
+		(nboot)x(nt)x4 array of transition probabilities,
 		and the second element is NULL.
 */
 
@@ -268,7 +284,7 @@ SEXP TransPROBKMPW2(
 	E = VECTOR_ELT(data, 3);
 	int len = GET_LENGTH(T1), nt = GET_LENGTH(UT);
 	SEXP P, list;
-	PROTECT( P = alloc3DArray(REALSXP, *INTEGER(nboot), nt, 3) );
+	PROTECT( P = alloc3DArray(REALSXP, *INTEGER(nboot), nt, 4) );
 	PROTECT( list = NEW_LIST(2) );
 	void (*func)(CintCP, CdoubleCP, CdoubleCP, CdoubleCP, CdoubleCP, CintCP, CintCP, CintCP, CdoubleCP, CintCP, doubleCP, CintCP);
 	switch ( *INTEGER(methodest) ) {
@@ -286,7 +302,7 @@ SEXP TransPROBKMPW2(
 	double epsilon = 1e-8;
 	for (j = 0; j < len; j++) J[j] = 1; // initialize J vector
 	#ifdef _OPENMP
-	#pragma omp parallel if(*INTEGER(nboot) > 1) private(j)
+	#pragma omp parallel if(*INTEGER(nboot) > 1) num_threads(global_num_threads) private(j)
 	#endif
 	{
 		int b, s0, s1, conv;

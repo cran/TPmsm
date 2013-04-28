@@ -1,10 +1,9 @@
 
-#include <stdlib.h>
 #include <string.h>
-#include <Rinternals.h>
+#include <Rdefines.h>
 #include <Rmath.h>
 #include "defines.h"
-#include "sort.h"
+#include "wtypefunc.h"
 
 #ifndef M_70_81
 #define M_70_81	0.864197530864197482891597701382	/* 70/81 */
@@ -12,374 +11,400 @@
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
+
+Description:
+	Initialize kernel density with weights over bandwith value.
+
+Parameters:
+	SW[in]			pointer to a weights stype structure.
+	index[i]		pointer to index vector
+	h[in]			pointer to bandwith value.
+	K[out]			pointer to kernel density vector.
+
+Return value:
+	This function doesn't return a value.
+
+Remarks:
+	The length of the vectors is read from SW->length.
+*/
+
+static void kweight(
+	CstypeCP SW,
+	CintCP index,
+	CdoubleCP h,
+	doubleCP K)
+{
+	register int i;
+	switch (SW->type) {
+		case SINT_PTR:
+			K[index[0]] = SW->ptr.shortinteger[index[0]] / *h;
+			for (i = 1; i < SW->length; i++) {
+				if (index[i] == index[i-1]) continue; // write only once to an index
+				K[index[i]] = SW->ptr.shortinteger[index[i]] / *h;
+			}
+			break;
+		case INT_PTR:
+			K[index[0]] = SW->ptr.integer[index[0]] / *h;
+			for (i = 1; i < SW->length; i++) {
+				if (index[i] == index[i-1]) continue; // write only once to an index
+				K[index[i]] = SW->ptr.integer[index[i]] / *h;
+			}
+			break;
+		case REAL_PTR:
+			K[index[0]] = SW->ptr.real[index[0]] / *h;
+			for (i = 1; i < SW->length; i++) {
+				if (index[i] == index[i-1]) continue; // write only once to an index
+				K[index[i]] = SW->ptr.real[index[i]] / *h;
+			}
+			break;
+		default:
+			break;
+	}
+	return;
+} // kweight
+
+/*
+Author:
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes weights based on the gaussian kernel.
 
 Parameters:
 	X[in]			pointer to covariate vector.
-	n[in]			pointer to lenght of covariate vector.
+	SW[in]			pointer to a weights stype structure.
+	index[i]		pointer to index vector
 	x[in]			pointer to covariate value to compute the weights at.
 	h[in]			pointer to bandwith value.
-	W[out]			pointer to weights vector.
+	K[out]			pointer to kernel density vector.
 
 Return value:
 	This function doesn't return a value.
+
+Remarks:
+	The length of the vectors is read from SW->length.
 */
 
 static void knormal(
 	CdoubleCP X,
-	CintCP n,
+	CstypeCP SW,
+	CintCP index,
 	CdoubleCP x,
 	CdoubleCP h,
-	doubleCP W)
+	doubleCP K)
 {
 	register int i;
-	for (i = 0; i < *n; i++) {
-		W[i] = (X[i] - *x) / *h;
-		W[i] = M_1_SQRT_2PI*exp( -0.5*R_pow_di(W[i], 2) ); // 1/sqrt(2pi) = M_1_SQRT_2PI, 1/2 = 0.5
+	kweight(SW, index, h, K); // initialize kernel density
+	K[index[0]] *= M_1_SQRT_2PI*exp( -0.5*R_pow_di( (X[index[0]] - *x) / *h, 2 ) ); // 1/sqrt(2pi) = M_1_SQRT_2PI, 1/2 = 0.5
+	for (i = 1; i < SW->length; i++) {
+		if (index[i] == index[i-1]) continue; // write only once to an index
+		K[index[i]] *= M_1_SQRT_2PI*exp( -0.5*R_pow_di( (X[index[i]] - *x) / *h, 2 ) ); // 1/sqrt(2pi) = M_1_SQRT_2PI, 1/2 = 0.5
 	}
 	return;
 } // knormal
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes weights based on the epanechnikov kernel.
 
 Parameters:
 	X[in]			pointer to covariate vector.
-	n[in]			pointer to lenght of covariate vector.
+	SW[in]			pointer to a weights stype structure.
+	index[i]		pointer to index vector
 	x[in]			pointer to covariate value to compute the weights at.
 	h[in]			pointer to bandwith value.
-	W[out]			pointer to weights vector.
+	K[out]			pointer to kernel density vector.
 
 Return value:
 	This function doesn't return a value.
+
+Remarks:
+	The length of the vectors is read from SW->length.
 */
 
 static void kepanech(
 	CdoubleCP X,
-	CintCP n,
+	CstypeCP SW,
+	CintCP index,
 	CdoubleCP x,
 	CdoubleCP h,
-	doubleCP W)
+	doubleCP K)
 {
 	register int i;
-	for (i = 0; i < *n; i++) {
-		W[i] = (X[i] - *x) / *h;
-		W[i] = 0.75*( 1-R_pow_di(W[i], 2) )*(fabs(W[i]) <= 1); // 3/4 = 0.75
+	double aux;
+	kweight(SW, index, h, K); // initialize kernel density
+	aux = (X[index[0]] - *x) / *h;
+	K[index[0]] *= 0.75*( 1-R_pow_di(aux, 2) )*(fabs(aux) <= 1); // 3/4 = 0.75
+	for (i = 1; i < SW->length; i++) {
+		if (index[i] == index[i-1]) continue; // write only once to an index
+		aux = (X[index[i]] - *x) / *h;
+		K[index[i]] *= 0.75*( 1-R_pow_di(aux, 2) )*(fabs(aux) <= 1); // 3/4 = 0.75
 	}
 	return;
 } // kepanech
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes weights based on the tricube kernel.
 
 Parameters:
 	X[in]			pointer to covariate vector.
-	n[in]			pointer to lenght of covariate vector.
+	SW[in]			pointer to a weights stype structure.
+	index[i]		pointer to index vector
 	x[in]			pointer to covariate value to compute the weights at.
 	h[in]			pointer to bandwith value.
-	W[out]			pointer to weights vector.
+	K[out]			pointer to kernel density vector.
 
 Return value:
 	This function doesn't return a value.
+
+Remarks:
+	The length of the vectors is read from SW->length.
 */
 
 static void ktricube(
 	CdoubleCP X,
-	CintCP n,
+	CstypeCP SW,
+	CintCP index,
 	CdoubleCP x,
 	CdoubleCP h,
-	doubleCP W)
+	doubleCP K)
 {
 	register int i;
-	for (i = 0; i < *n; i++) {
-		W[i] = (X[i] - *x) / *h;
-		W[i] = fabs(W[i]);
-		W[i] = M_70_81*R_pow_di(1-R_pow_di(W[i], 3), 3)*(W[i] <= 1); // 70/81 = M_70_81
+	double aux;
+	kweight(SW, index, h, K); // initialize kernel density
+	aux = fabs( (X[index[0]] - *x) / *h );
+	K[index[0]] *= M_70_81*R_pow_di(1-R_pow_di(aux, 3), 3)*(aux <= 1); // 70/81 = M_70_81
+	for (i = 1; i < SW->length; i++) {
+		if (index[i] == index[i-1]) continue; // write only once to an index
+		aux = fabs( (X[index[i]] - *x) / *h );
+		K[index[i]] *= M_70_81*R_pow_di(1-R_pow_di(aux, 3), 3)*(aux <= 1); // 70/81 = M_70_81
 	}
 	return;
 } // ktricube
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes weights based on the boxcar kernel.
 
 Parameters:
 	X[in]			pointer to covariate vector.
-	n[in]			pointer to lenght of covariate vector.
+	SW[in]			pointer to a weights stype structure.
+	index[i]		pointer to index vector
 	x[in]			pointer to covariate value to compute the weights at.
 	h[in]			pointer to bandwith value.
-	W[out]			pointer to weights vector.
+	K[out]			pointer to kernel density vector.
 
 Return value:
 	This function doesn't return a value.
+
+Remarks:
+	The length of the vectors is read from SW->length.
 */
 
 static void kbox(
 	CdoubleCP X,
-	CintCP n,
+	CstypeCP SW,
+	CintCP index,
 	CdoubleCP x,
 	CdoubleCP h,
-	doubleCP W)
+	doubleCP K)
 {
 	register int i;
-	for (i = 0; i < *n; i++) {
-		W[i] = (X[i] - *x) / *h;
-		W[i] = 0.5*(fabs(W[i]) <= 1); // 1/2 = 0.5
+	kweight(SW, index, h, K); // initialize kernel density
+	K[index[0]] *= 0.5*(fabs( (X[index[0]] - *x) / *h ) <= 1); // 1/2 = 0.5
+	for (i = 1; i < SW->length; i++) {
+		if (index[i] == index[i-1]) continue; // write only once to an index
+		K[index[i]] *= 0.5*(fabs( (X[index[i]] - *x) / *h ) <= 1); // 1/2 = 0.5
 	}
 	return;
 } // kbox
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes weights based on the triangular kernel.
 
 Parameters:
 	X[in]			pointer to covariate vector.
-	n[in]			pointer to lenght of covariate vector.
+	SW[in]			pointer to a weights stype structure.
+	index[i]		pointer to index vector
 	x[in]			pointer to covariate value to compute the weights at.
 	h[in]			pointer to bandwith value.
-	W[out]			pointer to weights vector.
+	K[out]			pointer to kernel density vector.
 
 Return value:
 	This function doesn't return a value.
+
+Remarks:
+	The length of the vectors is read from SW->length.
 */
 
 static void ktriangular(
 	CdoubleCP X,
-	CintCP n,
+	CstypeCP SW,
+	CintCP index,
 	CdoubleCP x,
 	CdoubleCP h,
-	doubleCP W)
+	doubleCP K)
 {
 	register int i;
-	for (i = 0; i < *n; i++) {
-		W[i] = (X[i] - *x) / *h;
-		W[i] = fabs(W[i]);
-		W[i] = (1-W[i])*(W[i] <= 1);
+	double aux;
+	kweight(SW, index, h, K); // initialize kernel density
+	aux = fabs( (X[index[0]] - *x) / *h );
+	K[index[0]] *= (1-aux)*(aux <= 1);
+	for (i = 1; i < SW->length; i++) {
+		if (index[i] == index[i-1]) continue; // write only once to an index
+		aux = fabs( (X[index[i]] - *x) / *h );
+		K[index[i]] *= (1-aux)*(aux <= 1);
 	}
 	return;
 } // ktriangular
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes weights based on the biweight kernel.
 
 Parameters:
 	X[in]			pointer to covariate vector.
-	n[in]			pointer to lenght of covariate vector.
+	SW[in]			pointer to a weights stype structure.
+	index[i]		pointer to index vector
 	x[in]			pointer to covariate value to compute the weights at.
 	h[in]			pointer to bandwith value.
-	W[out]			pointer to weights vector.
+	K[out]			pointer to kernel density vector.
 
 Return value:
 	This function doesn't return a value.
+
+Remarks:
+	The length of the vectors is read from SW->length.
 */
 
 static void kbiweight(
 	CdoubleCP X,
-	CintCP n,
+	CstypeCP SW,
+	CintCP index,
 	CdoubleCP x,
 	CdoubleCP h,
-	doubleCP W)
+	doubleCP K)
 {
 	register int i;
-	for (i = 0; i < *n; i++) {
-		W[i] = (X[i] - *x) / *h;
-		W[i] = 0.9375*R_pow_di(1-R_pow_di(W[i], 2), 2)*(fabs(W[i]) <= 1); // 15/16 = 0.9375
+	double aux;
+	kweight(SW, index, h, K); // initialize kernel density
+	aux = (X[index[0]] - *x) / *h;
+	K[index[0]] *= 0.9375*R_pow_di(1-R_pow_di(aux, 2), 2)*(fabs(aux) <= 1); // 15/16 = 0.9375
+	for (i = 1; i < SW->length; i++) {
+		if (index[i] == index[i-1]) continue; // write only once to an index
+		aux = (X[index[i]] - *x) / *h;
+		K[index[i]] *= 0.9375*R_pow_di(1-R_pow_di(aux, 2), 2)*(fabs(aux) <= 1); // 15/16 = 0.9375
 	}
 	return;
 } // kbiweight
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes weights based on the triweight kernel.
 
 Parameters:
 	X[in]			pointer to covariate vector.
-	n[in]			pointer to lenght of covariate vector.
+	SW[in]			pointer to a weights stype structure.
+	index[i]		pointer to index vector
 	x[in]			pointer to covariate value to compute the weights at.
 	h[in]			pointer to bandwith value.
-	W[out]			pointer to weights vector.
+	K[out]			pointer to kernel density vector.
 
 Return value:
 	This function doesn't return a value.
+
+Remarks:
+	The length of the vectors is read from SW->length.
 */
 
 static void ktriweight(
 	CdoubleCP X,
-	CintCP n,
+	CstypeCP SW,
+	CintCP index,
 	CdoubleCP x,
 	CdoubleCP h,
-	doubleCP W)
+	doubleCP K)
 {
 	register int i;
-	for (i = 0; i < *n; i++) {
-		W[i] = (X[i] - *x) / *h;
-		W[i] = 1.09375*R_pow_di(1-R_pow_di(W[i], 2), 3)*(fabs(W[i]) <= 1); // 35/32 = 1.09375
+	double aux;
+	kweight(SW, index, h, K); // initialize kernel density
+	aux = (X[index[0]] - *x) / *h;
+	K[index[0]] *= 1.09375*R_pow_di(1-R_pow_di(aux, 2), 3)*(fabs(aux) <= 1); // 35/32 = 1.09375
+	for (i = 1; i < SW->length; i++) {
+		if (index[i] == index[i-1]) continue; // write only once to an index
+		aux = (X[index[i]] - *x) / *h;
+		K[index[i]] *= 1.09375*R_pow_di(1-R_pow_di(aux, 2), 3)*(fabs(aux) <= 1); // 35/32 = 1.09375
 	}
 	return;
 } // ktriweight
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes weights based on the cosine kernel.
 
 Parameters:
 	X[in]			pointer to covariate vector.
-	n[in]			pointer to lenght of covariate vector.
+	SW[in]			pointer to a weights stype structure.
+	index[i]		pointer to index vector
 	x[in]			pointer to covariate value to compute the weights at.
 	h[in]			pointer to bandwith value.
-	W[out]			pointer to weights vector.
+	K[out]			pointer to kernel density vector.
 
 Return value:
 	This function doesn't return a value.
+
+Remarks:
+	The length of the vectors is read from SW->length.
 */
 
 static void kcosine(
 	CdoubleCP X,
-	CintCP n,
+	CstypeCP SW,
+	CintCP index,
 	CdoubleCP x,
 	CdoubleCP h,
-	doubleCP W)
+	doubleCP K)
 {
 	register int i;
-	for (i = 0; i < *n; i++) {
-		W[i] = (X[i] - *x) / *h;
-		W[i] = M_PI_4*cos(M_PI_2*W[i])*(fabs(W[i]) <= 1); // pi/4 = M_PI_4, pi/2 = M_PI_2
+	double aux;
+	kweight(SW, index, h, K); // initialize kernel density
+	aux = (X[index[0]] - *x) / *h;
+	K[index[0]] *= M_PI_4*cos(M_PI_2*aux)*(fabs(aux) <= 1); // pi/4 = M_PI_4, pi/2 = M_PI_2
+	for (i = 1; i < SW->length; i++) {
+		if (index[i] == index[i-1]) continue; // write only once to an index
+		aux = (X[index[i]] - *x) / *h;
+		K[index[i]] *= M_PI_4*cos(M_PI_2*aux)*(fabs(aux) <= 1); // pi/4 = M_PI_4, pi/2 = M_PI_2
 	}
 	return;
 } // kcosine
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
-
-Description:
-	Computes nearest neighbour weights based on an asymmetric window.
-
-Parameters:
-	X[in]			pointer to covariate vector.
-	n[in]			pointer to lenght of covariate vector.
-	x[in]			pointer to covariate value to compute the weights at.
-	h[in]			pointer to bandwith value.
-	W[out]			pointer to weights vector.
-
-Return value:
-	This function doesn't return a value.
-*/
-
-static void wasymmetric(
-	CdoubleCP X,
-	CintCP n,
-	CdoubleCP x,
-	CdoubleCP h,
-	doubleCP W)
-{
-	register int i;
-	int *index = (int*)malloc( *n*sizeof(int) ), tr;
-	double *WORK = (double*)malloc( *n*sizeof(double) ); // allocate memory block
-	double lambda;
-	for (i = 0; i < *n; i++) {
-		W[i] = X[i] - *x; // initialize weights vector
-		index[i] = i; // initialize index vector
-	}
-	order_d(W, index, *n, FALSE, FALSE, WORK); // get permutation
-	free(WORK); // free memory block
-	tr = *n * *h;
-	for (i = *n-1; i > 0; i--) {
-		if (W[index[i]] < 0) break; // compute index
-	}
-	if (i+tr+1 > *n-1) lambda = W[index[*n-1]];
-	else lambda = W[index[i+tr+1]];
-	for (i = 0; i < *n; i++) {
-		W[index[i]] = W[index[i]] >= 0 && W[index[i]] <= lambda; // compute weights
-	}
-	free(index); // free memory block
-	return;
-} // wasymmetric
-
-/*
-Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
-
-Description:
-	Computes nearest neighbour weights based on a symmetric window.
-
-Parameters:
-	X[in]			pointer to covariate vector.
-	n[in]			pointer to lenght of covariate vector.
-	x[in]			pointer to covariate value to compute the weights at.
-	h[in]			pointer to bandwith value.
-	W[out]			pointer to weights vector.
-
-Return value:
-	This function doesn't return a value.
-*/
-
-static void wsymmetric(
-	CdoubleCP X,
-	CintCP n,
-	CdoubleCP x,
-	CdoubleCP h,
-	doubleCP W)
-{
-	register int i;
-	int *index = (int*)malloc( *n*sizeof(int) ), tr;
-	double *WORK = (double*)malloc( *n*sizeof(double) ); // allocate memory block
-	double lambda[2];
-	for (i = 0; i < *n; i++) {
-		W[i] = X[i] - *x; // initialize weights vector
-		index[i] = i; // initialize index vector
-	}
-	order_d(W, index, *n, FALSE, FALSE, WORK); // get permutation
-	free(WORK); // free memory block
-	tr = *n * *h / 2;
-	for (i = *n-1; i > 0; i--) {
-		if (W[index[i]] <= 0) break; // compute lower index
-	}
-	if (i-tr < 0) lambda[0] = -fabs(W[index[0]]);
-	else lambda[0] = -fabs(W[index[i-tr]]);
-	for (; i > 0; i--) {
-		if (W[index[i]] < 0) break; // compute upper index
-	}
-	if (i+tr+1 > *n-1) lambda[1] = W[index[*n-1]];
-	else lambda[1] = W[index[i+tr+1]];
-	for (i = 0; i < *n; i++) {
-		W[index[i]] = W[index[i]] >= lambda[0] && W[index[i]] <= lambda[1]; // compute weights
-	}
-	free(index); // free memory block
-	return;
-} // wsymmetric
-
-/*
-Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Returns a pointer to a window or kernel function based on the inputed string.
@@ -391,7 +416,7 @@ Return value:
 	Returns a pointer to a window or kernel function.
 */
 
-void (*kchar2ptr(SEXP window))(CdoubleCP, CintCP, CdoubleCP, CdoubleCP, doubleCP) {
+void (*kchar2ptr(SEXP window))(CdoubleCP, CstypeCP, CintCP, CdoubleCP, CdoubleCP, doubleCP) {
 	CcharCP window1 = CHAR( STRING_ELT(window, 0) );
 	if (strcmp(window1, "epanech") == 0) return kepanech; // if window is epanechnikov
 	else if (strcmp(window1, "tricube") == 0) return ktricube; // if window is tricube
@@ -400,84 +425,116 @@ void (*kchar2ptr(SEXP window))(CdoubleCP, CintCP, CdoubleCP, CdoubleCP, doubleCP
 	else if (strcmp(window1, "biweight") == 0) return kbiweight; // if window is biweight
 	else if (strcmp(window1, "triweight") == 0) return ktriweight; // if window is triweight
 	else if (strcmp(window1, "cosine") == 0) return kcosine; // if window is cosine
-	else if (strcmp(window1, "asymmetric") == 0) return wasymmetric; // if window is asymmetric
-	else if (strcmp(window1, "symmetric") == 0) return wsymmetric; // if window is symmetric
 	else return knormal; // defaults to gaussian
 } // kchar2ptr
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes the Nadaraya-Watson weights.
 
 Parameters:
 	X[in]			pointer to covariate vector.
-	n[in]			pointer to lenght of covariate vector.
+	SW[in]			pointer to a weights stype structure.
+	index[i]		pointer to index vector
 	x[in]			pointer to covariate value to compute the weights at.
 	h[in]			pointer to bandwith value.
-	W[out]			pointer to weights vector.
+	K[out]			pointer to kernel density vector.
 	kfunc[in] 		pointer to kernel density function.
 
 Return value:
 	This function doesn't return a value.
+
+Remarks:
+	Vector index must indicate the permutation of vector X
+		sorted by ascending order.
+	Actually index can indicate the permuation of another
+		vector sorted by ascending order. As long as that
+		vector is indexed to vector X. As the columns in
+		a data.frame or matrix are indexed to each other.
+	Vectors X, SW->ptr, index and K must have the same length.
+	The length of the vectors is read from SW->length.
 */
 
 void NWWeights(
 	CdoubleCP X,
-	CintCP n,
+	CstypeCP SW,
+	CintCP index,
 	CdoubleCP x,
 	CdoubleCP h,
-	doubleCP W,
-	void (*kfunc)(CdoubleCP, CintCP, CdoubleCP, CdoubleCP, doubleCP) )
+	doubleCP K,
+	Kfunc kfunc)
 {
 	register int i;
 	double sum;
-	kfunc(X, n, x, h, W); // compute kernel density
-	for (i = 0, sum = 0; i < *n; i++) sum += W[i]; // compute sum
-	for (i = 0; i < *n; i++) W[i] /= sum; // compute Nadaraya-Watson weight
+	kfunc(X, SW, index, x, h, K); // compute kernel density
+	for (i = 0, sum = 0; i < SW->length; i++) sum += K[index[i]]; // compute sum
+	for (K[index[0]] /= sum, i = 1; i < SW->length; i++) {
+		if (index[i] == index[i-1]) continue; // write only once to an index
+		K[index[i]] /= sum; // compute Nadaraya-Watson weight
+	}
 	return;
 } // NWWeights
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes local linear weights based on a kernel density.
 
 Parameters:
 	X[in]			pointer to covariate vector.
-	n[in]			pointer to lenght of covariate vector.
+	SW[in]			pointer to a weights stype structure.
+	index[i]		pointer to index vector
 	x[in]			pointer to covariate value to compute the weights at.
 	h[in]			pointer to bandwith value.
-	W[out]			pointer to weights vector.
+	K[out]			pointer to kernel density vector.
 	kfunc[in] 		pointer to kernel density function.
 
 Return value:
 	This function doesn't return a value.
+
+Remarks:
+	Vector index must indicate the permutation of vector X
+		sorted by ascending order.
+	Actually index can indicate the permuation of another
+		vector sorted by ascending order. As long as that
+		vector is indexed to vector X. As the columns in
+		a data.frame or matrix are indexed to each other.
+	Vectors X, SW->ptr, index and K must have the same length.
+	The length of the vectors is read from SW->length.
 */
 
 void LLWeights(
 	CdoubleCP X,
-	CintCP n,
+	CstypeCP SW,
+	CintCP index,
 	CdoubleCP x,
 	CdoubleCP h,
-	doubleCP W,
-	void (*kfunc)(CdoubleCP, CintCP, CdoubleCP, CdoubleCP, doubleCP) )
+	doubleCP K,
+	Kfunc kfunc)
 {
 	register int i;
 	double aux[2], sum[2] = {0, 0};
-	kfunc(X, n, x, h, W); // compute kernel density
-	for (i = 0; i < *n; i++) {
-		aux[0] = X[i]-*x;
-		aux[1] = aux[0]*W[i];
+	kfunc(X, SW, index, x, h, K); // compute kernel density
+	for (i = 0; i < SW->length; i++) {
+		aux[0] = X[index[i]] - *x;
+		aux[1] = aux[0]*K[index[i]];
 		sum[0] += aux[1];
 		sum[1] += aux[0]*aux[1];
 	}
-	for (i = 0; i < *n; i++) W[i] *= sum[1]-(X[i]-*x)*sum[0];
-	for (i = 0, sum[0] = 0; i < *n; i++) sum[0] += W[i]; // compute sum
-	for (i = 0; i < *n; i++) W[i] /= sum[0]; // compute local linear weight
+	K[index[0]] *= sum[1]-(X[index[0]] - *x)*sum[0];
+	for (i = 1; i < SW->length; i++) {
+		if (index[i] == index[i-1]) continue; // write only once to an index
+		K[index[i]] *= sum[1]-(X[index[i]] - *x)*sum[0];
+	}
+	for (i = 0, sum[0] = 0; i < SW->length; i++) sum[0] += K[index[i]]; // compute sum
+	for (K[index[0]] /= sum[0], i = 1; i < SW->length; i++) {
+		if (index[i] == index[i-1]) continue; // write only once to an index
+		K[index[i]] /= sum[0]; // compute local linear weight
+	}
 	return;
 } // LLWeights

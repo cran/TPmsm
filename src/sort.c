@@ -76,7 +76,7 @@ static int rsub(
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Sorts vector 'x'.
@@ -105,7 +105,7 @@ void sort_i(
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Sorts vector 'x'.
@@ -152,7 +152,7 @@ void sort_d(
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Sorts vector 'x' with vector 'indx' alongside.
@@ -186,7 +186,7 @@ void sort_ii(
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Sorts vector 'x' with vector 'indx' alongside.
@@ -221,7 +221,7 @@ void sort_di(
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Sorts vector 'x' with vector 'indx' alongside.
@@ -255,7 +255,7 @@ void sort_dd(
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes the permutation that results by sorting time
@@ -291,7 +291,7 @@ void order_d(
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes the permutation that results by sorting time
@@ -345,7 +345,7 @@ void order_di(
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes the permutation that results by sorting time

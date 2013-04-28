@@ -3,7 +3,7 @@
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	This function reads bidimensional data in a way
@@ -38,20 +38,22 @@ void getOrdinateI(
 	CdoubleCP a,
 	doubleCP o)
 {
-	if (X[index[*i]] > *a) return;
-	else if (*i < *len-1) {
+	if (*i >= *len-1) *o = Y[index[*len-1]];
+	else if (X[index[*i]] <= *a) {
 		int j = *i;
 		*i = (*len-1+j)/2; // the midpoint
 		if (X[index[*i+1]] > *a) *i = j;
-		for (; *i < *len-1; (*i)++) if (X[index[*i+1]] > *a) break;
+		for (; *i < *len-1; (*i)++) {
+			if (X[index[*i+1]] > *a) break;
+		}
+		*o = Y[index[*i]];
 	}
-	*o = Y[index[*i]];
 	return;
 } // getOrdinateI
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes first e index of a vector T where T[index[e]] > t.
@@ -61,8 +63,8 @@ Parameters:
 	index[in]		pointer to index first element.
 	t[in]			pointer to t value.
 	len[in]			pointer to length of T and index.
-	i[in]			pointer to first index.
-	e[out]			pointer to last index.
+	i[in]			pointer to index to start the search.
+	e[out]			pointer to index found.
 
 Return value:
 	This function doesn't return a value.
@@ -82,9 +84,61 @@ void getIndexI(
 {
 	if (*i >= *len) *e = *len;
 	else {
-		*e = (*len-1+*i)/2; // the midpoint
-		if (T[index[*e]] > *t) *e = *i;
-		for (; *e < *len; (*e)++) if (T[index[*e]] > *t) break; // determine last index
+		if (*i < 0) {
+			*e = (*len-1)/2; // the midpoint
+			if (T[index[*e]] > *t) *e = 0;
+		} else {
+			*e = (*len-1+*i)/2; // the midpoint
+			if (T[index[*e]] > *t) *e = *i;
+		}
+		for (; *e < *len; (*e)++) {
+			if (T[index[*e]] > *t) break; // find index
+		}
 	}
 	return;
 } // getIndexI
+
+/*
+Author:
+	Artur Agostinho Araujo <artur.stat@gmail.com>
+
+Description:
+	Computes last e index of a vector T where T[index[e]] <= t.
+	The search is done backwards.
+
+Parameters:
+	T[in]			pointer to T first element.
+	index[in]		pointer to index first element.
+	t[in]			pointer to t value.
+	len[in]			pointer to length of T and index.
+	i[in]			pointer to index to start the search.
+	e[out]			pointer to index found.
+
+Return value:
+	This function doesn't return a value.
+
+Remarks:
+	Vector index must indicate the permutation
+		of vector T sorted by ascending order.
+*/
+
+void getBackIndexI(
+	CdoubleCP T,
+	CintCP index,
+	CdoubleCP t,
+	CintCP len,
+	CintCP i,
+	intCP e)
+{
+	if (*i < 0) *e = -1;
+	else {
+		if (*i < *len) {
+			*e = (*len-1+*i)/2; // the midpoint
+			if (T[index[*e]] < *t) *e = *i;
+		} else *e = *len-1;
+		for (; *e >= 0; (*e)--) {
+			if (T[index[*e]] <= *t) break; // find index
+		}
+	}
+	return;
+} // getBackIndexI

@@ -1,0 +1,3 @@
+LIBRARY TPmsm.dll
+EXPORTS
+ R_init_TPmsm

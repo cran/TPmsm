@@ -1,6 +1,6 @@
 TPBoot.rboot <- function(object, UT, nboot, ...) {
 	lst <- vector(mode="list", length=2)
-	a3d <- array( data=0, dim=c(nboot, length(UT), 3) )
+	a3d <- array( data=0, dim=c(nboot, length(UT), 4) )
 	est <- TransPROB(object, UT, nboot=1, ...)
 	a3d[1,,] <- est[[1]]
 	lst[[2]] <- est[[2]]
@@ -30,7 +30,7 @@ TransBoot.TP <- function(object, s, t, state.names, n.boot, conf.level, method.b
 
 TPCBoot.rboot <- function(object, UT, UX, nboot, ...) {
 	lst <- vector(mode="list", length=2)
-	a4d <- array( data=0, dim=c(nboot, length(UT), length(UX), 3) )
+	a4d <- array( data=0, dim=c(nboot, length(UT), length(UX), 4) )
 	est <- TransPROB(object, UT, UX, nboot=1, ...)
 	a4d[1,,,] <- est[[1]]
 	lst[[2]] <- est[[2]]

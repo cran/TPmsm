@@ -1,7 +1,9 @@
 
+#include <stdint.h>
 #include <stdlib.h>
 #include <Rdefines.h>
 #include "defines.h"
+#include "rthreads.h"
 
 SEXP toTPCmsm(
 	SEXP lst,
@@ -15,36 +17,29 @@ SEXP toTPCmsm(
 	SEXP a4d, h;
 	a4d = VECTOR_ELT(lst, 0);
 	h = VECTOR_ELT(lst, 1);
-	register int i, j;
-	int nt = GET_LENGTH(UT), nx = GET_LENGTH(UX);
+	register int i, j, k;
+	register int64_t y;
+	const int nt = GET_LENGTH(UT), nx = GET_LENGTH(UX);
+	const int64_t ntx = nt*nx;
 	SEXP aest;
 	PROTECT( aest = alloc3DArray(REALSXP, nt, nx, 5) );
 	#ifdef _OPENMP
-	#pragma omp parallel for private(i, j)
+	#pragma omp parallel for num_threads(global_num_threads) private(i, j, k, y)
 	#endif
 	for (i = 0; i < nt; i++) {
-		for (j = 0; j < nx; j++) {
-			if (REAL(a4d)[i+nt*j] < 0) REAL(aest)[i+nt*j] = 0;
-			else if (REAL(a4d)[i+nt*j] > 1) REAL(aest)[i+nt*j] = 1;
-			else REAL(aest)[i+nt*j] = REAL(a4d)[i+nt*j];
-			if (REAL(a4d)[i+nt*j+nt*nx] < 0) REAL(aest)[i+nt*j+nt*nx] = 0;
-			else if (REAL(a4d)[i+nt*j+nt*nx] > 1) REAL(aest)[i+nt*j+nt*nx] = 1;
-			else REAL(aest)[i+nt*j+nt*nx] = REAL(a4d)[i+nt*j+nt*nx];
-			REAL(aest)[i+nt*j+nt*nx*2] = 1-REAL(aest)[i+nt*j]-REAL(aest)[i+nt*j+nt*nx];
-			if (REAL(aest)[i+nt*j+nt*nx*2] < 0) {
-				REAL(aest)[i+nt*j+nt*nx] = 1-REAL(aest)[i+nt*j];
-				REAL(aest)[i+nt*j+nt*nx*2] = 0;
+		for (y = i, j = 0; j < nx; j++) {
+			for (k = 0; k < 4; k++) {
+				REAL(aest)[y] = REAL(a4d)[y];
+				y += ntx; // y = i+nt*j+ntx*k
 			}
-			if (REAL(a4d)[i+nt*j+nt*nx*2] < 0) REAL(aest)[i+nt*j+nt*nx*3] = 0;
-			else if (REAL(a4d)[i+nt*j+nt*nx*2] > 1) REAL(aest)[i+nt*j+nt*nx*3] = 1;
-			else REAL(aest)[i+nt*j+nt*nx*3] = REAL(a4d)[i+nt*j+nt*nx*2];
-			REAL(aest)[i+nt*j+nt*nx*4] = 1-REAL(aest)[i+nt*j+nt*nx*3];
+			REAL(aest)[y] = 1-REAL(aest)[y-ntx]; // y = i+nt*j+ntx*4, y-ntx = i+nt*j+ntx*3
+			y -= ntx*4; // y = i+nt*j+ntx*4-ntx*4 = i+nt*j+ntx*0 = i+nt*j
+			y += nt; // y = i+nt*j
 		}
 	}
 	const char *name1 = CHAR( STRING_ELT(statenames, 0) );
 	const char *name2 = CHAR( STRING_ELT(statenames, 1) );
 	const char *name3 = CHAR( STRING_ELT(statenames, 2) );
-	int k;
 	i = strlen(name1), j = strlen(name2), k = strlen(name3);
 	char *name11 = (char*)malloc( (i+i+2)*sizeof(char) );
 	strcpy(name11, name1);

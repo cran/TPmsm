@@ -1,3 +1,4 @@
+\encoding{UTF-8}
 \name{heartTP}
 \alias{heartTP}
 \docType{data}
@@ -20,19 +21,13 @@
 	}
 }
 
-%\details{
-%  ~~ If necessary, more details than the __description__ above ~~
-%}
-
-%\source{
-%J Crowley and M Hu (1977), Covariance analysis of heart transplant survival data. Journal of the American Statistical Association, 72, 27-36.
-%}
-
 \references{
-	J Crowley and M Hu (1977), Covariance analysis of heart transplant survival data. Journal of the American Statistical Association, 72, 27-36.
+	Crowley J. and Hu M. (1977), Covariance analysis of heart transplant survival data. \emph{Journal of the American Statistical Association}, \bold{72}, 27-36.
 }
 
 %\examples{
 %data(heartTP)
 %## maybe str(heartTP) ; plot(heartTP) ...
 %}
+
+\keyword{datasets}

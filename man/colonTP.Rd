@@ -1,3 +1,4 @@
+\encoding{UTF-8}
 \name{colonTP}
 \alias{colonTP}
 \docType{data}
@@ -42,21 +43,23 @@
 	adjuvant therapy of large-bowel carcinoma: An evaluation of
 	levamisole and the combination of levamisole and fluorouracil:
 	The North Central Cancer Treatment Group and the Mayo Clinic.
-	J Clinical Oncology, 7:1447-1456, 1989.
+	\emph{Journal of Clinical Oncology}, 7:1447-1456, 1989.
 
 	DY Lin.  Cox regression analysis of multivariate failure time data:
-	the marginal approach.  Statistics in Medicine, 13:2233-2247, 1994.
+	the marginal approach.  \emph{Statistics in Medicine}, 13:2233-2247, 1994.
 
 	CG Moertel, TR Fleming, JS MacDonald,
 	DG Haller, JA Laurie, PJ Goodman, JS Ungerleider,
 	WA Emerson, DC Tormey, JH Glick, MH Veeder and JA Maillard.
 	Levamisole and fluorouracil for adjuvant therapy of
-	resected colon carcinoma. New England J of Medicine, 332:352-358,
+	resected colon carcinoma. \emph{New England Journal of Medicine}, 332:352-358,
 	1990.
 
 	CG Moertel,  TR Fleming,  JS MacDonald, DG Haller, JA Laurie, CM Tangen,
 	JS Ungerleider, WA Emerson, DC Tormey, JH Glick, MH Veeder and JA
 	Maillard, Fluorouracil plus Levamisole as and effective adjuvant
 	therapy after resection of stage II colon carcinoma: a final report.
-	Annals of Internal Med, 122:321-326, 1991.
+	\emph{Annals of Internal Medicine}, 122:321-326, 1991.
 }
+
+\keyword{datasets}

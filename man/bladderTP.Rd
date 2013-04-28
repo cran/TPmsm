@@ -1,3 +1,4 @@
+\encoding{UTF-8}
 \name{bladderTP}
 \alias{bladderTP}
 \docType{data}
@@ -27,10 +28,12 @@
 %}
 
 \references{
-	LJ Wei, DY Lin, L Weissfeld (1989). "Regression analysis of multivariate incomplete failure time data by modeling marginal distributions", \emph{Journal of the American Statistical Association}, \bold{84}.
+	Wei L. J., Lin D. Y., Weissfeld L. (1989). Regression analysis of multivariate incomplete failure time data by modeling marginal distributions, \emph{Journal of the American Statistical Association}, \bold{84}.
 }
 
 %\examples{
 %data(bladderTP)
 %## maybe str(bladderTP) ; plot(bladderTP) ...
 %}
+
+\keyword{datasets}

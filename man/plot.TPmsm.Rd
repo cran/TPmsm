@@ -1,8 +1,9 @@
+\encoding{UTF-8}
 \name{plot.TPmsm}
 \alias{plot.TPmsm}
-\title{Plot method for a TPmsm object}
+\title{plot method for a TPmsm object}
 \description{
-	Plot method for an object of class 'TPmsm'.
+	plot method for an object of class 'TPmsm'.
 	It draws the estimated transition probabilities in a basic scatterplot.
 }
 \usage{\S3method{plot}{TPmsm}(x, tr.choice, xlab = "Time", ylab="Transition probability",
@@ -33,14 +34,17 @@ legend=TRUE, legend.pos, curvlab, legend.bty="n", ...)}
 	No value is returned.
 }
 
-\author{Artur Agostinho Araujo, Javier Roca-Pardinas and Luis Meira Machado}
+\author{Artur Agostinho Araújo, Javier Roca-Pardiñas and Luís Meira Machado}
 
 \seealso{
-	\code{\link{plot.default}},
-	\code{\link{legend}}.
+	\code{\link{legend}},
+	\code{\link{plot.default}}.
 }
 
 \examples{
+# set the number of threads
+nth <- threadsTP(2)
+
 # Create survTP object
 data(bladderTP)
 bladderTP_obj <- with(bladderTP, survTP(time1, event1, Stime, event))
@@ -63,4 +67,11 @@ for ( i in seq_len( length(tr.choice) ) ) {
 par(mfrow=c(1, 1), cex=1.2)
 title(xlab="Time", ylab="Transition probability", line=3)
 par(par.orig)
+
+# restore the number of threads
+threadsTP(nth)
 }
+
+\keyword{hplot}
+\keyword{methods}
+\keyword{survival}

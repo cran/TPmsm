@@ -29,18 +29,7 @@ plot.TPmsm <- function(x, tr.choice, xlab="Time", ylab="Transition probability",
 	if (legend) {
 		if ( missing(legend.pos) ) legend.pos <- "topleft"
 		if ( missing(curvlab) ) curvlab <- tr.choice
-		if ( is.list(legend.pos) ) legend.pos <- unlist(legend.pos)
-		if (length(legend.pos) == 1) {
-			xx <- legend.pos
-			yy <- NULL
-		}
-		if (length(legend.pos) == 2) {
-			xx <- legend.pos[1]
-			yy <- legend.pos[2]
-		}
-		args <- list(...)
-		ii <- pmatch( names(args), names(formals("legend")[-charmatch( "bty", names( formals("legend") ) )]) )
-		do.call( "legend", c(list(xx, yy, curvlab, col=col, lty=lty, bty=legend.bty), args[!is.na(ii)]) )
+		addlegend(legend.pos, curvlab, col=col, lty=lty, legend.bty=legend.bty, ...)
 	}
 	invisible()
 }

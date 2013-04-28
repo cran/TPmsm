@@ -2,13 +2,16 @@
 /*** IPCW1 TRANSITION PROBABILITIES ***/
 /**************************************/
 
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 #include <stdlib.h>
 #include <time.h>
 #include <Rdefines.h>
 #include "defines.h"
 #include "boot.h"
 #include "get.h"
+#include "rthreads.h"
 #include "sort.h"
 
 #define invsum_body \
@@ -28,13 +31,14 @@
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes the transition probabilities:
-		p11(s,t) = P(Z>t|Z>s) = P(Z>t)/P(Z>s)
-		p12(s,t) = P(Z<=t,T>t|Z>s) = P(s<Z<=t,T>t)/P(Z>s)
-		p22(s,t) = P(Z<=t,T>t|Z<=s,T>s) = P(Z<=s,T>t)/P(Z<=s,T>s)
+		p11(s,t) = P(Z>t|Z>s) = {1-P(Z<=t)}/{1-P(Z<=s)}
+		p12(s,t) = P(Z<=t,T>t|Z>s) = {P(Z<=t)-P(Z<=s)-P(s<Z<=t,T<=t)}/{1-P(Z<=s)}
+		p13(s,t) = 1-p11(s,t)-p12(s,t)
+		p22(s,t) = P(Z<=t,T>t|Z<=s,T>s) = {P(Z<=s)-P(Z<=s,T<=t)}/{P(Z<=s)-P(T<=s)}
 
 Parameters:
 	len[in]			pointer to length of T1, E1, S and E.
@@ -47,7 +51,7 @@ Parameters:
 	nt[in]			pointer to length of UT and number of rows of P.
 	UT[in]			pointer to unique times vector.
 	nb[in]			pointer to number of rows of P.
-	P[out]			pointer to a (nb)x(nt)x3 probability array.
+	P[out]			pointer to a (nb)x(nt)x4 probability array.
 	b[in]			pointer to row index.
 
 Return value:
@@ -72,7 +76,7 @@ static void transIPCW1I(
 	CintCP nt,
 	Cdouble UT[*nt],
 	CintCP nb,
-	double P[*nb*(*nt)*3],
+	double P[*nb*(*nt)*4],
 	CintCP b)
 {
 	register int i = 0, k;
@@ -84,11 +88,12 @@ static void transIPCW1I(
 	#undef sum
 	getIndexI(T1, index0, &UT[*nt-1], len, &j, &e); // determine index
 	while (j < e) { // loop through the sample until last index is reached
-		p[0] = (*len-sum[1]-sum[0])/(*len-sum[0]);
-		p[1] = sum[1]/(*len-sum[0]);
+		p[0] = (*len-sum[1]-sum[0])/(*len-sum[0]); // compute p11(s,t)
+		p[1] = sum[1]/(*len-sum[0]); // compute p12(s,t) term
 		while (T1[index0[j]] > UT[i]) {
-			P[*b+*nb*i] = p[0];
-			P[*b+*nb*(i+*nt)] = p[1];
+			if (p[0] < 0) P[*b+*nb*i] = 0;
+			else P[*b+*nb*i] = p[0]; // save p11(s,t)
+			P[*b+*nb*(i+*nt)] = p[1]; // save p12(s,t) term
 			i++;
 		}
 		n = *len-j; // count individuals at risk
@@ -101,11 +106,12 @@ static void transIPCW1I(
 		if (n-r != 0) surv *= 1-(double)d/(n-r); // compute survival probability
 		if (surv > 0) for (k = *len-n; k < j; k++) sum[1] += E1[index0[k]]/surv; // compute sum
 	}
-	p[0] = (*len-sum[1]-sum[0])/(*len-sum[0]);
-	p[1] = sum[1]/(*len-sum[0]);
+	p[0] = (*len-sum[1]-sum[0])/(*len-sum[0]); // compute p11(s,t)
+	p[1] = sum[1]/(*len-sum[0]); // compute p12(s,t) term
 	for (; i < *nt; i++) { // needed for bootstrap
-		P[*b+*nb*i] = p[0];
-		P[*b+*nb*(i+*nt)] = p[1];
+		if (p[0] < 0) P[*b+*nb*i] = 0;
+		else P[*b+*nb*i] = p[0]; // save p11(s,t)
+		P[*b+*nb*(i+*nt)] = p[1]; // save p12(s,t) term
 	}
 	sum[1] = 0;
 	j = 0;
@@ -123,11 +129,18 @@ static void transIPCW1I(
 	getIndexI(S, index1, &UT[*nt-1], len, &j, &e); // determine index
 	i = 0;
 	while (j < e) { // loop through the sample until last index is reached
-		p[0] = sum[2]/(*len-sum[0]);
-		p[1] = 1-sum[3]/(sum[0]-sum[1]);
+		p[0] = sum[2]/(*len-sum[0]); // compute p12(s,t) term
+		p[1] = 1-sum[3]/(sum[0]-sum[1]); // compute p22(s,t)
 		while (S[index1[j]] > UT[i]) {
-			P[*b+*nb*(i+*nt)] -= p[0];
-			P[*b+*nb*(i+*nt*2)] = p[1];
+			P[*b+*nb*(i+*nt)] -= p[0]; // compute and save p12(s,t)
+			if (P[*b+*nb*(i+*nt)] < 0) P[*b+*nb*(i+*nt)] = 0;
+			P[*b+*nb*(i+*nt*2)] = 1-P[*b+*nb*i]-P[*b+*nb*(i+*nt)]; // compute and save p13(s,t)
+			if (P[*b+*nb*(i+*nt*2)] < 0) {
+				P[*b+*nb*(i+*nt)] = 1-P[*b+*nb*i]; // compute and save p12(s,t)
+				P[*b+*nb*(i+*nt*2)] = 0; // save p13(s,t)
+			}
+			if (p[1] < 0) P[*b+*nb*(i+*nt*3)] = 0;
+			else P[*b+*nb*(i+*nt*3)] = p[1]; // save p22(s,t)
 			i++;
 		}
 		n = *len-j; // count individuals at risk
@@ -145,23 +158,31 @@ static void transIPCW1I(
 			}
 		}
 	}
-	p[0] = sum[2]/(*len-sum[0]);
-	p[1] = 1-sum[3]/(sum[0]-sum[1]);
+	p[0] = sum[2]/(*len-sum[0]); // compute p12(s,t) term
+	p[1] = 1-sum[3]/(sum[0]-sum[1]); // compute p22(s,t)
 	for (; i < *nt; i++) { // needed for bootstrap
-		P[*b+*nb*(i+*nt)] -= p[0];
-		P[*b+*nb*(i+*nt*2)] = p[1];
+		P[*b+*nb*(i+*nt)] -= p[0]; // compute and save p12(s,t)
+		if (P[*b+*nb*(i+*nt)] < 0) P[*b+*nb*(i+*nt)] = 0;
+		P[*b+*nb*(i+*nt*2)] = 1-P[*b+*nb*i]-P[*b+*nb*(i+*nt)]; // compute and save p13(s,t)
+		if (P[*b+*nb*(i+*nt*2)] < 0) {
+			P[*b+*nb*(i+*nt)] = 1-P[*b+*nb*i]; // compute and save p12(s,t)
+			P[*b+*nb*(i+*nt*2)] = 0; // save p13(s,t)
+		}
+		if (p[1] < 0) P[*b+*nb*(i+*nt*3)] = 0;
+		else P[*b+*nb*(i+*nt*3)] = p[1]; // save p22(s,t)
 	}
 	return;
 } // transIPCW1I
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes the transition probabilities:
 		p11(s,t) = P(Z>t|Z>s) = P(Z>t)/P(Z>s)
 		p12(s,t) = P(Z<=t,T>t|Z>s) = P(s<Z<=t,T>t)/P(Z>s)
+		p13(s,t) = 1-p11(s,t)-p12(s,t)
 		p22(s,t) = P(Z<=t,T>t|Z<=s,T>s) = P(Z<=s,T>t)/P(Z<=s,T>s)
 
 Parameters:
@@ -175,7 +196,7 @@ Parameters:
 	nt[in]			pointer to length of UT and number of rows of P.
 	UT[in]			pointer to unique times vector.
 	nb[in]			pointer to number of rows of P.
-	P[out]			pointer to a (nb)x(nt)x3 probability array.
+	P[out]			pointer to a (nb)x(nt)x4 probability array.
 	b[in]			pointer to row index.
 
 Return value:
@@ -200,7 +221,7 @@ static void transIPCW2I(
 	CintCP nt,
 	Cdouble UT[*nt],
 	CintCP nb,
-	double P[*nb*(*nt)*3],
+	double P[*nb*(*nt)*4],
 	CintCP b)
 {
 	register int i = 0, k, y = 0;
@@ -211,9 +232,9 @@ static void transIPCW2I(
 	getIndexI(T1, index0, &UT[*nt-1], len, &j, &e); // determine index
 	while (j < e) { // loop through the sample until last index is reached
 		while (T1[index0[j]] > UT[i]) {
-			P[*b+*nb*i] = sum;
-			P[*b+*nb*(i+*nt)] = 0;
-			P[*b+*nb*(i+*nt*2)] = 0;
+			P[*b+*nb*i] = sum; // save p11(s,t) term
+			P[*b+*nb*(i+*nt)] = 0; // initialize p12(s,t)
+			P[*b+*nb*(i+*nt*3)] = 0; // initialize p22(s,t)
 			i++;
 		}
 		n = *len-j; // count individuals at risk
@@ -227,14 +248,14 @@ static void transIPCW2I(
 		if (surv > 0) for (k = *len-n; k < j; k++) sum += E1[index0[k]]/surv; // compute sum
 	}
 	for (; i < *nt; i++) { // needed for bootstrap
-		P[*b+*nb*i] = sum;
-		P[*b+*nb*(i+*nt)] = 0;
-		P[*b+*nb*(i+*nt*2)] = 0;
+		P[*b+*nb*i] = sum; // save p11(s,t) term
+		P[*b+*nb*(i+*nt)] = 0; // initialize p12(s,t)
+		P[*b+*nb*(i+*nt*3)] = 0; // initialize p22(s,t)
 	}
 	#define e *len
 	invsum_body
 	#undef e
-	for (i = 0; i < *nt; i++) P[*b+*nb*i] = sum-P[*b+*nb*i];
+	for (i = 0; i < *nt; i++) P[*b+*nb*i] = sum-P[*b+*nb*i]; // compute and save p11(s,t) factor
 	j = 0;
 	surv = 1;
 	getIndexI(S, index1, &UT[0], len, &j, &e); // determine first index
@@ -263,7 +284,7 @@ static void transIPCW2I(
 			k = *len-n;
 			while (S[index1[k]] > UT[y]) y++;
 			for (; k < j; k++) {
-				if (T1[index1[k]] <= UT[0] && E[index1[k]]) for (i = 0; i < y; i++) P[*b+*nb*(i+*nt*2)] += 1/surv; // compute sum
+				if (T1[index1[k]] <= UT[0] && E[index1[k]]) for (i = 0; i < y; i++) P[*b+*nb*(i+*nt*3)] += 1/surv; // compute sum
 				else if (E[index1[k]]) for (i = 0; i < y; i++) P[*b+*nb*(i+*nt)] += (T1[index1[k]] <= UT[i])/surv; // compute sum
 			}
 		}
@@ -280,21 +301,26 @@ static void transIPCW2I(
 		if (surv > 0) {
 			k = *len-n;
 			for (; k < j; k++) {
-				if (T1[index1[k]] <= UT[0] && E[index1[k]]) for (i = 0; i < *nt; i++) P[*b+*nb*(i+*nt*2)] += 1/surv; // compute sum
+				if (T1[index1[k]] <= UT[0] && E[index1[k]]) for (i = 0; i < *nt; i++) P[*b+*nb*(i+*nt*3)] += 1/surv; // compute sum
 				else if (E[index1[k]]) for (i = 0; i < *nt; i++) P[*b+*nb*(i+*nt)] += (T1[index1[k]] <= UT[i])/surv; // compute sum
 			}
 		}
 	}
 	for (i = *nt-1; i >= 0; i--) {
-		P[*b+*nb*(i+*nt)] /= P[*b];
-		P[*b+*nb*i] /= P[*b];
-		P[*b+*nb*(i+*nt*2)] /= P[*b+*nb*(*nt*2)];
+		P[*b+*nb*(i+*nt)] /= P[*b]; // compute and save p12(s,t)
+		P[*b+*nb*i] /= P[*b]; // compute and save p11(s,t)
+		P[*b+*nb*(i+*nt*2)] = 1-P[*b+*nb*i]-P[*b+*nb*(i+*nt)]; // compute and save p13(s,t)
+		if (P[*b+*nb*(i+*nt*2)] < 0) {
+			P[*b+*nb*(i+*nt)] = 1-P[*b+*nb*i]; // compute and save p12(s,t)
+			P[*b+*nb*(i+*nt*2)] = 0; // save p13(s,t)
+		}
+		P[*b+*nb*(i+*nt*3)] /= P[*b+*nb*(*nt*3)]; // compute and save p22(s,t)
 	}
 } // transIPCW2I
 
 /*
 Author:
-	Artur Agostinho Araújo <b5498@math.uminho.pt>
+	Artur Agostinho Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes a transition probability vector based
@@ -308,7 +334,7 @@ Parameters:
 
 Return value:
 	Returns a list where the first element is a
-		(nboot)x(nt)x3 array of transition probabilities,
+		(nboot)x(nt)x4 array of transition probabilities,
 		and the second element is NULL.
 */
 
@@ -326,7 +352,7 @@ SEXP TransPROBIPCW1(
 	E = VECTOR_ELT(data, 3);
 	int len = GET_LENGTH(T1), nt = GET_LENGTH(UT);
 	SEXP P, list;
-	PROTECT( P = alloc3DArray(REALSXP, *INTEGER(nboot), nt, 3) );
+	PROTECT( P = alloc3DArray(REALSXP, *INTEGER(nboot), nt, 4) );
 	PROTECT( list = NEW_LIST(2) );
 	void (*func)(CintCP, CdoubleCP, CintCP, CdoubleCP, CintCP, CintCP, CintCP, CintCP, CdoubleCP, CintCP, doubleCP, CintCP);
 	switch ( *INTEGER(methodest) ) {
@@ -337,7 +363,7 @@ SEXP TransPROBIPCW1(
 			func = transIPCW1I;
 	}
 	#ifdef _OPENMP
-	#pragma omp parallel if(*INTEGER(nboot) > 1)
+	#pragma omp parallel if(*INTEGER(nboot) > 1) num_threads(global_num_threads)
 	#endif
 	{
 		int b;

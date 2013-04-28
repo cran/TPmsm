@@ -1,8 +1,10 @@
 
+#include <stdint.h>
 #include <stdlib.h>
 #include <Rdefines.h>
 #include "defines.h"
 #include "quantile.h"
+#include "rthreads.h"
 
 SEXP BtoTPCmsm(
 	SEXP lst,
@@ -19,8 +21,10 @@ SEXP BtoTPCmsm(
 	SEXP a4d, h;
 	a4d = VECTOR_ELT(lst, 0);
 	h = VECTOR_ELT(lst, 1);
-	register int i, j, k, y;
-	int nt = GET_LENGTH(UT), nx = GET_LENGTH(UX);
+	register int i, j, k;
+	register int64_t y;
+	const int nt = GET_LENGTH(UT), nx = GET_LENGTH(UX);
+	const int64_t ntx = nt*nx;
 	SEXP aest;
 	PROTECT( aest = alloc3DArray(REALSXP, nt, nx, 5) );
 	int n = 2, nb = INTEGER( GET_DIM(a4d) )[0];
@@ -31,59 +35,43 @@ SEXP BtoTPCmsm(
 	PROTECT( ainf = alloc3DArray(REALSXP, nt, nx, 5) );
 	PROTECT( asup = alloc3DArray(REALSXP, nt, nx, 5) );
 	#ifdef _OPENMP
-	#pragma omp parallel for private(i, j, k, y, Q)
+	#pragma omp parallel for num_threads(global_num_threads) private(i, j, k, y, Q)
 	#endif
 	for (i = 0; i < nt; i++) {
-		for (j = 0; j < nx; j++) {
-			if (REAL(a4d)[nb*(i+nt*j)] < 0) REAL(aest)[i+nt*j] = 0;
-			else if (REAL(a4d)[nb*(i+nt*j)] > 1) REAL(aest)[i+nt*j] = 1;
-			else REAL(aest)[i+nt*j] = REAL(a4d)[nb*(i+nt*j)];
-			if (REAL(a4d)[nb*(i+nt*j+nt*nx)] < 0) REAL(aest)[i+nt*j+nt*nx] = 0;
-			else if (REAL(a4d)[nb*(i+nt*j+nt*nx)] > 1) REAL(aest)[i+nt*j+nt*nx] = 1;
-			else REAL(aest)[i+nt*j+nt*nx] = REAL(a4d)[nb*(i+nt*j+nt*nx)];
-			REAL(aest)[i+nt*j+nt*nx*2] = 1-REAL(aest)[i+nt*j]-REAL(aest)[i+nt*j+nt*nx];
-			if (REAL(aest)[i+nt*j+nt*nx*2] < 0) {
-				REAL(aest)[i+nt*j+nt*nx] = 1-REAL(aest)[i+nt*j];
-				REAL(aest)[i+nt*j+nt*nx*2] = 0;
+		for (y = i, j = 0; j < nx; j++) {
+			for (k = 0; k < 4; k++) {
+				REAL(aest)[y] = REAL(a4d)[nb*y]; // must be computed before quantile_d
+				quantile_d(&nb, &REAL(a4d)[nb*y], &n, P, Q); // sorts the array internally
+				REAL(ainf)[y] = Q[0];
+				REAL(asup)[y] = Q[1];
+				y += ntx; // y = i+nt*j+ntx*k
 			}
-			if (REAL(a4d)[nb*(i+nt*j+nt*nx*2)] < 0) REAL(aest)[i+nt*j+nt*nx*3] = 0;
-			else if (REAL(a4d)[nb*(i+nt*j+nt*nx*2)] > 1) REAL(aest)[i+nt*j+nt*nx*3] = 1;
-			else REAL(aest)[i+nt*j+nt*nx*3] = REAL(a4d)[nb*(i+nt*j+nt*nx*2)];
-			REAL(aest)[i+nt*j+nt*nx*4] = 1-REAL(aest)[i+nt*j+nt*nx*3];
-			for (k = 0; k < 3; k++) {
-				quantile_d(&nb, &REAL(a4d)[nb*(i+nt*j+nt*nx*k)], &n, P, Q);
-				y = i+nt*j+nt*nx*( k+(k == 2) );
-				if (Q[0] < 0) REAL(ainf)[y] = 0;
-				else if (Q[0] > 1) REAL(ainf)[y] = 1;
-				else REAL(ainf)[y] = Q[0];
-				if (Q[1] < 0) REAL(asup)[y] = 0;
-				else if (Q[1] > 1) REAL(asup)[y] = 1;
-				else REAL(asup)[y] = Q[1];
-			}
-			REAL(ainf)[i+nt*j+nt*nx*2] = 1-REAL(asup)[i+nt*j]-REAL(asup)[i+nt*j+nt*nx];
-			if (REAL(ainf)[i+nt*j+nt*nx*2] < 0) REAL(ainf)[i+nt*j+nt*nx*2] = 0;
-			REAL(asup)[i+nt*j+nt*nx*2] = 1-REAL(ainf)[i+nt*j]-REAL(ainf)[i+nt*j+nt*nx];
-			if (REAL(asup)[i+nt*j+nt*nx*2] < 0) REAL(asup)[i+nt*j+nt*nx*2] = 0;
-			REAL(ainf)[i+nt*j+nt*nx*4] = 1-REAL(asup)[i+nt*j+nt*nx*3];
-			REAL(asup)[i+nt*j+nt*nx*4] = 1-REAL(ainf)[i+nt*j+nt*nx*3];
+			REAL(aest)[y] = 1-REAL(aest)[y-ntx]; // y = i+nt*j+ntx*4, y-ntx = i+nt*j+ntx*3
+			REAL(ainf)[y] = 1-Q[1];
+			REAL(asup)[y] = 1-Q[0];
+			y -= ntx*4; // y = i+nt*j+ntx*4-ntx*4 = i+nt*j+ntx*0 = i+nt*j
+			y += nt; // y = i+nt*j
 		}
 	}
 	if (strcmp(CHAR( STRING_ELT(methodboot, 0) ), "basic") == 0) {
 		#ifdef _OPENMP
-		#pragma omp parallel for private(i, j, k, P)
+		#pragma omp parallel for num_threads(global_num_threads) private(i, j, k, y, P)
 		#endif
 		for (i = 0; i < nt; i++) {
-			for (j = 0; j < nx; j++) {
-				for (k = 0; k < 3; k++) {
-					P[0] = 2*REAL(aest)[i+nt*j+nt*nx*k]-REAL(asup)[i+nt*j+nt*nx*k];
-					P[1] = 2*REAL(aest)[i+nt*j+nt*nx*k]-REAL(ainf)[i+nt*j+nt*nx*k];
-					if (P[0] < 0) REAL(ainf)[i+nt*j+nt*nx*k] = 0;
-					else if (P[0] > 1) REAL(ainf)[i+nt*j+nt*nx*k] = 1;
-					else REAL(ainf)[i+nt*j+nt*nx*k] = P[0];
-					if (P[1] < 0) REAL(asup)[i+nt*j+nt*nx*k] = 0;
-					else if (P[1] > 1) REAL(asup)[i+nt*j+nt*nx*k] = 1;
-					else REAL(asup)[i+nt*j+nt*nx*k] = P[1];
+			for (y = i, j = 0; j < nx; j++) {
+				for (k = 0; k < 5; k++) {
+					P[0] = 2*REAL(aest)[y]-REAL(asup)[y];
+					if (P[0] < 0) REAL(ainf)[y] = 0;
+					else if (P[0] > 1) REAL(ainf)[y] = 1;
+					else REAL(ainf)[y] = P[0];
+					P[1] = 2*REAL(aest)[y]-REAL(ainf)[y];
+					if (P[1] < 0) REAL(asup)[y] = 0;
+					else if (P[1] > 1) REAL(asup)[y] = 1;
+					else REAL(asup)[y] = P[1];
+					y += ntx; // y = i+nt*j+ntx*k
 				}
+				y -= ntx*5; // y = i+nt*j+ntx*5-ntx*5 = i+nt*j+ntx*0 = i+nt*j
+				y += nt; // y = i+nt*j
 			}
 		}
 	}
