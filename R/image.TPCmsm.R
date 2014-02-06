@@ -5,8 +5,6 @@ image.TPCmsm <- function(x, image.type="tc", tr.choice, xlim, ylim, zlim=c(0, 1)
 	lt <- length(tr.choice)
 	if (sum( tr.choice %in% dimnames(x$est)[[3]] ) != lt) stop("Argument 'tr.choice' and possible transitions must match")
 	if ( anyDuplicated(tr.choice) ) stop("Argument 'tr.choice' must be unique")
-	require(graphics)
-	require(grDevices)
 	draw.conf <- conf.int & !is.null(x$inf) & !is.null(x$sup)
 	itr <- match( tr.choice, dimnames(x$est)[[3]] )
 	if ( missing(main) ) main <- ""

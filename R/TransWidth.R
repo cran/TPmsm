@@ -2,7 +2,6 @@ TransWidth <- function(object, bw, window, ...) {
 	if ( is.numeric(bw) ) h <- bw
 	else {
 		if (bw =="dpik") {
-			require(KernSmooth)
 			h <- match.fun(bw)(x=object[[1]][,5], kernel=window, ...)
 		}
 		else if ( bw %in% c("ALbw", "CVbw", "PBbw") ) {

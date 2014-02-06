@@ -12,8 +12,12 @@ method.boot="percentile", method.est=1, ...)}
 	\item{s}{The first time for obtaining estimates for the transition probabilities. If missing, 0 will be used.}
 	\item{t}{The second time for obtaining estimates for the transition probabilities. If missing, the maximum of \code{Stime} will be used.}
 	\item{x}{Covariate values for obtaining estimates for the conditional transition probabilities. If missing, unconditioned transition probabilities will be computed.}
-	\item{bw}{A character string indicating a function to compute a kernel density bandwidth. Defaults to "dpik" from package \pkg{KernSmooth}.}
-	\item{window}{A character string specifying the desired kernel. Defaults to "normal" where the gaussian density kernel will be used.}
+	\item{bw}{A character string indicating a function to compute a kernel density bandwidth.
+		Defaults to "dpik" from package \pkg{KernSmooth}.
+		Alternatively a single numeric value can be specified.}
+	\item{window}{A character string specifying the desired kernel.
+		See details below for possible options.
+		Defaults to "normal" where the gaussian density kernel will be used.}
 	\item{method.weights}{A character string specifying the desired weights method. Possible options are "NW" for the Nadaraya-Watson weights and "LL" for local linear weights. Defaults to "NW".}
 	\item{state.names}{A vector of characters giving the state names.}
 	\item{conf}{Provides pointwise confidence bands. Defaults to \code{FALSE}.}
@@ -25,6 +29,8 @@ method.boot="percentile", method.est=1, ...)}
 }
 
 \details{
+	If \code{bw="dpik"} then possible options for argument \code{window} are "normal", "box", "epanech", "biweight" or "triweight".
+	When argument \code{bw} is numeric then argument \code{window} accepts the same options as when \code{bw="dpik"} plus one of "tricube", "triangular" or "cosine".\cr\cr
 	If \code{method.est=1} then \eqn{p_{11}(s,t|X)}, \eqn{p_{12}(s,t|X)} and \eqn{p_{22}(s,t|X)} are estimated according to the following expressions:\cr\cr
 	\eqn{p_{11}(s,t|X)=\frac{1-P(Z \leq t|X)}{1-P(Z \leq s|X)}},\cr\cr
 	\eqn{p_{12}(s,t|X)=\frac{P(Z \leq t|X)-P(Z \leq s|X)-P(s<Z \leq t, T \leq t|X)}{1-P(Z \leq s|X)}},\cr\cr

@@ -5,7 +5,6 @@ plot.TPCmsm <- function(x, plot.type="t", tr.choice, xlab, ylab, col, lty, xlim,
 	lt <- length(tr.choice)
 	if (sum( tr.choice %in% dimnames(x$est)[[3]] ) != lt) stop("Argument 'tr.choice' and possible transitions must match")
 	if ( anyDuplicated(tr.choice) ) stop("Argument 'tr.choice' must be unique")
-	require(graphics)
 	lx <- length(x$x)
 	itr <- match( tr.choice, dimnames(x$est)[[3]] )
 	if (plot.type == "t") {

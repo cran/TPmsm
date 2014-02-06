@@ -2,6 +2,14 @@
 
 \title{NEWS file for the TPmsm package}
 
+\section{Changes in version 1.1.1}{
+	\itemize{
+		\item{Improved the documentation.}
+
+		\item{Removed unnecessary require calls from R code.}
+	}
+}
+
 \section{Changes in version 1.1.0}{
 	\itemize{
 		\item{Changed package encoding to UTF-8.}

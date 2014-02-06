@@ -4,7 +4,6 @@ lines.TPmsm <- function(x, tr.choice, col, lty, conf.int=FALSE, ci.col, ci.lty, 
 	lt <- length(tr.choice)
 	if (sum( tr.choice %in% colnames(x$est) ) != lt) stop("Argument 'tr.choice' and possible transitions must match")
 	if ( anyDuplicated(tr.choice) ) stop("Argument 'tr.choice' must be unique")
-	require(graphics)
 	if ( missing(col) ) col <- rep(1, lt)
 	else if (length(col) < lt) col <- col*rep(1, lt)
 	if ( missing(lty) ) lty <- seq_len(lt)

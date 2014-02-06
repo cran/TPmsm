@@ -14,7 +14,9 @@ cv.full=TRUE)}
 	\item{h}{A vector with 1 up to 4 values, indicating the minimum and maximum bandwidths to test by cross-validation.}
 	\item{nh}{The number of bandwidth values to test by cross-validation. Defaults to 40.}
 	\item{ncv}{The number of cross-validation samples. Defaults to 10.}
-	\item{window}{A character string specifying the desired kernel. Defaults to "normal" where the gaussian density kernel will be used.}
+	\item{window}{A character string specifying the desired kernel.
+		Possible options are "normal", "epanech", "biweight", "triweight", "box", "tricube", "triangular" or "cosine".
+		Defaults to "normal" where the gaussian density kernel will be used.}
 	\item{state.names}{A vector of characters giving the state names.}
 	\item{conf}{Provides pointwise confidence bands. Defaults to \code{FALSE}.}
 	\item{n.boot}{The number of bootstrap samples. Defaults to 1000 samples.}
@@ -50,6 +52,8 @@ cv.full=TRUE)}
 \author{Artur Agostinho Araújo, Javier Roca-Pardiñas and Luís Meira Machado}
 
 \references{
+	Meira-Machado L., Roca-Pardiñas J., Van Keilegom I., and Cadarso-Suárez C. (2013). Bandwidth Selection for the Estimation of Transition Probabilities in the Location-Scale Progressive Three-State Model. \emph{Computational Statistics}, \bold{28}, 2185-2210.
+
 	Meira-Machado L., Roca-Pardiñas J., Van Keilegom I. and Cadarso-Suárez C. Estimation of transition probabilities in a non-Markov model with successive survival times. Discussion paper 2010. This file can be downloaded from: \url{http://sites.uclouvain.be/IAP-Stat-Phase-V-VI/ISBApub/dp2010/DP1053.pdf}
 
 	Van Keilegom I., de Uña-Álvarez J. and Meira-Machado L. (2011) Nonparametric location-scale models for successive survival times under dependent censoring. \emph{Journal of Statistical Planning and Inference}, \bold{141}, 1118-1131.

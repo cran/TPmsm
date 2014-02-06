@@ -5,7 +5,6 @@ contour.TPCmsm <- function(x, contour.type="tc", tr.choice, nlevels=20, levels=p
 	lt <- length(tr.choice)
 	if (sum( tr.choice %in% dimnames(x$est)[[3]] ) != lt) stop("Argument 'tr.choice' and possible transitions must match")
 	if ( anyDuplicated(tr.choice) ) stop("Argument 'tr.choice' must be unique")
-	require(graphics)
 	itr <- match( tr.choice, dimnames(x$est)[[3]] )
 	if ( missing(curvlab) ) curvlab <- tr.choice
 	mat <- matrix(nrow=2*conf.int+1, ncol=lt)

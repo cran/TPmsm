@@ -21,8 +21,8 @@
 	\tabular{ll}{
 		Package: \tab TPmsm\cr
 		Type: \tab Package\cr
-		Version: \tab 1.1.0\cr
-		Date: \tab 2013-04-28\cr
+		Version: \tab 1.1.1\cr
+		Date: \tab 2014-02-06\cr
 		License: \tab GPL (>= 2)\cr
 		LazyLoad: \tab yes\cr
 		LazyData: \tab yes\cr
@@ -55,6 +55,8 @@
 	Meira-Machado L., de Uña-Álvarez J. and Datta S. Conditional Transition Probabilities in a non-Markov Illness-death Model. Discussion Papers in Statistics and Operations Research n 11/03, 2011. Department of Statistics and Operations Research, University of Vigo (ISSN: 1888-5756, Deposito Legal VG 1402 - 2007). This file can be downloaded from: \url{http://webs.uvigo.es/depc05/reports/12_05.pdf}
 
 	Meira-Machado L., Roca-Pardiñas J. (2011). p3state.msm: Analyzing Survival Data from an Illness-Death Model. \emph{Journal of Statistical Software}, \bold{38(3)}, 1-18.
+
+	Meira-Machado L., Roca-Pardiñas J., Van Keilegom I., and Cadarso-Suárez C. (2013). Bandwidth Selection for the Estimation of Transition Probabilities in the Location-Scale Progressive Three-State Model. \emph{Computational Statistics}, \bold{28}, 2185-2210.
 
 	Meira-Machado L., Roca-Pardiñas J., Van Keilegom I. and Cadarso-Suárez C. Estimation of transition probabilities in a non-Markov model with successive survival times. Discussion paper 2010. This file can be downloaded from: \url{http://sites.uclouvain.be/IAP-Stat-Phase-V-VI/ISBApub/dp2010/DP1053.pdf}
 

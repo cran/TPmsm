@@ -4,7 +4,6 @@ plot.TPmsm <- function(x, tr.choice, xlab="Time", ylab="Transition probability",
 	lt <- length(tr.choice)
 	if (sum( tr.choice %in% colnames(x$est) ) != lt) stop("Argument 'tr.choice' and possible transitions must match")
 	if ( anyDuplicated(tr.choice) ) stop("Argument 'tr.choice' must be unique")
-	require(graphics)
 	if ( missing (xlim) ) xlim <- c( 0, max(x$time) )
 	if ( missing(ylim) ) ylim <- c(0, 1)
 	if ( missing(col) ) col <- rep(1, lt)

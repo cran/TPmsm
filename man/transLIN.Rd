@@ -12,8 +12,12 @@ method.boot="percentile", ...)}
 	\item{s}{The first time for obtaining estimates for the transition probabilities. If missing, 0 will be used.}
 	\item{t}{The second time for obtaining estimates for the transition probabilities. If missing, the maximum of \code{Stime} will be used.}
 	\item{x}{Covariate values for obtaining estimates for the conditional transition probabilities. If missing, unconditioned transition probabilities will be computed.}
-	\item{bw}{A character string indicating a function to compute a kernel density bandwidth. Defaults to "dpik" from package \pkg{KernSmooth}.}
-	\item{window}{A character string specifying the desired kernel. Defaults to "normal" where the gaussian density kernel will be used.}
+	\item{bw}{A character string indicating a function to compute a kernel density bandwidth.
+		Defaults to "dpik" from package \pkg{KernSmooth}.
+		Alternatively a single numeric value can be specified.}
+	\item{window}{A character string specifying the desired kernel.
+		See details below for possible options.
+		Defaults to "normal" where the gaussian density kernel will be used.}
 	\item{method.weights}{A character string specifying the desired weights method. Possible options are "NW" for the Nadaraya-Watson weights and "LL" for local linear weights. Defaults to "NW".}
 	\item{state.names}{A vector of characters giving the state names.}
 	\item{conf}{Provides pointwise confidence bands. Defaults to \code{FALSE}.}
@@ -23,9 +27,10 @@ method.boot="percentile", ...)}
 	\item{\dots}{Further arguments. Typically these arguments are passed to the function specified by argument \code{bw}.}
 }
 
-%\details{
-%%  ~~ If necessary, more details than the description above ~~
-%}
+\details{
+	If \code{bw="dpik"} then possible options for argument \code{window} are "normal", "box", "epanech", "biweight" or "triweight".
+	When argument \code{bw} is numeric then argument \code{window} accepts the same options as when \code{bw="dpik"} plus one of "tricube", "triangular" or "cosine".
+}
 
 \value{
 	If argument \code{x} is missing or if argument \code{object} doesn't contain a covariate,

@@ -65,8 +65,9 @@ tr.choice <- dimnames(TPCmsm_obj$est)[[3]]
 par.orig <- par( c("mfrow", "cex") )
 par( mfrow=c(2,3) )
 for ( i in seq_len( length(tr.choice) ) ) {
-	plot(TPCmsm_obj, plot.type="t", tr.choice=tr.choice[i], conf.int=TRUE, legend=TRUE, main=tr.choice[i],
-	col=seq_len( length(TPCmsm_obj$x) ), lty=1, xlab="", ylab="", curvlab=c("Age = 0", "Age = 15"))
+	plot(TPCmsm_obj, plot.type="t", tr.choice=tr.choice[i], conf.int=TRUE, legend=TRUE,
+	main=tr.choice[i], col=seq_len( length(TPCmsm_obj$x) ), lty=1, xlab="", ylab="",
+	curvlab=c("Age = 0", "Age = 15"))
 }
 par(mfrow=c(1, 1), cex=1.2)
 title(xlab="Time", ylab="Transition probability", line=3)
@@ -83,8 +84,8 @@ tr.choice <- dimnames(TPCmsm_obj$est)[[3]]
 par.orig <- par( c("mfrow", "cex") )
 par( mfrow=c(2,3) )
 for ( i in seq_len( length(tr.choice) ) ) {
-	plot(TPCmsm_obj, plot.type="c", tr.choice=tr.choice[i], conf.int=TRUE, legend=FALSE, main=tr.choice[i],
-	xlab="", ylab="")
+	plot(TPCmsm_obj, plot.type="c", tr.choice=tr.choice[i], conf.int=TRUE, legend=FALSE,
+	main=tr.choice[i], xlab="", ylab="")
 }
 par(mfrow=c(1, 1), cex=1.2)
 title( xlab="Age", ylab=paste("P(", TPCmsm_obj$s, ", ", TPCmsm_obj$t, " | Age)", sep=""), line=3)
