@@ -2,13 +2,21 @@
 \name{corrTP}
 \alias{corrTP}
 \title{Correlation between two gap times}
+
 \description{Provides the correlation between the bivariate times for some copula distributions.}
+
 \usage{corrTP(dist, corr, dist.par)}
 
 \arguments{
-\item{dist}{The distribution. Possible bivariate distributions are "exponential" and "weibull".}
-\item{corr}{Correlation parameter. Possible values for the bivariate exponential distribution are between -1 and 1 (0 for independency). Any value between 0 (not included) and 1 (1 for independency) is accepted for the bivariate Weibull distribution.}
-\item{dist.par}{Vector of parameters for the allowed distributions. Two (scale) parameters for the bivariate exponential distribution and four (2 location parameters and 2 scale parameters) for the bivariate Weibull distribution. See details below.}
+	\item{dist}{The distribution. Possible bivariate distributions are \dQuote{exponential} and \dQuote{weibull}.}
+	\item{corr}{Correlation parameter.
+		Possible values for the bivariate exponential distribution are between -1 and 1 (0 for independency).
+		Any value between 0 (not included) and 1 (1 for independency) is accepted for the bivariate Weibull distribution.
+	}
+	\item{dist.par}{Vector of parameters for the allowed distributions.
+		Two (scale) parameters for the bivariate exponential distribution and four (2 location parameters and 2 scale parameters)
+		for the bivariate Weibull distribution. See details below.
+	}
 }
 
 \details{
@@ -30,12 +38,12 @@ Where \eqn{0 < \delta \le 1}{0 < \delta \le 1} and each marginal distribution ha
 %% ...
 %}
 
-\author{Artur Agostinho Araújo, Javier Roca-Pardiñas and Luís Meira Machado}
+\author{Artur Araújo, Javier Roca-Pardiñas and Luís Meira-Machado}
 
 \references{
-	Johnson N., Kotz S. (1972). Distributions in statistics: continuous multivariate distributions, John Wiley and Sons.
+	Johnson N., Kotz S. (1972) \emph{Distributions in statistics: continuous multivariate distributions} John Wiley and Sons.
 
-	Lu J., Bhattacharya G. (1990). Some new constructions of bivariate weibull models, \emph{Annals of Institute of Statistical Mathematics}, \bold{42}, 543-559.
+	Lu J., Bhattacharya G. (1990) Some new constructions of bivariate weibull models. \emph{Annals of Institute of Statistical Mathematics} \bold{42(3)}, 543--559.
 }
 
 %\note{
@@ -45,12 +53,13 @@ Where \eqn{0 < \delta \le 1}{0 < \delta \le 1} and each marginal distribution ha
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{dgpTP}}.
+	\code{\link{dgpTP}}.
 }
 
 \examples{
 # Example for the bivariate Weibull distribution
 corrTP(dist = "weibull", corr = 0.5, dist.par = c(2, 7, 2, 7))
+
 # Example for the bivariate Exponential distribution
 corrTP(dist = "exponential", corr = 1, dist.par = c(1, 1))
 }

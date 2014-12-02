@@ -11,7 +11,7 @@
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Initialize kernel density with weights over bandwith value.
@@ -66,7 +66,7 @@ static void kweight(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes weights based on the gaussian kernel.
@@ -106,7 +106,7 @@ static void knormal(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes weights based on the epanechnikov kernel.
@@ -149,7 +149,7 @@ static void kepanech(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes weights based on the tricube kernel.
@@ -192,7 +192,7 @@ static void ktricube(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes weights based on the boxcar kernel.
@@ -232,7 +232,7 @@ static void kbox(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes weights based on the triangular kernel.
@@ -275,7 +275,7 @@ static void ktriangular(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes weights based on the biweight kernel.
@@ -318,7 +318,7 @@ static void kbiweight(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes weights based on the triweight kernel.
@@ -361,7 +361,7 @@ static void ktriweight(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes weights based on the cosine kernel.
@@ -404,7 +404,7 @@ static void kcosine(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Returns a pointer to a window or kernel function based on the inputed string.
@@ -430,7 +430,7 @@ void (*kchar2ptr(SEXP window))(CdoubleCP, CstypeCP, CintCP, CdoubleCP, CdoubleCP
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes the Nadaraya-Watson weights.
@@ -480,7 +480,7 @@ void NWWeights(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes local linear weights based on a kernel density.

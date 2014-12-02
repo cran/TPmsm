@@ -1,42 +1,47 @@
 
-#include <stdlib.h>
 #include "defines.h"
+#include "RngStream.h"
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes bootstrap index.
 
 Parameters:
-	index[out]		pointer to index first element.
+	g[in]			pointer to RngStream_InfoState.
 	len[in]			pointer to length of index.
+	index[out]		pointer to index first element.
 
 Return value:
 	This function doesn't return a value.
 */
 
 void boot_i(
-	intCP index,
-	CintCP len)
+	RngStream g,
+	CintCP len,
+	int index[*len])
 {
 	register int i;
-	for (i = 0; i < *len; i++) index[i] = *len * (double)rand()/(RAND_MAX+1.0);
+	for (i = 0; i < *len; i++) {
+		index[i] = RngStream_RandInt(g, 0, *len-1);
+	}
 	return;
 } // boot_i
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes bootstrap indexes.
 
 Parameters:
+	g[in]			pointer to RngStream_InfoState.
+	len[in]			pointer to length of index0 and index1.
 	index0[out]		pointer to index0 first element.
 	index1[out]		pointer to index1 first element.
-	len[in]			pointer to length of index0 and index1.
 
 Return value:
 	This function doesn't return a value.
@@ -46,13 +51,14 @@ Remarks:
 */
 
 void boot_ii(
-	intCP index0,
-	intCP index1,
-	CintCP len)
+	RngStream g,
+	CintCP len,
+	int index0[*len],
+	int index1[*len])
 {
 	register int i;
 	for (i = 0; i < *len; i++) {
-		index0[i] = *len * (double)rand()/(RAND_MAX+1.0);
+		index0[i] = RngStream_RandInt(g, 0, *len-1);
 		index1[i] = index0[i];
 	}
 	return;
@@ -60,22 +66,22 @@ void boot_ii(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Initializes index without bootstrap.
 
 Parameters:
-	index[out]		pointer to index first element.
 	len[in]			pointer to length of index.
+	index[out]		pointer to index first element.
 
 Return value:
 	This function doesn't return a value.
 */
 
 void indx_i(
-	intCP index,
-	CintCP len)
+  CintCP len,
+  int index[*len])
 {
 	register int i;
 	for (i = 0; i < *len; i++) index[i] = i;
@@ -84,15 +90,15 @@ void indx_i(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Initializes indexes without bootstrap.
 
 Parameters:
+	len[in]			pointer to length of index0 and index1.
 	index0[out]		pointer to index0 first element.
 	index1[out]		pointer to index1 first element.
-	len[in]			pointer to length of index0 and index1.
 
 Return value:
 	This function doesn't return a value.
@@ -102,9 +108,9 @@ Remarks:
 */
 
 void indx_ii(
-	intCP index0,
-	intCP index1,
-	CintCP len)
+  CintCP len,
+  int index0[*len],
+  int index1[*len])
 {
 	register int i;
 	for (i = 0; i < *len; i++) {

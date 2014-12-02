@@ -25,4 +25,20 @@ survTP <- function(time1, event1, Stime, event, ...) {
 	return(object)
 }
 
-is.survTP <- function(x) inherits(x, "survTP")
+is.survTP <- function(x) {
+	ret <- inherits(x, "survTP") & is.list(x) & (length(x) >= 1)
+	if (!ret) return(ret)
+ 	ret <- ret & is.data.frame(x[[1]]) & (length(x[[1]]) >= 4)
+	if (!ret) return(ret)
+	ret <- ret & is.double(x[[1]][[1]]) & is.integer(x[[1]][[2]])
+	ret <- ret & is.double(x[[1]][[3]]) & is.integer(x[[1]][[4]])
+	for (i in 2:4) ret <- ret & ( length(x[[1]][[1]]) == length(x[[1]][[i]]) )
+	if (length(x[[1]]) > 4) {
+		for ( i in 5:length(x[[1]]) ) {
+			ret <- ret & is.double(x[[1]][[i]])
+			ret <- ret & ( length(x[[1]][[1]]) == length(x[[1]][[i]]) )
+		}
+	}
+	ret <- ret & is.integer( attr(x[[1]], "row.names") )
+	return(ret)
+}

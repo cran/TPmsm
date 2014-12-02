@@ -5,19 +5,21 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+#include <stddef.h>
 #include <stdlib.h>
-#include <time.h>
 #include <Rdefines.h>
 #include "defines.h"
-#include "boot.h"
 #include "get.h"
+#include "RngStream.h"
+#include "RngArray.h"
+#include "RngBoot.h"
 #include "rthreads.h"
 #include "sort.h"
 #include "logistic.h"
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes the transition probabilities:
@@ -151,7 +153,7 @@ static void transKMPW1I(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes the transition probabilities:
@@ -276,7 +278,7 @@ static void transKMPW2I(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes a transition probability vector based
@@ -284,7 +286,7 @@ Description:
 
 Parameters:
 	object			an object of class 'KMPW1'.
-	UT				unique times vector.
+	UT			unique times vector.
 	nboot			number of bootstrap samples.
 	methodest		an integer indicating the desired method.
 
@@ -306,7 +308,7 @@ SEXP TransPROBKMPW1(
 	E1 = VECTOR_ELT(data, 1);
 	S = VECTOR_ELT(data, 2);
 	E = VECTOR_ELT(data, 3);
-	int len = GET_LENGTH(T1), nt = GET_LENGTH(UT);
+	int len = GET_LENGTH(T1), nt = GET_LENGTH(UT), t, nth = 1;
 	SEXP P, list;
 	PROTECT( P = alloc3DArray(REALSXP, *INTEGER(nboot), nt, 4) );
 	PROTECT( list = NEW_LIST(2) );
@@ -320,57 +322,85 @@ SEXP TransPROBKMPW1(
 	}
 	int b, n0 = 2, ns = 3, maxit = 30;
 	double *J = (double*)malloc( len*sizeof(double) ); // allocate memory block
+	if (J == NULL) error("TransPROBKMPW1: No more memory\n");
 	double *X0[2] = {J, REAL(T1)};
 	double *XS[3] = {J, REAL(T1), REAL(S)};
 	double epsilon = 1e-8;
 	for (b = 0; b < len; b++) J[b] = 1; // initialize J vector
+	if (*INTEGER(nboot) > 1) nth = global_num_threads;
+	int **index0 = (int**)malloc( nth*sizeof(int*) ); // allocate memory block
+	if (index0 == NULL) error("TransPROBKMPW1: No more memory\n");
+	int **index1 = (int**)malloc( nth*sizeof(int*) ); // allocate memory block
+	if (index1 == NULL) error("TransPROBKMPW1: No more memory\n");
+	double **M0 = (double**)malloc( nth*sizeof(double*) ); // allocate memory block
+	if (M0 == NULL) error("TransPROBKMPW1: No more memory\n");
+	double **MS = (double**)malloc( nth*sizeof(double*) ); // allocate memory block
+	if (MS == NULL) error("TransPROBKMPW1: No more memory\n");
+	double **WORK0 = (double**)malloc( nth*sizeof(double*) ); // allocate memory block
+	if (WORK0 == NULL) error("TransPROBKMPW1: No more memory\n");
+	double **WORK1 = (double**)malloc( nth*sizeof(double*) ); // allocate memory block
+	if (WORK1 == NULL) error("TransPROBKMPW1: No more memory\n");
+	logitW **WORK = (logitW**)malloc( nth*sizeof(logitW*) ); // allocate memory block
+	if (WORK == NULL) error("TransPROBKMPW1: No more memory\n");
+	for (t = 0; t < nth; t++) { // allocate per thread memory
+		if ( ( index0[t] = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBKMPW1: No more memory\n");
+		if ( ( index1[t] = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBKMPW1: No more memory\n");
+		if ( ( M0[t] = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBKMPW1: No more memory\n");
+		if ( ( MS[t] = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBKMPW1: No more memory\n");
+		if ( ( WORK0[t] = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBKMPW1: No more memory\n");
+		if ( ( WORK1[t] = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBKMPW1: No more memory\n");
+		WORK[t] = logitW_Create(&ns);
+	}
 	#ifdef _OPENMP
-	#pragma omp parallel if(*INTEGER(nboot) > 1) num_threads(global_num_threads) private(b)
+	#pragma omp parallel num_threads(nth) private(b, t)
 	#endif
 	{
 		int conv;
-		int *index0 = (int*)malloc( len*sizeof(int) ); // allocate memory block
-		int *index1 = (int*)malloc( len*sizeof(int) ); // allocate memory block
-		double *M0 = (double*)malloc( len*sizeof(double) ); // allocate memory block
-		double *MS = (double*)malloc( len*sizeof(double) ); // allocate memory block
-		double *WORK0 = (double*)malloc( len*sizeof(double) ); // allocate memory block
-		double *WORK1 = (double*)malloc( len*sizeof(double) ); // allocate memory block
 		#ifdef _OPENMP
-		unsigned int iseed = (unsigned int)time(NULL) ^ (unsigned int)omp_get_thread_num(); // save per thread seed
+		t = omp_get_thread_num();
 		#else
-		unsigned int iseed = (unsigned int)time(NULL);
+		t = 0;
 		#endif
-		srand(iseed); // set seed
 		#ifdef _OPENMP
 		#pragma omp single
 		#endif
 		{
 			b = 0;
-			indx_ii(index0, index1, &len); // initialize indexes
-			predict_logit(&len, index0, INTEGER(E1), M0, &n0, X0, &maxit, &epsilon, &conv); // compute M0 predicted values
-			predict_logit(&len, index1, INTEGER(E), MS, &ns, XS, &maxit, &epsilon, &conv); // compute MS predicted values
-			order_dd(REAL(T1), M0, index0, len, FALSE, FALSE, TRUE, WORK0, WORK1); // get permuation
-			order_dd(REAL(S), MS, index1, len, FALSE, FALSE, TRUE, WORK0, WORK1); // get permuation
-			func(&len, REAL(T1), M0, REAL(S), MS, index0, index1, &nt, REAL(UT), INTEGER(nboot), REAL(P), &b); // compute transition probabilities
+			indx_ii(&len, index0[t], index1[t]); // initialize indexes
+			predict_logit(&len, index0[t], INTEGER(E1), M0[t], &n0, X0, &maxit, &epsilon, &conv, WORK[t]); // compute M0 predicted values
+			predict_logit(&len, index1[t], INTEGER(E), MS[t], &ns, XS, &maxit, &epsilon, &conv, WORK[t]); // compute MS predicted values
+			order_dd(REAL(T1), M0[t], index0[t], len, FALSE, FALSE, TRUE, WORK0[t], WORK1[t]); // get permuation
+			order_dd(REAL(S), MS[t], index1[t], len, FALSE, FALSE, TRUE, WORK0[t], WORK1[t]); // get permuation
+			func(&len, REAL(T1), M0[t], REAL(S), MS[t], index0[t], index1[t], &nt, REAL(UT), INTEGER(nboot), REAL(P), &b); // compute transition probabilities
 		}
 		#ifdef _OPENMP
 		#pragma omp for
 		#endif
 		for (b = 1; b < *INTEGER(nboot); b++) {
-			boot_ii(index0, index1, &len); // bootstrap indexes
-			predict_logit(&len, index0, INTEGER(E1), M0, &n0, X0, &maxit, &epsilon, &conv); // compute M0 predicted values
-			predict_logit(&len, index1, INTEGER(E), MS, &ns, XS, &maxit, &epsilon, &conv); // compute MS predicted values
-			order_dd(REAL(T1), M0, index0, len, FALSE, FALSE, TRUE, WORK0, WORK1); // get permuation
-			order_dd(REAL(S), MS, index1, len, FALSE, FALSE, TRUE, WORK0, WORK1); // get permuation
-			func(&len, REAL(T1), M0, REAL(S), MS, index0, index1, &nt, REAL(UT), INTEGER(nboot), REAL(P), &b); // compute transition probabilities
+			boot_ii(RngArray[t], &len, index0[t], index1[t]); // bootstrap indexes
+			predict_logit(&len, index0[t], INTEGER(E1), M0[t], &n0, X0, &maxit, &epsilon, &conv, WORK[t]); // compute M0 predicted values
+			predict_logit(&len, index1[t], INTEGER(E), MS[t], &ns, XS, &maxit, &epsilon, &conv, WORK[t]); // compute MS predicted values
+			order_dd(REAL(T1), M0[t], index0[t], len, FALSE, FALSE, TRUE, WORK0[t], WORK1[t]); // get permuation
+			order_dd(REAL(S), MS[t], index1[t], len, FALSE, FALSE, TRUE, WORK0[t], WORK1[t]); // get permuation
+			func(&len, REAL(T1), M0[t], REAL(S), MS[t], index0[t], index1[t], &nt, REAL(UT), INTEGER(nboot), REAL(P), &b); // compute transition probabilities
 		}
-		free(index0); // free memory block
-		free(index1); // free memory block
-		free(M0); // free memory block
-		free(MS); // free memory block
-		free(WORK0); // free memory block
-		free(WORK1); // free memory block
 	}
+	for (t = nth-1; t >= 0; t--) {
+		free(index0[t]); // free memory block
+		free(index1[t]); // free memory block
+		free(M0[t]); // free memory block
+		free(MS[t]); // free memory block
+		free(WORK0[t]); // free memory block
+		free(WORK1[t]); // free memory block
+		logitW_Delete(WORK[t]);
+	}
+	free(index0); // free memory block
+	free(index1); // free memory block
+	free(M0); // free memory block
+	free(MS); // free memory block
+	free(WORK0); // free memory block
+	free(WORK1); // free memory block
+	free(WORK); // free memory block
 	free(J); // free memory block
 	SET_ELEMENT(list, 0, P);
 	SET_ELEMENT(list, 1, R_NilValue);

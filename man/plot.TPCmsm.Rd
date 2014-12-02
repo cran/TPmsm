@@ -2,21 +2,26 @@
 \name{plot.TPCmsm}
 \alias{plot.TPCmsm}
 \title{plot method for a TPCmsm object}
+
 \description{
-	plot method for an object of class 'TPCmsm'.
+	plot method for an object of class \sQuote{TPCmsm}.
 	It draws the estimated transition probabilities in a basic scatterplot.
 }
+
 \usage{\S3method{plot}{TPCmsm}(x, plot.type="t", tr.choice, xlab, ylab, col, lty, xlim, ylim,
 conf.int=FALSE, ci.col, ci.lty, legend=TRUE, legend.pos, curvlab,
 legend.bty="n", ...)}
 
 \arguments{
-	\item{x}{An object of class 'TPCmsm'.}
+	\item{x}{An object of class \sQuote{TPCmsm}.}
 	\item{plot.type}{A character string specifying the type of plot.
-		If 't' the scatterplot of transition probability versus time is plotted.
-		If 'c' the scatterplot of transition probability versus covariate is plotted.}
-	\item{tr.choice}{Character vector of the form 'c("from to", "from to")' specifying which transitions should be plotted.
-		Default, all the transition probabilities are plotted.}
+		If \dQuote{t} the scatterplot of transition probability versus time is plotted.
+		If \dQuote{c} the scatterplot of transition probability versus covariate is plotted.
+	}
+	\item{tr.choice}{Character vector of the form \sQuote{c(\dQuote{from to}, \dQuote{from to})}
+		specifying which transitions should be plotted.
+		Default, all the transition probabilities are plotted.
+	}
 	\item{xlab}{x-axis label.}
 	\item{ylab}{y-axis label.}
 	\item{col}{Vector of colour.}
@@ -27,8 +32,12 @@ legend.bty="n", ...)}
 	\item{ci.col}{Colour of the confidence bands. Default is \code{col}.}
 	\item{ci.lty}{Line type of the confidence bands. Default is 3.}
 	\item{legend}{A logical specifying if a legend should be added.}
-	\item{legend.pos}{A vector giving the legend's position. See \code{\link{legend}} for further details.}
-	\item{curvlab}{A character or expression vector to appear in the legend. Default is the name of the transitions.}
+	\item{legend.pos}{A vector giving the legend's position.
+		See \code{\link{legend}} for further details.
+	}
+	\item{curvlab}{A character or expression vector to appear in the legend.
+		Default is the name of the transitions.
+	}
 	\item{legend.bty}{Box type for the legend. By default no box is drawn.}
 	\item{\dots}{Further arguments for plot.}
 }
@@ -37,10 +46,10 @@ legend.bty="n", ...)}
 	No value is returned.
 }
 
-\author{Artur Agostinho Araújo, Javier Roca-Pardiñas and Luís Meira Machado}
+\author{Artur Araújo, Javier Roca-Pardiñas and Luís Meira-Machado}
 
 \references{
-	Meira-Machado L., de Uña-Álvarez J. and Datta S. Conditional Transition Probabilities in a non-Markov Illness-death Model. Discussion Papers in Statistics and Operation Research n 11/03, 2011. Department of Statistics and Operations Research, University of Vigo (ISSN: 1888-5756, Deposito Legal VG 1402 - 2007). This file can be downloaded from: \url{http://webs.uvigo.es/depc05/reports/12_05.pdf}
+	Meira-Machado L., de Uña-Álvarez J., Datta S. Conditional Transition Probabilities in a non-Markov Illness-death Model. Discussion Papers in Statistics and Operation Research n 11/03, 2011. Department of Statistics and Operations Research, University of Vigo (ISSN: 1888-5756, Deposito Legal VG 1402 - 2007). This file can be downloaded from: \url{http://webs.uvigo.es/depc05/reports/12_05.pdf}
 }
 
 \seealso{
@@ -49,8 +58,8 @@ legend.bty="n", ...)}
 }
 
 \examples{
-# set the number of threads
-nth <- threadsTP(2)
+# Set the number of threads
+nth <- setThreadsTP(2)
 
 # Create survTP object
 data(heartTP)
@@ -91,8 +100,8 @@ par(mfrow=c(1, 1), cex=1.2)
 title( xlab="Age", ylab=paste("P(", TPCmsm_obj$s, ", ", TPCmsm_obj$t, " | Age)", sep=""), line=3)
 par(par.orig)
 
-# restore the number of threads
-threadsTP(nth)
+# Restore the number of threads
+setThreadsTP(nth)
 }
 
 \keyword{hplot}

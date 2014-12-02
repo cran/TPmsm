@@ -2,23 +2,28 @@
 \name{as.data.frame.survTP}
 \alias{as.data.frame.survTP}
 \title{as.data.frame method for a survTP object}
-\description{as.data.frame method for an object of class 'survTP'.}
+
+\description{as.data.frame method for an object of class \sQuote{survTP}.}
+
 \usage{\S3method{as.data.frame}{survTP}(x, ..., package="TPmsm")}
 
 \arguments{
-	\item{x}{An object of class 'survTP'.}
+	\item{x}{An object of class \sQuote{survTP}.}
 	\item{\dots}{Additional arguments to be passed to or from method.}
-	\item{package}{The format of the data.frame. Possible options are "TPmsm", "p3state.msm" and "etm". Defaults to "TPmsm".}
+	\item{package}{The format of the data.frame.
+		Possible options are \dQuote{TPmsm}, \dQuote{p3state.msm} and \dQuote{etm}.
+		Defaults to \dQuote{TPmsm}.
+	}
 }
 
 \value{A data.frame in the format specified by argument \code{package}.}
 
-\author{Artur Agostinho Araújo, Javier Roca-Pardiñas and Luís Meira Machado}
+\author{Artur Araújo, Javier Roca-Pardiñas and Luís Meira-Machado}
 
 \references{
-	Allignol A., Schumacher M., Beyersmann J. (2011). Empirical Transition Matrix of Multi-State Models: The etm Package. \emph{Journal of Statistical Software}, \bold{38(4)}, 1-15.
+	Allignol A., Schumacher M., Beyersmann J. (2011) Empirical Transition Matrix of Multi-State Models: The etm Package. \emph{Journal of Statistical Software} \bold{38(4)}, 1--15.
 
-	Meira-Machado L., Roca-Pardiñas J. (2011). p3state.msm: Analyzing Survival Data from an Illness-Death Model. \emph{Journal of Statistical Software}, \bold{38(3)}, 1-18.
+	Meira-Machado L., Roca-Pardiñas J. (2011) p3state.msm: Analyzing Survival Data from an Illness-Death Model. \emph{Journal of Statistical Software} \bold{38(3)}, 1--18.
 }
 
 \seealso{

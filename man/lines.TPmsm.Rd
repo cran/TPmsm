@@ -2,24 +2,30 @@
 \name{lines.TPmsm}
 \alias{lines.TPmsm}
 \title{lines method for a TPmsm object}
-\description{
-	lines method for an object of class 'TPmsm'.
-}
+
+\description{lines method for an object of class \sQuote{TPmsm}.}
+
 \usage{\S3method{lines}{TPmsm}(x, tr.choice, col, lty, conf.int=FALSE, ci.col, ci.lty,
 legend=FALSE, legend.pos, curvlab, legend.bty="n", ...)}
 
 \arguments{
-	\item{x}{An object of class 'TPmsm'.}
-	\item{tr.choice}{Character vector of the form 'c("from to", "from to")' specifying which transitions should be plotted.
-		Default, all the transition probabilities are plotted.}
+	\item{x}{An object of class \sQuote{TPmsm}.}
+	\item{tr.choice}{Character vector of the form \sQuote{c(\dQuote{from to}, \dQuote{from to})}
+		specifying which transitions should be plotted.
+		Default, all the transition probabilities are plotted.
+	}
 	\item{col}{Vector of colour. Default is black.}
 	\item{lty}{Vector of line type. Default is 1:number of transitions.}
 	\item{conf.int}{Logical. Whether to display pointwise confidence bands. Default is FALSE.}
 	\item{ci.col}{Colour of the confidence bands. Default is \code{col}.}
 	\item{ci.lty}{Line type of the confidence bands. Default is 3.}
 	\item{legend}{A logical specifying if a legend should be added.}
-	\item{legend.pos}{A vector giving the legend's position. See \code{\link{legend}} for further details.}
-	\item{curvlab}{A character or expression vector to appear in the legend. Default is the name of the transitions.}
+	\item{legend.pos}{A vector giving the legend's position.
+		See \code{\link{legend}} for further details.
+	}
+	\item{curvlab}{A character or expression vector to appear in the legend.
+		Default is the name of the transitions.
+	}
 	\item{legend.bty}{Box type for the legend. By default no box is drawn.}
 	\item{\dots}{Further arguments for lines.}
 }
@@ -28,7 +34,7 @@ legend=FALSE, legend.pos, curvlab, legend.bty="n", ...)}
 	No value is returned.
 }
 
-\author{Artur Agostinho Araújo, Javier Roca-Pardiñas and Luís Meira Machado}
+\author{Artur Araújo, Javier Roca-Pardiñas and Luís Meira-Machado}
 
 \seealso{
 	\code{\link{legend}},
@@ -38,8 +44,8 @@ legend=FALSE, legend.pos, curvlab, legend.bty="n", ...)}
 }
 
 \examples{
-# set the number of threads
-nth <- threadsTP(2)
+# Set the number of threads
+nth <- setThreadsTP(2)
 
 # Create survTP object
 data(bladderTP)
@@ -90,8 +96,8 @@ par(mfrow=c(1, 1), cex=1.2)
 title(xlab="Time", ylab="Transition probability", line=3)
 par(par.orig)
 
-# restore the number of threads
-threadsTP(nth)
+# Restore the number of threads
+setThreadsTP(nth)
 }
 
 \keyword{aplot}

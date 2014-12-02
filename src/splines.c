@@ -9,7 +9,7 @@
  *	derivative of the spline at the end-points to equal to zero.
  *
  *	There are *n-2 unknowns (y[index0[i]]'' at x[index0[1]], ..., x[index0[*n-2]])
- *  and *n-2 equations to determine them.  Either Choleski or Gaussian
+ *	and *n-2 equations to determine them.  Either Choleski or Gaussian
  *	elimination could be used.
  */
 

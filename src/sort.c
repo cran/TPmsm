@@ -76,7 +76,7 @@ static int rsub(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Sorts vector 'x'.
@@ -85,7 +85,7 @@ Parameters:
 	x[inout]		pointer to x first element.
 	n[in]			length of x.
 	nalast[in]		if TRUE NA values are put last.
-	decreasing[in]	if TRUE sorts by descending order.
+	decreasing[in]		if TRUE sorts by descending order.
 
 Return value:
 	This function doesn't return a value.
@@ -105,7 +105,7 @@ void sort_i(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Sorts vector 'x'.
@@ -114,7 +114,7 @@ Parameters:
 	x[inout]		pointer to x first element.
 	n[in]			length of x.
 	nalast[in]		if TRUE NA values are put last.
-	decreasing[in]	if TRUE sorts by descending order.
+	decreasing[in]		if TRUE sorts by descending order.
 
 Return value:
 	This function doesn't return a value.
@@ -152,7 +152,7 @@ void sort_d(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Sorts vector 'x' with vector 'indx' alongside.
@@ -162,7 +162,7 @@ Parameters:
 	indx[inout]		pointer to indx first element.
 	n[in]			length of x and indx.
 	nalast[in]		if TRUE NA values are put last.
-	decreasing[in]	if TRUE sorts by descending order.
+	decreasing[in]		if TRUE sorts by descending order.
 
 Return value:
 	This function doesn't return a value.
@@ -186,7 +186,7 @@ void sort_ii(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Sorts vector 'x' with vector 'indx' alongside.
@@ -196,7 +196,7 @@ Parameters:
 	indx[inout]		pointer to indx first element.
 	n[in]			length of x and indx.
 	nalast[in]		if TRUE NA values are put last.
-	decreasing[in]	if TRUE sorts by descending order.
+	decreasing[in]		if TRUE sorts by descending order.
 
 Return value:
 	This function doesn't return a value.
@@ -221,7 +221,7 @@ void sort_di(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Sorts vector 'x' with vector 'indx' alongside.
@@ -231,7 +231,7 @@ Parameters:
 	indx[inout]		pointer to indx first element.
 	n[in]			length of x and indx.
 	nalast[in]		if TRUE NA values are put last.
-	decreasing[in]	if TRUE sorts by descending order.
+	decreasing[in]		if TRUE sorts by descending order.
 
 Return value:
 	This function doesn't return a value.
@@ -255,7 +255,7 @@ void sort_dd(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes the permutation that results by sorting time
@@ -266,7 +266,7 @@ Parameters:
 	index[out]		pointer to index first element.
 	len[in]			length of time and index.
 	nalast[in]		if TRUE NA values are put last.
-	decreasing[in]	if TRUE sorts by descending order.
+	decreasing[in]		if TRUE sorts by descending order.
 
 Return value:
 	This function doesn't return a value.
@@ -291,7 +291,7 @@ void order_d(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes the permutation that results by sorting time
@@ -302,11 +302,11 @@ Description:
 Parameters:
 	time[in]		pointer to time first element.
 	event[in]		pointer to event first element.
-	index[inout]	pointer to index first element.
+	index[inout]		pointer to index first element.
 	len[in]			length of time, event and index.
 	nalast[in]		if TRUE NA values are put last.
-	decreasing0[in]	if TRUE sorts time by descending order.
-	decreasing1[in]	if TRUE sorts event by descending order.
+	decreasing0[in]		if TRUE sorts time by descending order.
+	decreasing1[in]		if TRUE sorts event by descending order.
 
 Return value:
 	This function doesn't return a value.
@@ -345,7 +345,7 @@ void order_di(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes the permutation that results by sorting time
@@ -356,11 +356,11 @@ Description:
 Parameters:
 	time[in]		pointer to time first element.
 	event[in]		pointer to event first element.
-	index[inout]	pointer to index first element.
+	index[inout]		pointer to index first element.
 	len[in]			length of time, event and index.
 	nalast[in]		if TRUE NA values are put last.
-	decreasing0[in]	if TRUE sorts time by descending order.
-	decreasing1[in]	if TRUE sorts event by descending order.
+	decreasing0[in]		if TRUE sorts time by descending order.
+	decreasing1[in]		if TRUE sorts event by descending order.
 
 Return value:
 	This function doesn't return a value.

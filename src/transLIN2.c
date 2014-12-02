@@ -7,20 +7,25 @@
 #endif
 #include <stdint.h>
 #include <stdlib.h>
-#include <time.h>
 #include <Rdefines.h>
 #include "defines.h"
-#include "boot.h"
 #include "get.h"
+#include "RngStream.h"
+#include "RngArray.h"
+#include "RngBoot.h"
 #include "rthreads.h"
 #include "sort.h"
 #include "wikmsurv.h"
 #include "wtypefunc.h"
 #include "window.h"
 
+typedef struct {
+	double *K, *SV;
+} transLINW;
+
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes the conditional transition probabilities:
@@ -49,6 +54,8 @@ Parameters:
 	nb[in]			pointer to number of rows of P.
 	P[out]			pointer to a (nb)x(nt)x(nx)x4 probability array.
 	b[in]			pointer to row index.
+	t[in]			pointer to thread number.
+	WORK[out]		pointer to array of transLINW structures.
 
 Return value:
 	This function doesn't return a value.
@@ -80,7 +87,9 @@ static void transLIN2I(
 	Wfunc wfunc,
 	CintCP nb,
 	double P[*nb*(*nt)*(*nx)*4],
-	CintCP b)
+	CintCP b,
+	CintCP t,
+	transLINW *WORK)
 {
 	const int64_t nbt = *nb*(*nt), nbtx = nbt*(*nx);
 	int z, e[4];
@@ -98,10 +107,14 @@ static void transLIN2I(
 	{
 		register int i, j;
 		register int64_t k;
+		int tid = *t;
 		int64_t k0;
 		double p, sum[3];
-		double *K = (double*)malloc( *len*sizeof(double) ); // allocate memory block
-		double *SV = (double*)malloc( *len*sizeof(double) ); // allocate memory block
+		#ifdef _OPENMP
+		if (omp_get_num_threads() != 1) tid = omp_get_thread_num(); // use the correct thread number
+		#endif
+		double *K = WORK[tid].K;
+		double *SV = WORK[tid].SV;
 		#ifdef _OPENMP
 		#pragma omp for
 		#endif
@@ -188,15 +201,13 @@ static void transLIN2I(
 				else if (P[k+nbtx*3] > 1) P[k+nbtx*3] = 1;
 			}
 		}
-		free(K); // free memory block
-		free(SV); // free memory block
 	}
 	return;
 } // transLIN2I
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes a conditional transition probability array based
@@ -204,11 +215,11 @@ Description:
 
 Parameters:
 	object			an object of class 'LIN2'.
-	UT				unique times vector.
-	UX				unique covariate vector.
-	h				bandwidth parameter.
+	UT			unique times vector.
+	UX			unique covariate vector.
+	h			bandwidth parameter.
 	window			a string indicating the desired window or kernel.
-	methodweights	a string indicating the desired weights method.
+	methodweights		a string indicating the desired weights method.
 	nboot			number of bootstrap samples.
 
 Return value:
@@ -246,51 +257,66 @@ SEXP TransPROBLIN2(
 	INTEGER(dims)[3] = 4;
 	PROTECT( P = allocArray(REALSXP, dims) );
 	PROTECT( list = NEW_LIST(2) );
-	int b;
-	int *index0 = (int*)malloc( len*sizeof(int) ); // allocate memory block
-	int *index1 = (int*)malloc( len*sizeof(int) ); // allocate memory block
-	double *WORK = (double*)malloc( len*sizeof(double) ); // allocate memory block
+	int b, t, nth = 1;
+	transLINW *WORK = (transLINW*)malloc( global_num_threads*sizeof(transLINW) ); // allocate memory block
+	if (WORK == NULL) error("TransPROBLIN2: No more memory\n");
+	for (t = 0; t < global_num_threads; t++) { // allocate per thread memory
+		if ( ( WORK[t].K = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBLIN2: No more memory\n");
+		if ( ( WORK[t].SV = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBLIN2: No more memory\n");
+	}
+	if (*INTEGER(nboot) > 1) nth = global_num_threads;
+	int **index0 = (int**)malloc( nth*sizeof(int*) ); // allocate memory block
+	if (index0 == NULL) error("TransPROBLIN2: No more memory\n");
+	int **index1 = (int**)malloc( nth*sizeof(int*) ); // allocate memory block
+	if (index1 == NULL) error("TransPROBLIN2: No more memory\n");
+	for (t = 0; t < nth; t++) { // allocate per thread memory
+		if ( ( index0[t] = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBLIN2: No more memory\n");
+		if ( ( index1[t] = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBLIN2: No more memory\n");
+	}
 	stype SW; // declare stype structure
 	SW.type = SINT_PTR; // type is a short int pointer
 	SW.ptr.shortinteger = (short int*)malloc( len*sizeof(short int) ); // allocate memory block
+	if (SW.ptr.shortinteger == NULL) error("TransPROBLIN2: No more memory\n");
 	SW.length = len; // hold length of array
 	for (b = 0; b < len; b++) SW.ptr.shortinteger[b] = 1; // weights should be equal to 1.0/len, however all weights equal to 1 yield an equivalent result in this case
 	b = 0; // b = len, put it back to 0 or a crash might occur
-	indx_ii(index0, index1, &len); // initialize indexes
-	order_d(REAL(T1), index0, len, FALSE, FALSE, WORK); // get permuation
-	order_d(REAL(S), index1, len, FALSE, FALSE, WORK); // get permuation
-	transLIN2I(&len, REAL(T1), INTEGER(E1), REAL(S), INTEGER(E), REAL(X), &SW, index0, index1, &nt, REAL(UT), &nx, REAL(UX), REAL(h), kfunc, wfunc, INTEGER(nboot), REAL(P), &b); // compute transition probabilities
-	free(index0); // free memory block
-	free(index1); // free memory block
-	free(WORK); // free memory block
+	t = 0; // t = nth, put it back to 0 or a crash might occur
+	indx_ii(&len, index0[0], index1[0]); // initialize indexes
+	order_d(REAL(T1), index0[0], len, FALSE, FALSE, WORK[0].K); // get permuation
+	order_d(REAL(S), index1[0], len, FALSE, FALSE, WORK[0].K); // get permuation
+	transLIN2I(&len, REAL(T1), INTEGER(E1), REAL(S), INTEGER(E), REAL(X), &SW, index0[0], index1[0], &nt, REAL(UT), &nx, REAL(UX), REAL(h), kfunc, wfunc, INTEGER(nboot), REAL(P), &b, &t, WORK); // compute transition probabilities
 	if (*INTEGER(nboot) > 1) {
 		#ifdef _OPENMP
-		#pragma omp parallel num_threads(global_num_threads) private(b)
+		#pragma omp parallel num_threads(global_num_threads) private(b, t)
 		#endif
 		{
-			int *index0 = (int*)malloc( len*sizeof(int) ); // allocate memory block
-			int *index1 = (int*)malloc( len*sizeof(int) ); // allocate memory block
-			double *WORK = (double*)malloc( len*sizeof(double) ); // allocate memory block
 			#ifdef _OPENMP
-			unsigned int iseed = (unsigned int)time(NULL) ^ (unsigned int)omp_get_thread_num(); // save per thread seed
+			t = omp_get_thread_num();
 			#else
-			unsigned int iseed = (unsigned int)time(NULL);
+			t = 0;
 			#endif
-			srand(iseed); // set seed
 			#ifdef _OPENMP
 			#pragma omp for
 			#endif
 			for (b = 1; b < *INTEGER(nboot); b++) {
-				boot_ii(index0, index1, &len); // bootstrap indexes
-				order_d(REAL(T1), index0, len, FALSE, FALSE, WORK); // get permuation
-				order_d(REAL(S), index1, len, FALSE, FALSE, WORK); // get permuation
-				transLIN2I(&len, REAL(T1), INTEGER(E1), REAL(S), INTEGER(E), REAL(X), &SW, index0, index1, &nt, REAL(UT), &nx, REAL(UX), REAL(h), kfunc, wfunc, INTEGER(nboot), REAL(P), &b); // compute transition probabilities
+				boot_ii(RngArray[t], &len, index0[t], index1[t]); // bootstrap indexes
+				order_d(REAL(T1), index0[t], len, FALSE, FALSE, WORK[t].K); // get permuation
+				order_d(REAL(S), index1[t], len, FALSE, FALSE, WORK[t].K); // get permuation
+				transLIN2I(&len, REAL(T1), INTEGER(E1), REAL(S), INTEGER(E), REAL(X), &SW, index0[t], index1[t], &nt, REAL(UT), &nx, REAL(UX), REAL(h), kfunc, wfunc, INTEGER(nboot), REAL(P), &b, &t, WORK); // compute transition probabilities
 			}
-			free(index0); // free memory block
-			free(index1); // free memory block
-			free(WORK); // free memory block
 		}
 	}
+	for (t = nth-1; t >= 0; t--) {
+		free(index0[t]); // free memory block
+		free(index1[t]); // free memory block
+	}
+	free(index0); // free memory block
+	free(index1); // free memory block
+	for (t = global_num_threads-1; t >= 0; t--) {
+		free(WORK[t].K); // free memory block
+		free(WORK[t].SV); // free memory block
+	}
+	free(WORK); // free memory block
 	free(SW.ptr.shortinteger); // free memory block
 	SET_ELEMENT(list, 0, P);
 	SET_ELEMENT(list, 1, h);

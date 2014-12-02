@@ -2,28 +2,37 @@
 \name{image.TPCmsm}
 \alias{image.TPCmsm}
 \title{image method for a TPCmsm object}
+
 \description{
-	image method for an object of class 'TPCmsm'.
+	image method for an object of class \sQuote{TPCmsm}.
 	Creates a grid of colored or gray-scale rectangles with colors corresponding to the values of the transition probabilities.
 }
+
 \usage{\S3method{image}{TPCmsm}(x, image.type="tc", tr.choice, xlim, ylim, zlim=c(0, 1), col, xlab, ylab,
 main, sub, key.title, key.axes, las=1, conf.int=FALSE, legend=TRUE, curvlab,
 contour=TRUE, nlevels=20, levels=pretty(zlim, nlevels), ...)}
 
 \arguments{
-	\item{x}{An object of class 'TPCmsm'.}
+	\item{x}{An object of class \sQuote{TPCmsm}.}
 	\item{image.type}{A character string specifying the type of image.
-		If 'tc' the image with time in the x axis, covariate in the y axis and transition probability in the z axis is drawn.
-		If 'ct' the image with covariate in the x axis, time in the y axis and transition probability in the z axis is drawn.
-		Defaults to 'tc'.}
-	\item{tr.choice}{Character vector of the form 'c("from to", "from to")' specifying which transitions should be plotted.
-		Default, all the transition probabilities are plotted.}
+		If \dQuote{tc} the image with time in the x axis, covariate in the y axis and transition probability in the z axis is drawn.
+		If \dQuote{ct} the image with covariate in the x axis, time in the y axis and transition probability in the z axis is drawn.
+		Defaults to \dQuote{tc}.
+	}
+	\item{tr.choice}{Character vector of the form \sQuote{c(\dQuote{from to}, \dQuote{from to})}
+		specifying which transitions should be plotted.
+		Default, all the transition probabilities are plotted.
+	}
 	\item{xlim}{Limits of x-axis for the plot.}
 	\item{ylim}{Limits of y-axis for the plot.}
 	\item{zlim}{Limits of z-axis for the plot. Defaults to \code{c(0, 1)}.}
 	\item{col}{Vector of colour. Defaults to \code{heat.colors(nlevels)[nlevels:1]}.}
-	\item{xlab}{x-axis label. If \code{image.type="tc"} defaults to "Time". If \code{image.type="ct"} defaults to "Covariate".}
-	\item{ylab}{y-axis label. If \code{image.type="tc"} defaults to "Covariate". If \code{image.type="ct"} defaults to "Time".}
+	\item{xlab}{x-axis label. If \code{image.type="tc"} defaults to \dQuote{Time}.
+		If \code{image.type="ct"} defaults to \dQuote{Covariate}.
+	}
+	\item{ylab}{y-axis label. If \code{image.type="tc"} defaults to \dQuote{Covariate}.
+		If \code{image.type="ct"} defaults to \dQuote{Time}.
+	}
 	\item{main}{The main title for the plot. By default no main title is added.}
 	\item{sub}{A sub title for the plot. By default no sub title is added.}
 	\item{key.title}{Statements which add titles for the plot key.}
@@ -31,11 +40,15 @@ contour=TRUE, nlevels=20, levels=pretty(zlim, nlevels), ...)}
 	\item{las}{The style of labeling to be used. The default is to use horizontal labeling.}
 	\item{conf.int}{Logical. Whether to display images of confidence regions. Default is FALSE.}
 	\item{legend}{A logical specifying if a legend should be added.}
-	\item{curvlab}{A character or expression vector to appear in the legend. Default is the name of the transitions.}
+	\item{curvlab}{A character or expression vector to appear in the legend.
+		Default is the name of the transitions.
+	}
 	\item{contour}{If \code{TRUE} contour lines are added to the image. Default is \code{TRUE}.}
 	\item{nlevels}{The number of levels to divide the range of z. Defaults to 20 levels.}
-	\item{levels}{Numeric vector of levels at which to draw contour lines. Defaults to
-		\code{pretty(zlim, nlevels)}. The breaks of image are set equal to levels.}
+	\item{levels}{Numeric vector of levels at which to draw contour lines.
+		Defaults to \code{pretty(zlim, nlevels)}.
+		The breaks of image are set equal to levels.
+	}
 	\item{\dots}{Further arguments for image.}
 }
 
@@ -43,7 +56,7 @@ contour=TRUE, nlevels=20, levels=pretty(zlim, nlevels), ...)}
 	No value is returned.
 }
 
-\author{Artur Agostinho Araújo, Javier Roca-Pardiñas and Luís Meira Machado}
+\author{Artur Araújo, Javier Roca-Pardiñas and Luís Meira-Machado}
 
 \note{
 	The device is divided by the number of transitions specified by argument \code{tr.choice}.
@@ -56,7 +69,7 @@ contour=TRUE, nlevels=20, levels=pretty(zlim, nlevels), ...)}
 }
 
 \references{
-	Meira-Machado L., de Uña-Álvarez J. and Datta S. Conditional Transition Probabilities in a non-Markov Illness-death Model. Discussion Papers in Statistics and Operation Research n 11/03, 2011. Department of Statistics and Operations Research, University of Vigo (ISSN: 1888-5756, Deposito Legal VG 1402 - 2007). This file can be downloaded from: \url{http://webs.uvigo.es/depc05/reports/12_05.pdf}
+	Meira-Machado L., de Uña-Álvarez J., Datta S. Conditional Transition Probabilities in a non-Markov Illness-death Model. Discussion Papers in Statistics and Operation Research n 11/03, 2011. Department of Statistics and Operations Research, University of Vigo (ISSN: 1888-5756, Deposito Legal VG 1402 - 2007). This file can be downloaded from: \url{http://webs.uvigo.es/depc05/reports/12_05.pdf}
 }
 
 \seealso{
@@ -65,8 +78,8 @@ contour=TRUE, nlevels=20, levels=pretty(zlim, nlevels), ...)}
 }
 
 \examples{
-# set the number of threads
-nth <- threadsTP(2)
+# Set the number of threads
+nth <- setThreadsTP(2)
 
 # Create survTP object
 data(heartTP)
@@ -84,8 +97,8 @@ ylab="Age")
 image(TPCmsm_obj, image.type="ct", tr.choice=c("1 1", "1 2", "1 3"), conf.int=TRUE,
 xlab="Age")
 
-# restore the number of threads
-threadsTP(nth)
+# Restore the number of threads
+setThreadsTP(nth)
 }
 
 \keyword{hplot}

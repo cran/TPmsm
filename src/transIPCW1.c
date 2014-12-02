@@ -5,12 +5,14 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+#include <stddef.h>
 #include <stdlib.h>
-#include <time.h>
 #include <Rdefines.h>
 #include "defines.h"
-#include "boot.h"
 #include "get.h"
+#include "RngStream.h"
+#include "RngArray.h"
+#include "RngBoot.h"
 #include "rthreads.h"
 #include "sort.h"
 
@@ -31,7 +33,7 @@
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes the transition probabilities:
@@ -176,7 +178,7 @@ static void transIPCW1I(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes the transition probabilities:
@@ -320,7 +322,7 @@ static void transIPCW2I(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes a transition probability vector based
@@ -328,7 +330,7 @@ Description:
 
 Parameters:
 	object			an object of class 'IPCW1'.
-	UT				unique times vector.
+	UT			unique times vector.
 	nboot			number of bootstrap samples.
 	methodest		an integer indicating the desired method.
 
@@ -350,7 +352,7 @@ SEXP TransPROBIPCW1(
 	E1 = VECTOR_ELT(data, 1);
 	S = VECTOR_ELT(data, 2);
 	E = VECTOR_ELT(data, 3);
-	int len = GET_LENGTH(T1), nt = GET_LENGTH(UT);
+	int len = GET_LENGTH(T1), nt = GET_LENGTH(UT), t, nth = 1;
 	SEXP P, list;
 	PROTECT( P = alloc3DArray(REALSXP, *INTEGER(nboot), nt, 4) );
 	PROTECT( list = NEW_LIST(2) );
@@ -362,43 +364,56 @@ SEXP TransPROBIPCW1(
 		default:
 			func = transIPCW1I;
 	}
+	if (*INTEGER(nboot) > 1) nth = global_num_threads;
+	int **index0 = (int**)malloc( nth*sizeof(int*) ); // allocate memory block
+	if (index0 == NULL) error("TransPROBIPCW1: No more memory\n");
+	int **index1 = (int**)malloc( nth*sizeof(int*) ); // allocate memory block
+	if (index1 == NULL) error("TransPROBIPCW1: No more memory\n");
+	double **WORK = (double**)malloc( nth*sizeof(double*) ); // allocate memory block
+	if (WORK == NULL) error("TransPROBIPCW1: No more memory\n");
+	for (t = 0; t < nth; t++) { // allocate per thread memory
+		if ( ( index0[t] = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBIPCW1: No more memory\n");
+		if ( ( index1[t] = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBIPCW1: No more memory\n");
+		if ( ( WORK[t] = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBIPCW1: No more memory\n");
+	}
 	#ifdef _OPENMP
-	#pragma omp parallel if(*INTEGER(nboot) > 1) num_threads(global_num_threads)
+	#pragma omp parallel num_threads(nth) private(t)
 	#endif
 	{
 		int b;
-		int *index0 = (int*)malloc( len*sizeof(int) ); // allocate memory block
-		int *index1 = (int*)malloc( len*sizeof(int) ); // allocate memory block
-		double *WORK = (double*)malloc( len*sizeof(double) ); // allocate memory block
 		#ifdef _OPENMP
-		unsigned int iseed = (unsigned int)time(NULL) ^ (unsigned int)omp_get_thread_num(); // save per thread seed
+		t = omp_get_thread_num();
 		#else
-		unsigned int iseed = (unsigned int)time(NULL);
+		t = 0;
 		#endif
-		srand(iseed); // set seed
 		#ifdef _OPENMP
 		#pragma omp single
 		#endif
 		{
 			b = 0;
-			indx_ii(index0, index1, &len); // initialize indexes
-			order_d(REAL(T1), index0, len, FALSE, FALSE, WORK); // get permuation
-			order_d(REAL(S), index1, len, FALSE, FALSE, WORK); // get permuation
-			func(&len, REAL(T1), INTEGER(E1), REAL(S), INTEGER(E), index0, index1, &nt, REAL(UT), INTEGER(nboot), REAL(P), &b); // compute transition probabilities
+			indx_ii(&len, index0[t], index1[t]); // initialize indexes
+			order_d(REAL(T1), index0[t], len, FALSE, FALSE, WORK[t]); // get permuation
+			order_d(REAL(S), index1[t], len, FALSE, FALSE, WORK[t]); // get permuation
+			func(&len, REAL(T1), INTEGER(E1), REAL(S), INTEGER(E), index0[t], index1[t], &nt, REAL(UT), INTEGER(nboot), REAL(P), &b); // compute transition probabilities
 		}
 		#ifdef _OPENMP
 		#pragma omp for
 		#endif
 		for (b = 1; b < *INTEGER(nboot); b++) {
-			boot_ii(index0, index1, &len); // bootstrap indexes
-			order_d(REAL(T1), index0, len, FALSE, FALSE, WORK); // get permuation
-			order_d(REAL(S), index1, len, FALSE, FALSE, WORK); // get permuation
-			func(&len, REAL(T1), INTEGER(E1), REAL(S), INTEGER(E), index0, index1, &nt, REAL(UT), INTEGER(nboot), REAL(P), &b); // compute transition probabilities
+			boot_ii(RngArray[t], &len, index0[t], index1[t]); // bootstrap indexes
+			order_d(REAL(T1), index0[t], len, FALSE, FALSE, WORK[t]); // get permuation
+			order_d(REAL(S), index1[t], len, FALSE, FALSE, WORK[t]); // get permuation
+			func(&len, REAL(T1), INTEGER(E1), REAL(S), INTEGER(E), index0[t], index1[t], &nt, REAL(UT), INTEGER(nboot), REAL(P), &b); // compute transition probabilities
 		}
-		free(index0); // free memory block
-		free(index1); // free memory block
-		free(WORK); // free memory block
 	}
+	for (t = nth-1; t >= 0; t--) {
+		free(index0[t]); // free memory block
+		free(index1[t]); // free memory block
+		free(WORK[t]); // free memory block
+	}
+	free(index0); // free memory block
+	free(index1); // free memory block
+	free(WORK); // free memory block
 	SET_ELEMENT(list, 0, P);
 	SET_ELEMENT(list, 1, R_NilValue);
 	UNPROTECT(2);

@@ -1,4 +1,5 @@
 
+#include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <Rdefines.h>
@@ -16,30 +17,6 @@
 	PROTECT( mest = allocMatrix(REALSXP, nt, 5) ); \
 
 #define toTPmsm1 \
-	const char *name1 = CHAR( STRING_ELT(statenames, 0) ); \
-	const char *name2 = CHAR( STRING_ELT(statenames, 1) ); \
-	const char *name3 = CHAR( STRING_ELT(statenames, 2) ); \
-	i = strlen(name1), j = strlen(name2), k = strlen(name3); \
-	char *name11 = (char*)malloc( (i+i+2)*sizeof(char) ); \
-	strcpy(name11, name1); \
-	strcpy(&name11[i], " "); \
-	strcpy(&name11[i+1], name1); \
-	char *name12 = (char*)malloc( (i+j+2)*sizeof(char) ); \
-	strcpy(name12, name1); \
-	strcpy(&name12[i], " "); \
-	strcpy(&name12[i+1], name2); \
-	char *name13 = (char*)malloc( (i+k+2)*sizeof(char) ); \
-	strcpy(name13, name1); \
-	strcpy(&name13[i], " "); \
-	strcpy(&name13[i+1], name3); \
-	char *name22 = (char*)malloc( (j+j+2)*sizeof(char) ); \
-	strcpy(name22, name2); \
-	strcpy(&name22[j], " "); \
-	strcpy(&name22[j+1], name2); \
-	char *name23 = (char*)malloc( (j+k+2)*sizeof(char) ); \
-	strcpy(name23, name2); \
-	strcpy(&name23[j], " "); \
-	strcpy(&name23[j+1], name3); \
 	SEXP colnames; \
 	PROTECT( colnames = NEW_CHARACTER(5) ); \
 	SET_STRING_ELT( colnames, 0, mkChar(name11) ); \
@@ -106,6 +83,35 @@ SEXP toTPmsm1222(
 		}
 		REAL(mest)[k] = 1-REAL(mest)[k-nt]; // k = i+nt*4, k-nt = i+nt*3
 	}
+	const char *name1 = CHAR( STRING_ELT(statenames, 0) );
+	const char *name2 = CHAR( STRING_ELT(statenames, 1) );
+	const char *name3 = CHAR( STRING_ELT(statenames, 2) );
+	i = strlen(name1), j = strlen(name2), k = strlen(name3);
+	char *name11 = (char*)malloc( (i+i+2)*sizeof(char) );
+	if (name11 == NULL) error("toTPmsm1222: No more memory\n");
+	strcpy(name11, name1);
+	strcpy(&name11[i], " ");
+	strcpy(&name11[i+1], name1);
+	char *name12 = (char*)malloc( (i+j+2)*sizeof(char) );
+	if (name12 == NULL) error("toTPmsm1222: No more memory\n");
+	strcpy(name12, name1);
+	strcpy(&name12[i], " ");
+	strcpy(&name12[i+1], name2);
+	char *name13 = (char*)malloc( (i+k+2)*sizeof(char) );
+	if (name13 == NULL) error("toTPmsm1222: No more memory\n");
+	strcpy(name13, name1);
+	strcpy(&name13[i], " ");
+	strcpy(&name13[i+1], name3);
+	char *name22 = (char*)malloc( (j+j+2)*sizeof(char) );
+	if (name22 == NULL) error("toTPmsm1222: No more memory\n");
+	strcpy(name22, name2);
+	strcpy(&name22[j], " ");
+	strcpy(&name22[j+1], name2);
+	char *name23 = (char*)malloc( (j+k+2)*sizeof(char) );
+	if (name23 == NULL) error("toTPmsm1222: No more memory\n");
+	strcpy(name23, name2);
+	strcpy(&name23[j], " ");
+	strcpy(&name23[j+1], name3);
 	toTPmsm1
 } // toTPmsm1222
 
@@ -128,5 +134,34 @@ SEXP toTPmsm1323(
 		REAL(mest)[k+nt] = REAL(a3d)[k]; // k+nt = i+nt*4, k = i+nt*3
 		REAL(mest)[k] = 1-REAL(a3d)[k];
 	}
+	const char *name1 = CHAR( STRING_ELT(statenames, 0) );
+	const char *name2 = CHAR( STRING_ELT(statenames, 1) );
+	const char *name3 = CHAR( STRING_ELT(statenames, 2) );
+	i = strlen(name1), j = strlen(name2), k = strlen(name3);
+	char *name11 = (char*)malloc( (i+i+2)*sizeof(char) );
+	if (name11 == NULL) error("toTPmsm1323: No more memory\n");
+	strcpy(name11, name1);
+	strcpy(&name11[i], " ");
+	strcpy(&name11[i+1], name1);
+	char *name12 = (char*)malloc( (i+j+2)*sizeof(char) );
+	if (name12 == NULL) error("toTPmsm1323: No more memory\n");
+	strcpy(name12, name1);
+	strcpy(&name12[i], " ");
+	strcpy(&name12[i+1], name2);
+	char *name13 = (char*)malloc( (i+k+2)*sizeof(char) );
+	if (name13 == NULL) error("toTPmsm1323: No more memory\n");
+	strcpy(name13, name1);
+	strcpy(&name13[i], " ");
+	strcpy(&name13[i+1], name3);
+	char *name22 = (char*)malloc( (j+j+2)*sizeof(char) );
+	if (name22 == NULL) error("toTPmsm1323: No more memory\n");
+	strcpy(name22, name2);
+	strcpy(&name22[j], " ");
+	strcpy(&name22[j+1], name2);
+	char *name23 = (char*)malloc( (j+k+2)*sizeof(char) );
+	if (name23 == NULL) error("toTPmsm1323: No more memory\n");
+	strcpy(name23, name2);
+	strcpy(&name23[j], " ");
+	strcpy(&name23[j+1], name3);
 	toTPmsm1
 } // toTPmsm1323

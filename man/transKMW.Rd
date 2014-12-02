@@ -2,19 +2,28 @@
 \name{transKMW}
 \alias{transKMW}
 \title{Kaplan-Meier weighted transition probabilities}
+
 \description{Provides estimates for the transition probabilities based on Kaplan-Meier weighted estimators, KMW.}
+
 \usage{transKMW(object, s, t, state.names=c("1", "2", "3"), conf=FALSE, n.boot=1000,
 conf.level=0.95, method.boot="percentile", method.est=3)}
 
 \arguments{
-	\item{object}{An object of class \code{survTP}.}
-	\item{s}{The first time for obtaining estimates for the transition probabilities. If missing, 0 will be used.}
-	\item{t}{The second time for obtaining estimates for the transition probabilities. If missing, the maximum of \code{Stime} will be used.}
+	\item{object}{An object of class \sQuote{survTP}.}
+	\item{s}{The first time for obtaining estimates for the transition probabilities.
+		If missing, 0 will be used.
+	}
+	\item{t}{The second time for obtaining estimates for the transition probabilities.
+		If missing, the maximum of \code{Stime} will be used.
+	}
 	\item{state.names}{A vector of characters giving the state names.}
 	\item{conf}{Provides pointwise confidence bands. Defaults to \code{FALSE}.}
 	\item{n.boot}{The number of bootstrap samples. Defaults to 1000 samples.}
 	\item{conf.level}{Level of confidence. Defaults to 0.95 (corresponding to 95\%).}
-	\item{method.boot}{The method used to compute bootstrap confidence bands. Possible options are "percentile" and "basic". Defaults to "percentile".}
+	\item{method.boot}{The method used to compute bootstrap confidence bands.
+		Possible options are \dQuote{percentile} and \dQuote{basic}.
+		Defaults to \dQuote{percentile}.
+	}
 	\item{method.est}{The method used to compute the estimate. Possible options are 1, 2, 3 or 4.}
 }
 
@@ -42,8 +51,8 @@ conf.level=0.95, method.boot="percentile", method.est=3)}
 }
 
 \value{
-	An object of class \code{TPmsm}. There are methods for \code{contour}, \code{image}, \code{print} and \code{plot}.
-	\code{TPmsm} objects are implemented as a list with elements:
+	An object of class \sQuote{TPmsm}. There are methods for \code{contour}, \code{image}, \code{print} and \code{plot}.
+	\sQuote{TPmsm} objects are implemented as a list with elements:
 	\item{method}{A string indicating the type of estimator used in the computation.}
 	\item{est}{A matrix with transition probability estimates. The rows being the event times and the columns the 5 possible transitions.}
 	\item{inf}{A matrix with the lower transition probabilities of the confidence band. The rows being the event times and the columns the 5 possible transitions.}
@@ -57,12 +66,12 @@ conf.level=0.95, method.boot="percentile", method.est=3)}
 	\item{conf.level}{Level of confidence used to compute the confidence band.}
 }
 
-\author{Artur Agostinho Araújo, Javier Roca-Pardiñas and Luís Meira Machado}
+\author{Artur Araújo, Javier Roca-Pardiñas and Luís Meira-Machado}
 
 \references{
-	Meira Machado L. F., de Uña-Álvarez J., Cadarso-Suárez C. (2006). Nonparametric estimation of transition probabilities in a non-Markov illness-death model, \emph{Lifetime Data Anal}, \bold{12}, 325-344.
+	Meira Machado L. F., de Uña-Álvarez J., Cadarso-Suárez C. (2006) Nonparametric estimation of transition probabilities in a non-Markov illness-death model. \emph{Lifetime Data Anal} \bold{12(3)}, 325--344.
 
-	Davison, A. C. and Hinkley, D. V. (1997) Bootstrap Methods and their Application, Chapter 5. Cambridge University Press.
+	Davison, A. C., Hinkley, D. V. (1997) \emph{Bootstrap Methods and their Application} Chapter 5, Cambridge University Press.
 }
 
 %\note{
@@ -81,8 +90,8 @@ conf.level=0.95, method.boot="percentile", method.est=3)}
 }
 
 \examples{
-# set the number of threads
-nth <- threadsTP(2)
+# Set the number of threads
+nth <- setThreadsTP(2)
 
 # Create survTP object
 data(heartTP)
@@ -95,8 +104,8 @@ transKMW(object=heartTP_obj, s=33, t=412)
 transKMW(object=heartTP_obj, s=33, t=412, conf=TRUE, conf.level=0.9,
 method.boot="basic", method.est=2)
 
-# restore the number of threads
-threadsTP(nth)
+# Restore the number of threads
+setThreadsTP(nth)
 }
 
 \keyword{dplot}

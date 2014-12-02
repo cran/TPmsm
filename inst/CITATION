@@ -1,16 +1,21 @@
-PKG <- "TPmsm"
-citHeader( paste("To cite the R package ", PKG, " in publications use:", sep="") )
+citHeader("To cite TPmsm in publications use:")
 
-year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date, perl = TRUE)
-vers <- paste("R package version", meta$Version)
-url <- paste("http://CRAN.R-project.org/package=", PKG, sep="")
+citEntry(entry = "Article",
+  title        = "{TPmsm}: Estimation of the Transition Probabilities in 3-State Models",
+  author       = personList(as.person("Artur Ara{\\'u}jo"),
+                   as.person("Lu{\\'\\i}s Meira-Machado"),
+                   as.person("Javier Roca-Pardi{\\~n}as")),
+  journal      = "Journal of Statistical Software",
+  year         = "2014",
+  volume       = "62",
+  number       = "4",
+  pages        = "1--29",
+  url          = "http://www.jstatsoft.org/v62/i04/",
 
-citEntry(
-	entry = "Manual",
-	title = "TPmsm: Estimation of transition probabilities in multistate models",
-	author = personList( as.person("Artur Agostinho Araújo"), as.person("Javier Roca-Pardiñas"), as.person("Luís Meira-Machado") ),
-	year = year,
-	note = vers,
-	url = url,
-	textVersion = paste("Artur Agostinho Araújo, Javier Roca-Pardiñas and Luís Meira-Machado (", year, "). TPmsm: Estimation of transition probabilities in multistate models. ", vers, " URL ", url, ".", sep="")
+  textVersion  =
+  paste("Artur Araujo, Luis Meira-Machado, Javier Roca-Pardinas (2014).",
+        "TPmsm: Estimation of the Transition Probabilities in 3-State Models.",
+        "Journal of Statistical Software, 62(4), 1-29.",
+        "URL http://www.jstatsoft.org/v62/i04/.")
 )
+

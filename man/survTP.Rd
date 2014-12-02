@@ -3,19 +3,21 @@
 \alias{survTP}
 \alias{is.survTP}
 \title{Create a survTP object}
-\description{Creates a survTP object, usually used as input to other functions.}
+
+\description{Creates a \sQuote{survTP} object, usually used as input to other functions.}
+
 \usage{
-survTP(time1, event1, Stime, event, ...)
-is.survTP(x)
+	survTP(time1, event1, Stime, event, ...)
+	is.survTP(x)
 }
 
 \arguments{
-\item{time1}{Time of the transition into state 2, state 3 or censoring time.}
-\item{event1}{Indicator of transition into state 2 or state 3; 0 if the transition time is censored and 1 otherwise.}
-\item{Stime}{The total time of the process.}
-\item{event}{Censoring indicator of the total time of the process; 0 if the total time is censored and 1 otherwise.}
-\item{\dots}{Any number of covariates can be specified.}
-\item{x}{Any R object.}
+	\item{time1}{Time of the transition into state 2, state 3 or censoring time.}
+	\item{event1}{Indicator of transition into state 2 or state 3; 0 if the transition time is censored and 1 otherwise.}
+	\item{Stime}{The total time of the process.}
+	\item{event}{Censoring indicator of the total time of the process; 0 if the total time is censored and 1 otherwise.}
+	\item{\dots}{Any number of covariates can be specified.}
+	\item{x}{Any R object.}
 }
 
 %\details{
@@ -23,16 +25,16 @@ is.survTP(x)
 %}
 
 \value{
-An object of class \code{survTP}.
+	An object of class \sQuote{survTP}.
 
-\code{survTP} objects are implemented as a single element list \item{data}{a data.frame
-with \code{time1}, \code{event1}, \code{Stime}, \code{event} and covariates as columns.}
+	\sQuote{survTP} objects are implemented as a single element list \item{data}{a data.frame
+	with \code{time1}, \code{event1}, \code{Stime}, \code{event} and covariates as columns.}
 
-In the case of \code{is.survTP}, a logical value \code{TRUE} if \code{x}
-inherits from class \code{survTP}, otherwise \code{FALSE}.
+	In the case of \code{is.survTP}, a logical value \code{TRUE} if \code{x}
+	inherits from class \sQuote{survTP}, otherwise \code{FALSE}.
 }
 
-\author{Artur Agostinho Araújo, Javier Roca-Pardiñas and Luís Meira Machado}
+\author{Artur Araújo, Javier Roca-Pardiñas and Luís Meira-Machado}
 
 \examples{
 data(bladderTP)

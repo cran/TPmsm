@@ -1,29 +1,36 @@
 
-#include <R_ext/Random.h>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 #include <Rdefines.h>
 #include <Rmath.h>
 #include "defines.h"
+#include "RngStream.h"
+#include "RngArray.h"
+#include "rthreads.h"
 
-typedef void (*Tfunc)(CdoubleCP, CdoubleCP, doubleCP, doubleCP);
-typedef void (*Cfunc)(CdoubleCP, doubleCP);
+typedef void (*Tfunc)(RngStream, CdoubleCP, CdoubleCP, doubleCP, doubleCP);
+typedef void (*Cfunc)(RngStream, CdoubleCP, doubleCP);
 
 static void expt(
+	RngStream g,
 	CdoubleCP pcorr,
 	CdoubleCP pdistpar,
 	doubleCP t1,
 	doubleCP t2)
 {
 	double u1, u2, v, a;
-	u1 = runif(0, 1);
-	v = runif(0, 1);
+	u1 = RngStream_RandU01(g); // uniform(0, 1)
+	v = RngStream_RandU01(g); // uniform(0, 1)
 	a = *pcorr*(2*u1-1);
 	u2 = 2*v/( 1-a+sqrt(R_pow_di(1-a, 2)+4*a*v) );
-	*t1 = -pdistpar[0]*log(1-u1);
-	*t2 = -pdistpar[1]*log(1-u2);
+	*t1 = -pdistpar[0]*log(1-u1); // exponential(pdistpar[0])
+	*t2 = -pdistpar[1]*log(1-u2); // exponential(pdistpar[1])
 	return;
 } // expt
 
 static void weibullt(
+	RngStream g,
 	CdoubleCP pcorr,
 	CdoubleCP pdistpar,
 	doubleCP t1,
@@ -31,7 +38,9 @@ static void weibullt(
 {
 	register int i;
 	double u[5], v;
-	for (i = 0; i < 5; i++) u[i] = runif(0, 1);
+	for (i = 0; i < 5; i++) {
+		u[i] = RngStream_RandU01(g); // uniform(0,1)
+	}
 	if (u[4] > *pcorr) v = -log(u[3]);
 	else v = -log(u[1])-log(u[2]);
 	*t1 = R_pow(u[0], *pcorr/pdistpar[0])*R_pow(v, 1/pdistpar[0])*pdistpar[1];
@@ -40,20 +49,20 @@ static void weibullt(
 } // weibullt
 
 static void runif0(
+	RngStream g,
 	CdoubleCP pcenspar,
 	doubleCP c)
 {
-	*c = runif(0, *pcenspar);
+	*c = *pcenspar*RngStream_RandU01(g); // uniform(0, *pcenspar)
 	return;
 } // runif0
 
 static void rexp0(
+	RngStream g,
 	CdoubleCP pcenspar,
 	doubleCP c)
 {
-	double u;
-	u = runif(0, 1);
-	*c = -*pcenspar*log(1-u);
+	*c = -*pcenspar*log( 1-RngStream_RandU01(g) ); // exponential(*pcenspar)
 	return;
 } // rexp0
 
@@ -70,29 +79,42 @@ static void cens2(
 	CdoubleCP pcenspar,
 	CdoubleCP pstate2prob)
 {
-	register int i;
-	double t1, t2, c, b;
-	for (i = 0; i < *pn; i++) {
-		cfunc(pcenspar, &c);
-		tfunc(pcorr, pdistpar, &t1, &t2);
-		b = rbinom(1, *pstate2prob);
-		pT1[i] = fmin2(t1, c);
-		pE1[i] = (t1 <= c);
-		pS[i] = pT1[i]+b*pE1[i]*fmin2(t2, c-t1);
-		pE[i] = (1-b)*pE1[i]+b*(t2 <= c-t1);
+	#ifdef _OPENMP
+	#pragma omp parallel num_threads(global_num_threads)
+	#endif
+	{
+		int i, b, t;
+		#ifdef _OPENMP
+		t = omp_get_thread_num();
+		#else
+		t = 0;
+		#endif
+		double t1, t2, c;
+		#ifdef _OPENMP
+		#pragma omp for
+		#endif
+		for (i = 0; i < *pn; i++) {
+			cfunc(RngArray[t], pcenspar, &c);
+			tfunc(RngArray[t], pcorr, pdistpar, &t1, &t2);
+			b = (RngStream_RandU01(RngArray[t]) <= *pstate2prob); // bernoulli(*pstate2prob)
+			pT1[i] = fmin2(t1, c);
+			pE1[i] = (t1 <= c);
+			pS[i] = pT1[i]+b*pE1[i]*fmin2(t2, c-t1);
+			pE[i] = (1-b)*pE1[i]+b*(t2 <= c-t1);
+		}
 	}
 	return;
 } // cens2
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Generates bivariate censored gap times from some known copula functions.
 
 Parameters:
-	n				sample size.
+	n			sample size.
 	corr			correlation parameter.
 	dist			distribution.
 	distpar			vector of parameters for the distribution.
@@ -153,9 +175,7 @@ SEXP dgpTP(
 	PROTECT( E1 = NEW_INTEGER(*pn) );
 	PROTECT( S = NEW_NUMERIC(*pn) );
 	PROTECT( E = NEW_INTEGER(*pn) );
-	GetRNGstate();
 	func(REAL(T1), INTEGER(E1), REAL(S), INTEGER(E), pn, tfunc, pcorr, pdistpar, cfunc, pcenspar, pstate2prob);
-	PutRNGstate();
 	SEXP data;
 	PROTECT( data = NEW_LIST(4) );
 	SET_ELEMENT(data, 0, T1);

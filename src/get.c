@@ -3,7 +3,7 @@
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	This function reads bidimensional data in a way
@@ -53,7 +53,7 @@ void getOrdinateI(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes first e index of a vector T where T[index[e]] > t.
@@ -100,7 +100,7 @@ void getIndexI(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes last e index of a vector T where T[index[e]] <= t.

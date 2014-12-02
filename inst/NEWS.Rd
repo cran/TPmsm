@@ -2,6 +2,26 @@
 
 \title{NEWS file for the TPmsm package}
 
+\section{Changes in version 1.2.0}{
+	\itemize{
+		\item{Improved the documentation.}
+
+		\item{Renamed threadsTP function to setThreadsTP.}
+
+		\item{Implemented RngStreams C package for
+		parallel random number generation.}
+
+		\item{Added setPackageSeedTP function for
+		defining the seed of the RngStreams C package.}
+
+		\item{Added setSeedTP function for saving and restoring
+		the individual seeds of the RNG streams used by the
+		RngStreams C package.}
+
+		\item{Added research article to the CITATION file.}
+	}
+}
+
 \section{Changes in version 1.1.1}{
 	\itemize{
 		\item{Improved the documentation.}

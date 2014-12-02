@@ -2,15 +2,22 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+#include <stddef.h>
+#include <stdlib.h>
 #include <R_ext/Rdynload.h>
 #include <R_ext/Visibility.h>
 #include <Rinternals.h>
 #include <Rversion.h>
+#include "defines.h"
 #include "BtoTPCmsm.h"
 #include "BtoTPmsm.h"
 #include "dgpTP.h"
 #include "object.h"
+#include "RngStream.h"
+#include "RngArray.h"
 #include "rthreads.h"
+#include "rseed.h"
+#include "sample.h"
 #include "toTPCmsm.h"
 #include "toTPmsm.h"
 #include "transAJ.h"
@@ -39,7 +46,10 @@ static const R_CallMethodDef CallEntries[] = {
 	CALLDEF(BtoTPmsm1222, 8),
 	CALLDEF(BtoTPmsm1323, 8),
 	CALLDEF(dgpTP, 7),
+	CALLDEF(rsample, 1),
 	CALLDEF(rset_num_threads, 1),
+	CALLDEF(rset_package_seed, 1),
+	CALLDEF(rset_seed, 1),
 	CALLDEF(SetClass, 2),
 	CALLDEF(toTPCmsm, 7),
 	CALLDEF(toTPmsm1222, 5),
@@ -67,8 +77,13 @@ void attribute_visible R_init_TPmsm(DllInfo *dll) {
 	#endif
 
 	#ifdef _OPENMP
-	set_num_threads( omp_get_num_procs() );
+	global_num_procs = omp_get_num_procs();
+	set_num_threads(global_num_procs);
 	#endif
+
+	RngArray = (RngStream*)malloc( global_num_procs*sizeof(RngStream) );
+	if (RngArray == NULL) error("R_init_TPmsm: No more memory\n");
+	RngArray_CreateStream(&global_num_threads, RngArray);
 
 	SEXP TPmsm_NS = R_FindNamespace( mkString("TPmsm") );
 	if (TPmsm_NS == R_UnboundValue) error("missing 'TPmsm' namespace: should never happen");

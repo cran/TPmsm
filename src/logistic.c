@@ -3,10 +3,11 @@
 #include <R_ext/Lapack.h>
 #include <Rmath.h>
 #include "defines.h"
+#include "logistic.h"
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes the predicted values.
@@ -49,7 +50,7 @@ static void predict(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes the deviance of the fitted model.
@@ -81,9 +82,41 @@ static void deviance(
 	return;
 } // deviance
 
+logitW *logitW_Create(
+	CintCP n)
+{
+	logitW *WORK = (logitW*)malloc( sizeof(logitW) ); // allocate memory block;
+	if (WORK == NULL) error("logitW_Create: No more memory\n");
+	WORK->n = *n;
+	WORK->IPIV = (int*)malloc( WORK->n*sizeof(int) ); // allocate memory block
+	if (WORK->IPIV == NULL) error("logitW_Create: No more memory\n");
+	WORK->B = (double*)malloc( WORK->n*sizeof(double) ); // allocate memory block
+	if (WORK->B == NULL) error("logitW_Create: No more memory\n");
+	WORK->U = (double*)malloc( WORK->n*sizeof(double) ); // allocate memory block
+	if (WORK->U == NULL) error("logitW_Create: No more memory\n");
+	WORK->lwork = (*n)*(*n);
+	WORK->F = (double*)malloc( WORK->lwork*sizeof(double) ); // allocate memory block
+	if (WORK->F == NULL) error("logitW_Create: No more memory\n");
+	WORK->W = (double*)malloc( WORK->lwork*sizeof(double) ); // allocate memory block
+	if (WORK->W == NULL) error("logitW_Create: No more memory\n");
+	return WORK;
+} // logitW_Create
+
+void logitW_Delete(
+	logitW *WORK)
+{
+	free(WORK->IPIV); // free memory block
+	free(WORK->B); // free memory block
+	free(WORK->U); // free memory block
+	free(WORK->F); // free memory block
+	free(WORK->W); // free memory block
+	free(WORK); // free memory block
+	return;
+} // logitW_Delete
+
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Computes the predicted values from the logistic regression,
@@ -99,6 +132,7 @@ Parameters:
 	maxit[in]		pointer to maximum number of iterations.
 	epsilon[in]		pointer to convergence parameter.
 	conv[out]		pointer to conv value.
+	WORK[out]		pointer to logitW structure.
 
 Return value:
 	This function doesn't return a value.
@@ -118,47 +152,43 @@ void predict_logit(
 	doubleCP X[*n],
 	CintCP maxit,
 	CdoubleCP epsilon,
-	intCP conv)
+	intCP conv,
+	logitW *WORK)
 {
 	register int it, i, j, k;
 	int info, lwork = (*n)*(*n);
 	double dev[2], aux[2];
-	double *B = (double*)malloc( *n*sizeof(double) ); // allocate memory block
-	double *U = (double*)malloc( *n*sizeof(double) ); // allocate memory block
-	double *F = (double*)malloc( lwork*sizeof(double) ); // allocate memory block
-	int *IPIV = (int*)malloc( *n*sizeof(int) ); // allocate memory block
-	double *WORK = (double*)malloc( lwork*sizeof(double) ); // allocate memory block
-	for (i = 0; i < *n; i++) B[i] = 0; // initialize vector of parameters
-	predict(len, subset, n, X, B, P); // initialize predicted values
+	for (i = 0; i < *n; i++) WORK->B[i] = 0; // initialize vector of parameters
+	predict(len, subset, n, X, WORK->B, P); // initialize predicted values
 	deviance(len, subset, Y, P, &dev[0]); // initialize deviance
 	for (*conv = 0, it = 0; it < *maxit; it++) {
 		for (i = 0; i < *n; i++) {
-			U[i] = 0; // initialize the score vector
-			for (j = 0; j < *n; j++) F[i+*n*j] = 0; // initialize information matrix
+			WORK->U[i] = 0; // initialize the score vector
+			for (j = 0; j < *n; j++) WORK->F[i+*n*j] = 0; // initialize information matrix
 		}
 		for (k = 0; k < *len; k++) {
 			aux[0] = Y[subset[k]]-P[subset[k]];
 			aux[1] = P[subset[k]]*(1-P[subset[k]]); // compute variance
 			for (i = 0; i < *n; i++) {
-				U[i] += X[i][subset[k]]*aux[0]; // compute the score vector
+				WORK->U[i] += X[i][subset[k]]*aux[0]; // compute the score vector
 				for (j = i; j < *n; j++) {
-					F[i+*n*j] += X[i][subset[k]]*X[j][subset[k]]*aux[1]; // fill upper triangular part of the information matrix
+					WORK->F[i+*n*j] += X[i][subset[k]]*X[j][subset[k]]*aux[1]; // fill upper triangular part of the information matrix
 				}
 			}
 		}
 		for (i = 0; i < *n-1; i++) {
 			for (j = i+1; j < *n; j++) {
-				F[j+*n*i] = F[i+*n*j]; // copy upper part of the information matrix to it's lower part
+				WORK->F[j+*n*i] = WORK->F[i+*n*j]; // copy upper part of the information matrix to it's lower part
 			}
 		}
-		F77_CALL(dgetrf)(n, n, F, n, IPIV, &info); // compute LU factorization of the information matrix
-		F77_CALL(dgetri)(n, F, n, IPIV, WORK, &lwork, &info); // compute the inverse of the information matrix
+		F77_CALL(dgetrf)(n, n, WORK->F, n, WORK->IPIV, &info); // compute LU factorization of the information matrix
+		F77_CALL(dgetri)(n, WORK->F, n, WORK->IPIV, WORK->W, &lwork, &info); // compute the inverse of the information matrix
 		for (i = 0; i < *n; i++) {
 			for (j = 0; j < *n; j++) {
-				B[i] += F[i+*n*j]*U[j]; // compute vector of parameters
+				WORK->B[i] += WORK->F[i+*n*j]*WORK->U[j]; // compute vector of parameters
 			}
 		}
-		predict(len, subset, n, X, B, P); // compute predicted values
+		predict(len, subset, n, X, WORK->B, P); // compute predicted values
 		deviance(len, subset, Y, P, &dev[1]); // compute deviance
 		if (isnan(dev[1]) || info) { // if isnan(dev[1]) the algorithm isn't converging
 			for (i = 0; i < *len; i++) P[subset[i]] = Y[subset[i]]; // in that case make the predicted values equal to the response values
@@ -169,10 +199,5 @@ void predict_logit(
 			break;
 		} else dev[0] = dev[1];
 	}
-	free(B); // free memory block
-	free(U); // free memory block
-	free(F); // free memory block
-	free(IPIV); // free memory block
-	free(WORK); // free memory block
 	return;
 } // predict_logit

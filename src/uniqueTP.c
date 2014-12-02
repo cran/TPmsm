@@ -5,7 +5,7 @@
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Concatenates vectors T1 and S and then computes the unique
@@ -54,7 +54,7 @@ static void uniqueTS(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Concatenates X and x and computes it's unique vector.
@@ -91,7 +91,7 @@ static void uniqueX(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Concatenates vectors T1 and S and then computes the unique
@@ -99,8 +99,8 @@ Description:
 
 Parameters:
 	object			an object of class 'survTP' or 'survTPC'.
-	s				first time value to compute the probability at.
-	t				second time value to compute the probability at.
+	s			first time value to compute the probability at.
+	t			second time value to compute the probability at.
 
 Return value:
 	Returns a vector of unique times.
@@ -126,14 +126,14 @@ SEXP uniqueTIME(
 
 /*
 Author:
-	Artur Agostinho Araujo <artur.stat@gmail.com>
+	Artur Araujo <artur.stat@gmail.com>
 
 Description:
 	Concatenates X and x and computes it's unique vector.
 
 Parameters:
 	object			an object of class 'survTPC'.
-	x				single covariate value.
+	x			single covariate value.
 
 Return value:
 	Returns a vector of unique covariate values.

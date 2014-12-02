@@ -3,10 +3,14 @@
 \alias{colonTP}
 \docType{data}
 \title{Chemotherapy for Stage B/C colon cancer}
-\description{These are data from one of the first successful trials of
+
+\description{
+	These are data from one of the first successful trials of
 	adjuvant chemotherapy for colon cancer. Levamisole is a low-toxicity
 	compound previously used to treat worm infestations in animals; 5-FU
-	is a moderately toxic (as these things go) chemotherapy agent.}
+	is a moderately toxic (as these things go) chemotherapy agent.
+}
+
 \usage{data(colonTP)}
 
 \format{
@@ -30,7 +34,8 @@
 	}
 }
 
-\note{The study is originally described in Laurie (1989).
+\note{
+	The study is originally described in Laurie (1989).
 	The main report is found in Moertel (1990).  This data set is closest
 	to that of the final report in Moertel (1991).
 	A version of the data with less follow-up time was used in the
@@ -38,28 +43,13 @@
 }
 
 \references{
-	JA Laurie, CG Moertel, TR Fleming, HS Wieand, JE Leigh, J Rubin,
-	GW McCormack, JB Gerstner, JE Krook and J Malliard.  Surgical
-	adjuvant therapy of large-bowel carcinoma: An evaluation of
-	levamisole and the combination of levamisole and fluorouracil:
-	The North Central Cancer Treatment Group and the Mayo Clinic.
-	\emph{Journal of Clinical Oncology}, 7:1447-1456, 1989.
+	Laurie J. A., Moertel C. G., Fleming T. R., Wieand H. S., Leigh J. E., Rubin J., McCormack G. W., Gerstner J. B., Krook J. E., Malliard J. (1989) Surgical adjuvant therapy of large-bowel carcinoma: An evaluation of levamisole and the combination of levamisole and fluorouracil: The North Central Cancer Treatment Group and the Mayo Clinic. \emph{Journal of Clinical Oncology} \bold{7(10)}, 1447--1456.
 
-	DY Lin.  Cox regression analysis of multivariate failure time data:
-	the marginal approach.  \emph{Statistics in Medicine}, 13:2233-2247, 1994.
+	Lin D. Y. (1994) Cox regression analysis of multivariate failure time data: the marginal approach. \emph{Statistics in Medicine} \bold{13(21)}, 2233--2247.
 
-	CG Moertel, TR Fleming, JS MacDonald,
-	DG Haller, JA Laurie, PJ Goodman, JS Ungerleider,
-	WA Emerson, DC Tormey, JH Glick, MH Veeder and JA Maillard.
-	Levamisole and fluorouracil for adjuvant therapy of
-	resected colon carcinoma. \emph{New England Journal of Medicine}, 332:352-358,
-	1990.
+	Moertel C. G., Fleming T. R., MacDonald J. S., Haller D. G., Laurie J. A., Goodman P.J., Ungerleider J.S., Emerson W.A., Tormey D.C., Glick J.H., Veeder M.H., Maillard J.A. (1990) Levamisole and fluorouracil for adjuvant therapy of resected colon carcinoma. \emph{New England Journal of Medicine} \bold{322(6)}, 352--358.
 
-	CG Moertel,  TR Fleming,  JS MacDonald, DG Haller, JA Laurie, CM Tangen,
-	JS Ungerleider, WA Emerson, DC Tormey, JH Glick, MH Veeder and JA
-	Maillard, Fluorouracil plus Levamisole as and effective adjuvant
-	therapy after resection of stage II colon carcinoma: a final report.
-	\emph{Annals of Internal Medicine}, 122:321-326, 1991.
+	Moertel C. G., Fleming T. R., MacDonald J. S., Haller D. G., Laurie J. A., Tangen C. M., Ungerleider J. S., Emerson W. A., Tormey D. C., Glick J. H., Veeder M. H., Maillard J. A. (1991) Fluorouracil plus Levamisole as an effective adjuvant therapy after resection of stage II colon carcinoma: a final report. \emph{Annals of Internal Medicine} \bold{122(5)}, 321--326.
 }
 
 \keyword{datasets}

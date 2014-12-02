@@ -6,7 +6,7 @@ TPBoot.rboot <- function(object, UT, nboot, ...) {
 	lst[[2]] <- est[[2]]
 	for (i in 2:nboot) {
 		y <- vector(mode="list", length=1)
-		y[[1]] <- object[[1]][sample.int(n=nrow(object[[1]]), replace=TRUE),]
+		y[[1]] <- object[[1]][csample.int( n=nrow(object[[1]]) ),] # csample.int must be called for reproduction with TPmsm's own RNG
 		class(y) <- class(object)[2]
 		a3d[i,,] <- TransPROB(y, UT, nboot=1, ...)[[1]]
 	}
@@ -36,7 +36,7 @@ TPCBoot.rboot <- function(object, UT, UX, nboot, ...) {
 	lst[[2]] <- est[[2]]
 	for (i in 2:nboot) {
 		y <- vector(mode="list", length=1)
-		y[[1]] <- object[[1]][sample.int(n=nrow(object[[1]]), replace=TRUE),]
+		y[[1]] <- object[[1]][csample.int( n=nrow(object[[1]]) ),] # csample.int must be called for reproduction with TPmsm's own RNG
 		class(y) <- class(object)[2]
 		a4d[i,,,] <- TransPROB(y, UT, UX, nboot=1, ...)[[1]]
 	}
