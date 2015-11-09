@@ -22,8 +22,8 @@
 	\tabular{ll}{
 		Package: \tab TPmsm\cr
 		Type: \tab Package\cr
-		Version: \tab 1.2.0\cr
-		Date: \tab 2014-12-02\cr
+		Version: \tab 1.2.1\cr
+		Date: \tab 2015-10-02\cr
 		License: \tab GPL (>= 2)\cr
 		LazyLoad: \tab yes\cr
 		LazyData: \tab yes\cr

@@ -1,5 +1,5 @@
-989b95a36cd9203ff7af8c52bb23bb51 *DESCRIPTION
-7299560ba4b66ac90e12355744947275 *NAMESPACE
+2becb73c27c3d2625bd6458cc4f5dd65 *DESCRIPTION
+71c131c363d9aae8159e489bec375d79 *NAMESPACE
 7cbfbc304a4782df13c1698a8298b2f2 *R/BtoTPCmsm.R
 9f0e4b64b87845144e986f187891f94e *R/BtoTPmsm.R
 c5e4150083c4c0df9cd0ed04c808f4f7 *R/Clean.R
@@ -48,8 +48,8 @@ da866f2ae5c1284a654e281e65b770d7 *R/uniqueTP.R
 fb0a5e4cf8fe184035b1cb097a9aed63 *data/colonTP.rda
 1dbd4cc350ce75f439f4f80d5ce97432 *data/heartTP.rda
 1a9c1cb6d0bed10e8c8fb4fd5a963089 *inst/CITATION
-cd6fa218792c59d2c82077a029bda1ad *inst/NEWS.Rd
-c665fd12b52b1f1e5ee634cd7c3dae7b *man/TPmsm-package.Rd
+e7e81a6399e5c479be3ebbbe030a667c *inst/NEWS.Rd
+7a236ed39a9a80fa63b84bb58f3ee149 *man/TPmsm-package.Rd
 4970f486f08b6b71c3c43e3fdfadce6a *man/TPmsmOut.Rd
 f4699b071b5f15fb5cdd82091efafe76 *man/as.data.frame.survTP.Rd
 27a3dbb579f7ecb22e2abff0ebcfb43a *man/bladderTP.Rd

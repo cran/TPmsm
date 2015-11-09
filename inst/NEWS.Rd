@@ -2,6 +2,12 @@
 
 \title{NEWS file for the TPmsm package}
 
+\section{Changes in version 1.2.1}{
+	\itemize{
+		\item{Corrected DESCRIPTION and NAMESPACE files.}
+	}
+}
+
 \section{Changes in version 1.2.0}{
 	\itemize{
 		\item{Improved the documentation.}
