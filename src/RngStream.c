@@ -330,30 +330,29 @@ static int CheckSeed (unsigned long seed[6])
 
 RngStream RngStream_CreateStream (const char name[])
 {
-   int i;
-   RngStream g;
-   size_t len = strlen (name);
-
-   g = (RngStream) malloc (sizeof (struct RngStream_InfoState));
-   if (g == NULL) {
-   	/* HS 01-25-2012 */
-      	error("RngStream_CreateStream: No more memory\n");
-      /* original code
-      printf ("RngStream_CreateStream: No more memory\n\n");
-      exit (EXIT_FAILURE);
-      */
-   }
-   g->name = (char *) malloc ((len + 1) * sizeof (char));
-   strncpy (g->name, name, len + 1); 
-   g->Anti = 0;
-   g->IncPrec = 0;
-
-   for (i = 0; i < 6; ++i) {
-      g->Bg[i] = g->Cg[i] = g->Ig[i] = nextSeed[i];
-   }
-   MatVecModM (A1p127, nextSeed, nextSeed, m1);
-   MatVecModM (A2p127, &nextSeed[3], &nextSeed[3], m2);
-   return g;
+  int i;
+  RngStream g;
+  
+  g = (RngStream)malloc( sizeof(struct RngStream_InfoState) );
+  if (g == NULL) {
+    /* HS 01-25-2012 */
+    error("RngStream_CreateStream: No more memory\n");
+    /* original code
+    printf ("RngStream_CreateStream: No more memory\n\n");
+    exit (EXIT_FAILURE);
+    */
+  }
+  g->name = (char *)malloc( (strlen(name)+1)*sizeof(char) );
+  strcpy(g->name, name);
+  g->Anti = 0;
+  g->IncPrec = 0;
+  
+  for (i = 0; i < 6; ++i) {
+    g->Bg[i] = g->Cg[i] = g->Ig[i] = nextSeed[i];
+  }
+  MatVecModM (A1p127, nextSeed, nextSeed, m1);
+  MatVecModM (A2p127, &nextSeed[3], &nextSeed[3], m2);
+  return g;
 }
 
 /*-------------------------------------------------------------------------*/

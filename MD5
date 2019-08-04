@@ -1,4 +1,4 @@
-2becb73c27c3d2625bd6458cc4f5dd65 *DESCRIPTION
+6e5dd1b805ac3fa0889694858d7eed6f *DESCRIPTION
 71c131c363d9aae8159e489bec375d79 *NAMESPACE
 7cbfbc304a4782df13c1698a8298b2f2 *R/BtoTPCmsm.R
 9f0e4b64b87845144e986f187891f94e *R/BtoTPmsm.R
@@ -48,7 +48,7 @@ da866f2ae5c1284a654e281e65b770d7 *R/uniqueTP.R
 fb0a5e4cf8fe184035b1cb097a9aed63 *data/colonTP.rda
 1dbd4cc350ce75f439f4f80d5ce97432 *data/heartTP.rda
 1a9c1cb6d0bed10e8c8fb4fd5a963089 *inst/CITATION
-e7e81a6399e5c479be3ebbbe030a667c *inst/NEWS.Rd
+51e3af0f228c5e367dd0be1fdfb226ac *inst/NEWS.Rd
 7a236ed39a9a80fa63b84bb58f3ee149 *man/TPmsm-package.Rd
 4970f486f08b6b71c3c43e3fdfadce6a *man/TPmsmOut.Rd
 f4699b071b5f15fb5cdd82091efafe76 *man/as.data.frame.survTP.Rd
@@ -83,7 +83,7 @@ c259fb27b45f9281aed60d82a33dcb6a *src/RngArray.c
 be6c24f5c51e49387c223c183f90c790 *src/RngArray.h
 b237afca1fb85feba3f3109e97a9ce95 *src/RngBoot.c
 8f17bbdfa31691a599b3f85b6da217d7 *src/RngBoot.h
-03879a1db3082baf6ea30ae122f6b7ef *src/RngStream.c
+ece18044bb51483c899a7fc7b648b684 *src/RngStream.c
 0a6c741f540ebe35ce8ef5e36946640c *src/RngStream.h
 bc2de60f06fad6c416a0af88da076e14 *src/TPmsm-win.def
 096eb9414d72c9e82006fed830d5e1ab *src/defines.h
@@ -134,7 +134,7 @@ dd0fc565b94716eb344df537083fbb99 *src/transKMW2.c
 9e519a8c683f3535df60cea630597f4f *src/transLIN1.h
 331257bfbb8077818d1c0c9b0d57bd20 *src/transLIN2.c
 67e2fdfd09f941f2b9728100c77f02d4 *src/transLIN2.h
-57eae1183d606071c44d0c340035fa39 *src/transLS.c
+578ba8fb7bb9aec7f111c2d8f3a0ff9c *src/transLS.c
 2d81fb42ef9020f50398887e950b0e76 *src/transLS.h
 b6a43ff1455692631a82a132010d95ac *src/transPAJ.c
 3ae16d4a3f3e44ab16dc3c9d82c73b9b *src/transPAJ.h

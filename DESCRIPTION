@@ -4,8 +4,8 @@ Type: Package
 Depends: R (>= 2.12.0),graphics,grDevices,KernSmooth
 Enhances: p3state.msm,etm
 Title: Estimation of Transition Probabilities in Multistate Models
-Version: 1.2.1
-Date: 2015-10-02
+Version: 1.2.2
+Date: 2019-08-04
 Author: Artur Araujo, Javier Roca-Pardinas <roca@uvigo.es>
         and Luis Meira-Machado <lmachado@math.uminho.pt>
 Maintainer: Artur Araujo <artur.stat@gmail.com>
@@ -15,6 +15,6 @@ License: GPL (>= 2)
 LazyLoad: yes
 LazyData: yes
 NeedsCompilation: yes
-Packaged: 2015-11-09 09:53:12 UTC; aaraujo
+Packaged: 2019-08-04 19:44:30 UTC; User
 Repository: CRAN
-Date/Publication: 2015-11-09 15:11:14
+Date/Publication: 2019-08-04 20:30:03 UTC

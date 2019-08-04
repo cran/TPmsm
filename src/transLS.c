@@ -2,7 +2,7 @@
 /*** LOCATION-SCALE TRANSITION PROBABILITIES ***/
 /***********************************************/
 
-#ifdef _OPENMP
+#if defined(_OPENMP) && !defined(__clang__)
 #include <omp.h>
 #endif
 #include <stdlib.h>
@@ -132,11 +132,11 @@ static void crossValid(
 	SW.type = INT_PTR; // type is an int pointer
 	SW.ptr.integer = E1; // hold E1 pointer in ptr union
 	SW.length = *len; // hold length of array
-	#ifdef _OPENMP
+  #if defined(_OPENMP) && !defined(__clang__)
 	#pragma omp parallel if( !omp_in_parallel() ) num_threads(global_num_threads) firstprivate(tid) private(x, y, i, j, iseed, u0, h1, aux, cv1, cv2, sum)
 	#endif
 	{
-		#ifdef _OPENMP
+    #if defined(_OPENMP) && !defined(__clang__)
 		if (omp_get_num_threads() != 1) tid = omp_get_thread_num(); // use the correct thread number
 		#endif
 		int *sample0 = WORK[tid].sample0;
@@ -149,21 +149,21 @@ static void crossValid(
 		double *c = WORK[tid].c;
 		RngStream_GetState(RngArray[tid], iseed); // save per thread seed
 		if (h[1] == h[0]) {
-			#ifdef _OPENMP
+			#if defined(_OPENMP) && !defined(__clang__)
 			#pragma omp single
 			#endif
 			{
 				H[0] = h[0];
 			}
 		} else {
-			#ifdef _OPENMP
+			#if defined(_OPENMP) && !defined(__clang__)
 			#pragma omp single
 			#endif
 			{
 				h0 = (h[1]-h[0])/(*nh-1);
 				cv0 = R_PosInf;
 			}
-			#ifdef _OPENMP
+			#if defined(_OPENMP) && !defined(__clang__)
 			#pragma omp for
 			#endif
 			for (x = 0; x < *nh; x++) {
@@ -183,7 +183,7 @@ static void crossValid(
 					cverror // compute cross-validation error term
 					cv1 += cv2 / *ncv; // compute cross-validation error
 				}
-				#ifdef _OPENMP
+				#if defined(_OPENMP) && !defined(__clang__)
 				#pragma omp critical
 				#endif
 				{
@@ -196,7 +196,7 @@ static void crossValid(
 		}
 		if (*cvfull) {
 			if (h[3] == h[2]) {
-				#ifdef _OPENMP
+				#if defined(_OPENMP) && !defined(__clang__)
 				#pragma omp single
 				#endif
 				{
@@ -206,14 +206,14 @@ static void crossValid(
 				RngStream_SetSeed(RngArray[tid], iseed); // restore seed
 				double *E0B = WORK[tid].E0B;
 				double *E1B = WORK[tid].E1B;
-				#ifdef _OPENMP
+				#if defined(_OPENMP) && !defined(__clang__)
 				#pragma omp single
 				#endif
 				{
 					h0 = (h[3]-h[2])/(*nh-1);
 					cv0 = R_PosInf;
 				}
-				#ifdef _OPENMP
+				#if defined(_OPENMP) && !defined(__clang__)
 				#pragma omp for
 				#endif
 				for (x = 0; x < *nh; x++) {
@@ -250,7 +250,7 @@ static void crossValid(
 						#undef T2
 						cv1 += cv2 / *ncv; // compute cross-validation error
 					}
-					#ifdef _OPENMP
+					#if defined(_OPENMP) && !defined(__clang__)
 					#pragma omp critical
 					#endif
 					{
@@ -262,7 +262,7 @@ static void crossValid(
 				}
 			}
 		} else {
-			#ifdef _OPENMP
+			#if defined(_OPENMP) && !defined(__clang__)
 			#pragma omp single
 			#endif
 			{
@@ -321,19 +321,19 @@ static void LSmeasuresI(
 	CintCP t,
 	transLSW *WORK)
 {
-	#ifdef _OPENMP
+	#if defined(_OPENMP) && !defined(__clang__)
 	#pragma omp parallel if( !omp_in_parallel() ) num_threads(global_num_threads)
 	#endif
 	{
 		register int i, j;
 		int tid = *t;
 		double aux;
-		#ifdef _OPENMP
+		#if defined(_OPENMP) && !defined(__clang__)
 		if (omp_get_num_threads() != 1) tid = omp_get_thread_num(); // use the correct thread number
 		#endif
 		double *K = WORK[tid].K;
 		if (H[1] == H[0]) {
-			#ifdef _OPENMP
+			#if defined(_OPENMP) && !defined(__clang__)
 			#pragma omp for
 			#endif
 			for (i = 0; i < *len; i++) {
@@ -356,7 +356,7 @@ static void LSmeasuresI(
 				SX[index[i]] = sqrt(SX[index[i]]); // compute standard deviation
 			}
 		} else {
-			#ifdef _OPENMP
+			#if defined(_OPENMP) && !defined(__clang__)
 			#pragma omp for
 			#endif
 			for (i = 0; i < *len; i++) {
@@ -368,7 +368,7 @@ static void LSmeasuresI(
 				}
 				if (K[index[*len-1]] != 1) MX[index[i]] /= 1-K[index[*len-1]]; // normalize mean
 			}
-			#ifdef _OPENMP
+			#if defined(_OPENMP) && !defined(__clang__)
 			#pragma omp for
 			#endif
 			for (i = 0; i < *len; i++) {
@@ -491,11 +491,11 @@ static void transLSI(
 	order_d(EX, index1, *len, FALSE, FALSE, SV); // get permuation
 	kmsurv(len, EX, E, index1, len, SV); // compute survival probabilities
 	x = e0;
-	#ifdef _OPENMP
+	#if defined(_OPENMP) && !defined(__clang__)
 	#pragma omp parallel for if(*b < 1) num_threads(global_num_threads) private(i, j, k, aux, e1) firstprivate(x) ordered
 	#endif
 	for (i = 0; i < *nt; i++) {
-		#ifdef _OPENMP
+		#if defined(_OPENMP) && !defined(__clang__)
 		#pragma omp ordered
 		#endif
 		{
@@ -517,11 +517,11 @@ static void transLSI(
 			x = e1;
 		}
 	}
-	#ifdef _OPENMP
+	#if defined(_OPENMP) && !defined(__clang__)
 	#pragma omp parallel for if(*b < 1) num_threads(global_num_threads) private(i) ordered
 	#endif
 	for (i = *nt-1; i >= 0; i--) {
-		#ifdef _OPENMP
+		#if defined(_OPENMP) && !defined(__clang__)
 		#pragma omp ordered
 		#endif
 		{
@@ -628,16 +628,16 @@ SEXP TransPROBLS(
 	REAL(H)[0] = HC[0];
 	REAL(H)[1] = HC[1];
 	if (*INTEGER(nboot) > 1) {
-		#ifdef _OPENMP
+		#if defined(_OPENMP) && !defined(__clang__)
 		#pragma omp parallel num_threads(global_num_threads) private(b, t) firstprivate(HC)
 		#endif
 		{
-			#ifdef _OPENMP
+			#if defined(_OPENMP) && !defined(__clang__)
 			t = omp_get_thread_num();
 			#else
 			t = 0;
 			#endif
-			#ifdef _OPENMP
+			#if defined(_OPENMP) && !defined(__clang__)
 			#pragma omp for
 			#endif
 			for (b = 1; b < *INTEGER(nboot); b++) {
