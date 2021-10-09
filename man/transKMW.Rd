@@ -28,50 +28,53 @@ conf.level=0.95, method.boot="percentile", method.est=3)}
 }
 
 \details{
-	If \code{method.est=1} then \eqn{p_{11}(s,t)}, \eqn{p_{12}(s,t)} and \eqn{p_{22}(s,t)} are estimated according to the following expressions:\cr\cr
-	\eqn{p_{11}(s,t)=\frac{1-P(Z \leq t)}{1-P(Z \leq s)}},\cr\cr
-	\eqn{p_{12}(s,t)=\frac{P(Z \leq t)-P(Z \leq s)-P(s<Z \leq t, T \leq t)}{1-P(Z \leq s)}},\cr\cr
-	\eqn{p_{22}(s,t) =\frac{P(Z \leq s)-P(Z \leq s,T \leq t)}{P(Z \leq s)-P(T \leq s)}}.\cr\cr
-	Then, \eqn{p_{13}(s,t)=1-p_{11}(s,t)-p_{12}(s,t)} and \eqn{p_{23}(s,t)=1-p_{22}(s,t)}.\cr\cr
-	If \code{method.est=2} then \eqn{p_{11}(s,t)}, \eqn{p_{12}(s,t)} and \eqn{p_{22}(s,t)} are estimated according to the following expressions:\cr\cr
-	\eqn{p_{11}(s,t)=\frac{P(Z>t)}{P(Z>s)}},\cr\cr
-	\eqn{p_{12}(s,t)=\frac{P(s<Z \leq t,T>t)}{P(Z>s)}},\cr\cr
-	\eqn{p_{22}(s,t) =\frac{P(Z \leq s,T>t)}{P(Z \leq s,T>s)}}.\cr\cr
-	Then, \eqn{p_{13}(s,t)=1-p_{11}(s,t)-p_{12}(s,t)} and \eqn{p_{23}(s,t)=1-p_{22}(s,t)}.\cr\cr
-	If \code{method.est=3} then \eqn{p_{11}(s,t)}, \eqn{p_{13}(s,t)} and \eqn{p_{23}(s,t)} are estimated according to the following expressions:\cr\cr
-	\eqn{p_{11}(s,t)=\frac{1-P(Z \leq t)}{1-P(Z \leq s)}},\cr\cr
-	\eqn{p_{13}(s,t)=\frac{P(Z>s,T \leq t)}{1-P(Z \leq s)}},\cr\cr
-	\eqn{p_{23}(s,t) =\frac{P(Z \leq s,s<T \leq t)}{P(Z \leq s)-P(T \leq s)}}.\cr\cr
-	Then, \eqn{p_{12}(s,t)=1-p_{11}(s,t)-p_{13}(s,t)} and \eqn{p_{22}(s,t)=1-p_{23}(s,t)}.\cr\cr
-	If \code{method.est=4} then \eqn{p_{11}(s,t)}, \eqn{p_{13}(s,t)} and \eqn{p_{23}(s,t)} are estimated according to the following expressions:\cr\cr
-	\eqn{p_{11}(s,t)=\frac{P(Z>t)}{P(Z>s)}},\cr\cr
-	\eqn{p_{13}(s,t)=\frac{P(Z>s,T \leq t)}{P(Z>s)}},\cr\cr
-	\eqn{p_{23}(s,t) =\frac{P(Z \leq s,s<T \leq t)}{P(Z \leq s,T>s)}}.\cr\cr
-	Then, \eqn{p_{12}(s,t)=1-p_{11}(s,t)-p_{13}(s,t)} and \eqn{p_{22}(s,t)=1-p_{23}(s,t)}.
+If \code{method.est=1} then \eqn{p_{11}(s,t)}, \eqn{p_{12}(s,t)} and \eqn{p_{22}(s,t)} are estimated according to the following expressions:\cr\cr
+\eqn{p_{11}(s,t)=\frac{1-P(Z \leq t)}{1-P(Z \leq s)}},\cr\cr
+\eqn{p_{12}(s,t)=\frac{P(Z \leq t)-P(Z \leq s)-P(s<Z \leq t, T \leq t)}{1-P(Z \leq s)}},\cr\cr
+\eqn{p_{22}(s,t) =\frac{P(Z \leq s)-P(Z \leq s,T \leq t)}{P(Z \leq s)-P(T \leq s)}}.\cr\cr
+Then, \eqn{p_{13}(s,t)=1-p_{11}(s,t)-p_{12}(s,t)} and \eqn{p_{23}(s,t)=1-p_{22}(s,t)}.\cr\cr
+If \code{method.est=2} then \eqn{p_{11}(s,t)}, \eqn{p_{12}(s,t)} and \eqn{p_{22}(s,t)} are estimated according to the following expressions:\cr\cr
+\eqn{p_{11}(s,t)=\frac{P(Z>t)}{P(Z>s)}},\cr\cr
+\eqn{p_{12}(s,t)=\frac{P(s<Z \leq t,T>t)}{P(Z>s)}},\cr\cr
+\eqn{p_{22}(s,t) =\frac{P(Z \leq s,T>t)}{P(Z \leq s,T>s)}}.\cr\cr
+Then, \eqn{p_{13}(s,t)=1-p_{11}(s,t)-p_{12}(s,t)} and \eqn{p_{23}(s,t)=1-p_{22}(s,t)}.\cr\cr
+If \code{method.est=3} then \eqn{p_{11}(s,t)}, \eqn{p_{13}(s,t)} and \eqn{p_{23}(s,t)} are estimated according to the following expressions:\cr\cr
+\eqn{p_{11}(s,t)=\frac{1-P(Z \leq t)}{1-P(Z \leq s)}},\cr\cr
+\eqn{p_{13}(s,t)=\frac{P(Z>s,T \leq t)}{1-P(Z \leq s)}},\cr\cr
+\eqn{p_{23}(s,t) =\frac{P(Z \leq s,s<T \leq t)}{P(Z \leq s)-P(T \leq s)}}.\cr\cr
+Then, \eqn{p_{12}(s,t)=1-p_{11}(s,t)-p_{13}(s,t)} and \eqn{p_{22}(s,t)=1-p_{23}(s,t)}.\cr\cr
+If \code{method.est=4} then \eqn{p_{11}(s,t)}, \eqn{p_{13}(s,t)} and \eqn{p_{23}(s,t)} are estimated according to the following expressions:\cr\cr
+\eqn{p_{11}(s,t)=\frac{P(Z>t)}{P(Z>s)}},\cr\cr
+\eqn{p_{13}(s,t)=\frac{P(Z>s,T \leq t)}{P(Z>s)}},\cr\cr
+\eqn{p_{23}(s,t) =\frac{P(Z \leq s,s<T \leq t)}{P(Z \leq s,T>s)}}.\cr\cr
+Then, \eqn{p_{12}(s,t)=1-p_{11}(s,t)-p_{13}(s,t)} and \eqn{p_{22}(s,t)=1-p_{23}(s,t)}.
 }
 
 \value{
-	An object of class \sQuote{TPmsm}. There are methods for \code{contour}, \code{image}, \code{print} and \code{plot}.
-	\sQuote{TPmsm} objects are implemented as a list with elements:
-	\item{method}{A string indicating the type of estimator used in the computation.}
-	\item{est}{A matrix with transition probability estimates. The rows being the event times and the columns the 5 possible transitions.}
-	\item{inf}{A matrix with the lower transition probabilities of the confidence band. The rows being the event times and the columns the 5 possible transitions.}
-	\item{sup}{A matrix with the upper transition probabilities of the confidence band. The rows being the event times and the columns the 5 possible transitions.}
-	\item{time}{Vector of times where the transition probabilities are computed.}
-	\item{s}{Start of the time interval.}
-	\item{t}{End of the time interval.}
-	\item{h}{The bandwidth used. If the estimator doesn't require a bandwidth, it's set to \code{NULL}.}
-	\item{state.names}{A vector of characters giving the states names.}
-	\item{n.boot}{Number of bootstrap samples used in the computation of the confidence band.}
-	\item{conf.level}{Level of confidence used to compute the confidence band.}
+An object of class \sQuote{TPmsm}. There are methods for \code{contour}, \code{image}, \code{print} and \code{plot}.
+\sQuote{TPmsm} objects are implemented as a list with elements:
+\item{method}{A string indicating the type of estimator used in the computation.}
+\item{est}{A matrix with transition probability estimates. The rows being the event times and the columns the 5 possible transitions.}
+\item{inf}{A matrix with the lower transition probabilities of the confidence band. The rows being the event times and the columns the 5 possible transitions.}
+\item{sup}{A matrix with the upper transition probabilities of the confidence band. The rows being the event times and the columns the 5 possible transitions.}
+\item{time}{Vector of times where the transition probabilities are computed.}
+\item{s}{Start of the time interval.}
+\item{t}{End of the time interval.}
+\item{h}{The bandwidth used. If the estimator doesn't require a bandwidth, it's set to \code{NULL}.}
+\item{state.names}{A vector of characters giving the states names.}
+\item{n.boot}{Number of bootstrap samples used in the computation of the confidence band.}
+\item{conf.level}{Level of confidence used to compute the confidence band.}
 }
 
 \author{Artur Araújo, Javier Roca-Pardiñas and Luís Meira-Machado}
 
 \references{
-	Meira Machado L. F., de Uña-Álvarez J., Cadarso-Suárez C. (2006) Nonparametric estimation of transition probabilities in a non-Markov illness-death model. \emph{Lifetime Data Anal} \bold{12(3)}, 325--344.
+Araújo A, Meira-Machado L, Roca-Pardiñas J (2014) TPmsm: Estimation of the Transition Probabilities in
+3-State Models. \emph{Journal of Statistical Software}, \bold{62}(4), 1-29. \doi{10.18637/jss.v062.i04}
 
-	Davison, A. C., Hinkley, D. V. (1997) \emph{Bootstrap Methods and their Application} Chapter 5, Cambridge University Press.
+Meira Machado L. F., de Uña-Álvarez J., Cadarso-Suárez C. (2006) Nonparametric estimation of transition probabilities in a non-Markov illness-death model. \emph{Lifetime Data Anal} \bold{12}(3), 325--344. \doi{10.1007/s10985-006-9009-x}
+
+Davison, A. C., Hinkley, D. V. (1997) \emph{Bootstrap Methods and their Application} Chapter 5, Cambridge University Press.
 }
 
 %\note{
@@ -81,12 +84,12 @@ conf.level=0.95, method.boot="percentile", method.est=3)}
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-	\code{\link{transAJ}},
-	\code{\link{transIPCW}},
-	\code{\link{transKMPW}},
-	\code{\link{transLIN}},
-	\code{\link{transLS}},
-	\code{\link{transPAJ}}.
+\code{\link{transAJ}},
+\code{\link{transIPCW}},
+\code{\link{transKMPW}},
+\code{\link{transLIN}},
+\code{\link{transLS}},
+\code{\link{transPAJ}}.
 }
 
 \examples{

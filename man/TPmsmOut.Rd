@@ -25,14 +25,17 @@
 \author{Artur Araújo, Javier Roca-Pardiñas and Luís Meira-Machado}
 
 \references{
-	Allignol A., Schumacher M., Beyersmann J. (2011) Empirical Transition Matrix of Multi-State Models: The etm Package. \emph{Journal of Statistical Software} \bold{38(4)}, 1--15.
+Allignol A., Schumacher M., Beyersmann J. (2011) Empirical Transition Matrix of Multi-State Models: The etm Package. \emph{Journal of Statistical Software} \bold{38}(4), 1--15. \doi{10.18637/jss.v038.i04}
 
-	Meira-Machado L., Roca-Pardiñas J. (2011) p3state.msm: Analyzing Survival Data from an Illness-Death Model. \emph{Journal of Statistical Software} \bold{38(3)}, 1--18.
+Araújo A, Meira-Machado L, Roca-Pardiñas J (2014) TPmsm: Estimation of the Transition Probabilities in
+3-State Models. \emph{Journal of Statistical Software}, \bold{62}(4), 1-29. \doi{10.18637/jss.v062.i04}
+
+Meira-Machado L., Roca-Pardiñas J. (2011) p3state.msm: Analyzing Survival Data from an Illness-Death Model. \emph{Journal of Statistical Software} \bold{38}(3), 1--18. \doi{10.18637/jss.v038.i03}
 }
 
 \seealso{
-	\code{\link{as.data.frame.survTP}},
-	\code{\link{survTP}}.
+\code{\link{as.data.frame.survTP}},
+\code{\link{survTP}}.
 }
 
 \examples{

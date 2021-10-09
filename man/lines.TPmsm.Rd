@@ -31,16 +31,21 @@ legend=FALSE, legend.pos, curvlab, legend.bty="n", ...)}
 }
 
 \value{
-	No value is returned.
+No value is returned.
 }
 
 \author{Artur Araújo, Javier Roca-Pardiñas and Luís Meira-Machado}
 
+\references{
+Araújo A, Meira-Machado L, Roca-Pardiñas J (2014) TPmsm: Estimation of the Transition Probabilities in
+3-State Models. \emph{Journal of Statistical Software}, \bold{62}(4), 1-29. \doi{10.18637/jss.v062.i04}
+}
+
 \seealso{
-	\code{\link{legend}},
-	\code{\link{lines}},
-	\code{\link{plot.default}},
-	\code{\link{plot.TPmsm}}.
+\code{\link{legend}},
+\code{\link{lines}},
+\code{\link{plot.default}},
+\code{\link{plot.TPmsm}}.
 }
 
 \examples{

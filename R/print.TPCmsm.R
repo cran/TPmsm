@@ -1,7 +1,7 @@
 print.TPCmsm <- function(x, ...) {
 	if ( !inherits(x, "TPCmsm") ) stop("'x' must be of class 'TPCmsm'")
 	lst <- TransMatrix(x)
-	if (x$method == "IPCW2") cat("Inverse Probability of Censoring Weighted conditional transition probabilities\n")
+	if (x$method == "IPCW2") cat("Inverse Probability Censoring Weighted conditional transition probabilities\n")
 	else if (x$method == "LIN2") cat("Lin conditional transition probabilities\n")
 #	cat("\n")
 #	cat( paste("Bandwidth = ", x$h, "\n", sep = "") )

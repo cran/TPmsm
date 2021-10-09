@@ -1,20 +1,47 @@
 Encoding: UTF-8
 Package: TPmsm
 Type: Package
-Depends: R (>= 2.12.0),graphics,grDevices,KernSmooth
-Enhances: p3state.msm,etm
+Version: 1.2.4
+Date: 2021-10-08
 Title: Estimation of Transition Probabilities in Multistate Models
-Version: 1.2.2
-Date: 2019-08-04
-Author: Artur Araujo, Javier Roca-Pardinas <roca@uvigo.es>
-        and Luis Meira-Machado <lmachado@math.uminho.pt>
-Maintainer: Artur Araujo <artur.stat@gmail.com>
+Authors@R: c(
+	person(
+		given = "Artur",
+		family = "Araujo",
+		role = c("aut", "cre"),
+		email = "artur.stat@gmail.com",
+		comment = c(ORCID = "0000-0003-1419-4208")
+	),
+	person(
+		given = "Javier",
+		family = "Roca-Pardinas",
+		role = "aut",
+		email = "roca@uvigo.es",
+		comment = c(ORCID = "0000-0003-3107-4515")
+	),
+	person(
+		given = "Luis",
+		family = "Meira-Machado",
+		role = "aut",
+		email = "lmachado@math.uminho.pt",
+		comment = c(ORCID = "0000-0002-8577-7665")
+	) )
+Depends: R (>= 3.1.0), graphics, grDevices, KernSmooth
+Enhances: p3state.msm, etm
+Suggests: knitr
+VignetteBuilder: knitr
 Description: Estimation of transition probabilities for the
-        illness-death model and or the three-state progressive model.
-License: GPL (>= 2)
+	illness-death model and or the three-state progressive model.
+License: GPL-3 | file LICENSE
+URL: https://github.com/arturstat/TPmsm
+BugReports: https://github.com/arturstat/TPmsm/issues
 LazyLoad: yes
 LazyData: yes
 NeedsCompilation: yes
-Packaged: 2019-08-04 19:44:30 UTC; User
+Packaged: 2021-10-08 19:36:26 UTC; User
+Author: Artur Araujo [aut, cre] (<https://orcid.org/0000-0003-1419-4208>),
+  Javier Roca-Pardinas [aut] (<https://orcid.org/0000-0003-3107-4515>),
+  Luis Meira-Machado [aut] (<https://orcid.org/0000-0002-8577-7665>)
+Maintainer: Artur Araujo <artur.stat@gmail.com>
 Repository: CRAN
-Date/Publication: 2019-08-04 20:30:03 UTC
+Date/Publication: 2021-10-09 15:30:17 UTC

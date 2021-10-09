@@ -35,20 +35,23 @@ ci.col, ci.lty, legend=FALSE, legend.pos, curvlab, legend.bty="n", ...)}
 }
 
 \value{
-	No value is returned.
+No value is returned.
 }
 
 \author{Artur Araújo, Javier Roca-Pardiñas and Luís Meira-Machado}
 
 \references{
-	Meira-Machado L., de Uña-Álvarez J., Datta S. Conditional Transition Probabilities in a non-Markov Illness-death Model. Discussion Papers in Statistics and Operation Research n 11/03, 2011. Department of Statistics and Operations Research, University of Vigo (ISSN: 1888-5756, Deposito Legal VG 1402 - 2007). This file can be downloaded from: \url{http://webs.uvigo.es/depc05/reports/12_05.pdf}
+Araújo A, Meira-Machado L, Roca-Pardiñas J (2014) TPmsm: Estimation of the Transition Probabilities in
+3-State Models. \emph{Journal of Statistical Software}, \bold{62}(4), 1-29. \doi{10.18637/jss.v062.i04}
+
+Meira-Machado L., de Uña-Álvarez J., Datta S. Conditional Transition Probabilities in a non-Markov Illness-death Model. Discussion Papers in Statistics and Operation Research n 11/03, 2011. Department of Statistics and Operations Research, University of Vigo (ISSN: 1888-5756, Deposito Legal VG 1402 - 2007). \url{https://depc05.webs.uvigo.es/reports/12_05.pdf}
 }
 
 \seealso{
-	\code{\link{legend}},
-	\code{\link{lines}},
-	\code{\link{plot.default}},
-	\code{\link{plot.TPCmsm}}.
+\code{\link{legend}},
+\code{\link{lines}},
+\code{\link{plot.default}},
+\code{\link{plot.TPCmsm}}.
 }
 
 \examples{

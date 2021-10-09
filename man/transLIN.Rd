@@ -46,52 +46,55 @@ method.boot="percentile", ...)}
 }
 
 \details{
-	If \code{bw="dpik"} then possible options for argument \code{window} are \dQuote{normal}, \dQuote{box}, \dQuote{epanech}, \dQuote{biweight} or \dQuote{triweight}.
-	When argument \code{bw} is numeric then argument \code{window} accepts the same options as when \code{bw="dpik"} plus one of \dQuote{tricube}, \dQuote{triangular} or \dQuote{cosine}.
+If \code{bw="dpik"} then possible options for argument \code{window} are \dQuote{normal}, \dQuote{box}, \dQuote{epanech}, \dQuote{biweight} or \dQuote{triweight}.
+When argument \code{bw} is numeric then argument \code{window} accepts the same options as when \code{bw="dpik"} plus one of \dQuote{tricube}, \dQuote{triangular} or \dQuote{cosine}.
 }
 
 \value{
-	If argument \code{x} is missing or if argument \code{object} doesn't contain a covariate,
-	an object of class \sQuote{TPmsm} is returned. There are methods for \code{contour}, \code{image}, \code{print} and \code{plot}.
-	\sQuote{TPmsm} objects are implemented as a list with elements:
-	\item{method}{A string indicating the type of estimator used in the computation.}
-	\item{est}{A matrix with transition probability estimates. The rows being the event times and the columns the 5 possible transitions.}
-	\item{inf}{A matrix with the lower transition probabilities of the confidence band. The rows being the event times and the columns the 5 possible transitions.}
-	\item{sup}{A matrix with the upper transition probabilities of the confidence band. The rows being the event times and the columns the 5 possible transitions.}
-	\item{time}{Vector of times where the transition probabilities are computed.}
-	\item{s}{Start of the time interval.}
-	\item{t}{End of the time interval.}
-	\item{h}{The bandwidth used. If the estimator doesn't require a bandwidth, it's set to \code{NULL}.}
-	\item{state.names}{A vector of characters giving the states names.}
-	\item{n.boot}{Number of bootstrap samples used in the computation of the confidence band.}
-	\item{conf.level}{Level of confidence used to compute the confidence band.}
+If argument \code{x} is missing or if argument \code{object} doesn't contain a covariate,
+an object of class \sQuote{TPmsm} is returned. There are methods for \code{contour}, \code{image}, \code{print} and \code{plot}.
+\sQuote{TPmsm} objects are implemented as a list with elements:
+\item{method}{A string indicating the type of estimator used in the computation.}
+\item{est}{A matrix with transition probability estimates. The rows being the event times and the columns the 5 possible transitions.}
+\item{inf}{A matrix with the lower transition probabilities of the confidence band. The rows being the event times and the columns the 5 possible transitions.}
+\item{sup}{A matrix with the upper transition probabilities of the confidence band. The rows being the event times and the columns the 5 possible transitions.}
+\item{time}{Vector of times where the transition probabilities are computed.}
+\item{s}{Start of the time interval.}
+\item{t}{End of the time interval.}
+\item{h}{The bandwidth used. If the estimator doesn't require a bandwidth, it's set to \code{NULL}.}
+\item{state.names}{A vector of characters giving the states names.}
+\item{n.boot}{Number of bootstrap samples used in the computation of the confidence band.}
+\item{conf.level}{Level of confidence used to compute the confidence band.}
 
-	If argument \code{x} is specified and argument \code{object} contains a covariate,
-	an object of class \sQuote{TPCmsm} is returned. There are methods for \code{print} and \code{plot}.
-	\sQuote{TPCmsm} objects are implemented as a list with elements:
-	\item{method}{A string indicating the type of estimator used in the computation.}
-	\item{est}{A 3 dimensional array with transition probability estimates. The first dimension being the event times, the second the covariate values and the last one the 5 possible transitions.}
-	\item{inf}{A 3 dimensional array with the lower transition probabilities of the confidence band. The first dimension being the event times, the second the covariate values and the last one the 5 possible transitions.}
-	\item{sup}{A 3 dimensional array with the upper transition probabilities of the confidence band. The first dimension being the event times, the second the covariate values and the last one the 5 possible transitions.}
-	\item{time}{Vector of times where the transition probabilities are computed.}
-	\item{covariate}{Vector of covariate values where the conditional transition probabilities are computed.}
-	\item{s}{Start of the time interval.}
-	\item{t}{End of the time interval.}
-	\item{x}{Additional covariate values where the conditional transition probabilities are computed, which may or may not be present in the sample.}
-	\item{h}{The bandwidth used.}
-	\item{state.names}{A vector of characters giving the states names.}
-	\item{n.boot}{Number of bootstrap samples used in the computation of the confidence band.}
-	\item{conf.level}{Level of confidence used to compute the confidence band.}
+If argument \code{x} is specified and argument \code{object} contains a covariate,
+an object of class \sQuote{TPCmsm} is returned. There are methods for \code{print} and \code{plot}.
+\sQuote{TPCmsm} objects are implemented as a list with elements:
+\item{method}{A string indicating the type of estimator used in the computation.}
+\item{est}{A 3 dimensional array with transition probability estimates. The first dimension being the event times, the second the covariate values and the last one the 5 possible transitions.}
+\item{inf}{A 3 dimensional array with the lower transition probabilities of the confidence band. The first dimension being the event times, the second the covariate values and the last one the 5 possible transitions.}
+\item{sup}{A 3 dimensional array with the upper transition probabilities of the confidence band. The first dimension being the event times, the second the covariate values and the last one the 5 possible transitions.}
+\item{time}{Vector of times where the transition probabilities are computed.}
+\item{covariate}{Vector of covariate values where the conditional transition probabilities are computed.}
+\item{s}{Start of the time interval.}
+\item{t}{End of the time interval.}
+\item{x}{Additional covariate values where the conditional transition probabilities are computed, which may or may not be present in the sample.}
+\item{h}{The bandwidth used.}
+\item{state.names}{A vector of characters giving the states names.}
+\item{n.boot}{Number of bootstrap samples used in the computation of the confidence band.}
+\item{conf.level}{Level of confidence used to compute the confidence band.}
 }
 
 \author{Artur Araújo, Javier Roca-Pardiñas and Luís Meira-Machado}
 
 \references{
-	Meira-Machado L., de Uña-Álvarez J., Datta S. Conditional Transition Probabilities in a non-Markov Illness-death Model. Discussion Papers in Statistics and Operation Research n 11/03, 2011. Department of Statistics and Operations Research, University of Vigo (ISSN: 1888-5756, Deposito Legal VG 1402 - 2007). This file can be downloaded from: \url{http://webs.uvigo.es/depc05/reports/12_05.pdf}
+Araújo A, Meira-Machado L, Roca-Pardiñas J (2014) TPmsm: Estimation of the Transition Probabilities in
+3-State Models. \emph{Journal of Statistical Software}, \bold{62}(4), 1-29. \doi{10.18637/jss.v062.i04}
 
-	Meira Machado L. F., de Uña-Álvarez J., Cadarso-Suárez C. (2006) Nonparametric estimation of transition probabilities in a non-Markov illness-death model. \emph{Lifetime Data Anal} \bold{12(3)}, 325--344.
+Meira-Machado L., de Uña-Álvarez J., Datta S. Conditional Transition Probabilities in a non-Markov Illness-death Model. Discussion Papers in Statistics and Operation Research n 11/03, 2011. Department of Statistics and Operations Research, University of Vigo (ISSN: 1888-5756, Deposito Legal VG 1402 - 2007). \url{https://depc05.webs.uvigo.es/reports/12_05.pdf}
 
-	Davison, A. C., Hinkley, D. V. (1997) \emph{Bootstrap Methods and their Application} Chapter 5, Cambridge University Press.
+Meira Machado L. F., de Uña-Álvarez J., Cadarso-Suárez C. (2006) Nonparametric estimation of transition probabilities in a non-Markov illness-death model. \emph{Lifetime Data Anal} \bold{12}(3), 325--344. \doi{10.1007/s10985-006-9009-x}
+
+Davison, A. C., Hinkley, D. V. (1997) \emph{Bootstrap Methods and their Application} Chapter 5, Cambridge University Press.
 }
 
 %\note{
@@ -101,12 +104,12 @@ method.boot="percentile", ...)}
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-	\code{\link{transAJ}},
-	\code{\link{transIPCW}},
-	\code{\link{transKMPW}},
-	\code{\link{transKMW}},
-	\code{\link{transLS}},
-	\code{\link{transPAJ}}.
+\code{\link{transAJ}},
+\code{\link{transIPCW}},
+\code{\link{transKMPW}},
+\code{\link{transKMW}},
+\code{\link{transLS}},
+\code{\link{transPAJ}}.
 }
 
 \examples{

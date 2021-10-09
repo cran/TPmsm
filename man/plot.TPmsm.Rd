@@ -4,8 +4,8 @@
 \title{plot method for a TPmsm object}
 
 \description{
-	plot method for an object of class \sQuote{TPmsm}.
-	It draws the estimated transition probabilities in a basic scatterplot.
+plot method for an object of class \sQuote{TPmsm}.
+It draws the estimated transition probabilities in a basic scatterplot.
 }
 
 \usage{\S3method{plot}{TPmsm}(x, tr.choice, xlab = "Time", ylab="Transition probability",
@@ -39,14 +39,19 @@ legend=TRUE, legend.pos, curvlab, legend.bty="n", ...)}
 }
 
 \value{
-	No value is returned.
+No value is returned.
 }
 
 \author{Artur Araújo, Javier Roca-Pardiñas and Luís Meira-Machado}
 
+\references{
+Araújo A, Meira-Machado L, Roca-Pardiñas J (2014) TPmsm: Estimation of the Transition Probabilities in
+3-State Models. \emph{Journal of Statistical Software}, \bold{62}(4), 1-29. \doi{10.18637/jss.v062.i04}
+}
+
 \seealso{
-	\code{\link{legend}},
-	\code{\link{plot.default}}.
+\code{\link{legend}},
+\code{\link{plot.default}}.
 }
 
 \examples{

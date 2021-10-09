@@ -41,9 +41,12 @@ Where \eqn{0 < \delta \le 1}{0 < \delta \le 1} and each marginal distribution ha
 \author{Artur Araújo, Javier Roca-Pardiñas and Luís Meira-Machado}
 
 \references{
-	Johnson N., Kotz S. (1972) \emph{Distributions in statistics: continuous multivariate distributions} John Wiley and Sons.
+Araújo A, Meira-Machado L, Roca-Pardiñas J (2014) TPmsm: Estimation of the Transition Probabilities in
+3-State Models. \emph{Journal of Statistical Software}, \bold{62}(4), 1-29. \doi{10.18637/jss.v062.i04}
 
-	Lu J., Bhattacharya G. (1990) Some new constructions of bivariate weibull models. \emph{Annals of Institute of Statistical Mathematics} \bold{42(3)}, 543--559.
+Johnson N., Kotz S. (1972) \emph{Distributions in statistics: continuous multivariate distributions} John Wiley and Sons.
+
+Lu J., Bhattacharya G. (1990) Some new constructions of bivariate weibull models. \emph{Annals of Institute of Statistical Mathematics} \bold{42}(3), 543--559. \doi{10.1007/BF00049307}
 }
 
 %\note{
@@ -53,7 +56,7 @@ Where \eqn{0 < \delta \le 1}{0 < \delta \le 1} and each marginal distribution ha
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-	\code{\link{dgpTP}}.
+\code{\link{dgpTP}}.
 }
 
 \examples{

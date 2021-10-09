@@ -1,0 +1,1165 @@
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{TPmsm: Estimation of the Transition Probabilities in 3-State Models}
+\documentclass[nojss]{jss}
+\usepackage{thumbpdf}
+\usepackage{amsmath}
+\usepackage{MnSymbol}
+
+\author{Artur Ara\'ujo\\ University of Sheffield
+  \And
+  Lu\'{\i}s Meira-Machado\\ University of Minho
+  \And
+  Javier Roca-Pardi\~{n}as\\ University of Vigo
+}
+\Plainauthor{Artur Ara\'ujo, Lu\'{\i}s Meira-Machado, Javier Roca-Pardi\~{n}as}
+
+\title{\pkg{TPmsm}: Estimation of the Transition Probabilities in 3-State Models}
+\Plaintitle{TPmsm: Estimation of the Transition Probabilities in 3-State Models}
+\Shorttitle{\pkg{TPmsm}: Transition Probabilities in 3-State Models}
+
+\Abstract{
+  One major goal in clinical applications of multi-state
+  models is the estimation of transition probabilities. The usual
+  nonparametric estimator of the transition matrix for non-homogeneous
+  Markov processes is the Aalen-Johansen estimator \citep{AJ1978}.
+  However, two problems may arise from using this estimator: first,
+  its standard error may be large in heavy censored scenarios; second,
+  the estimator may be inconsistent if the process is
+  non-Markovian. The development of the \proglang{R} package
+  \pkg{TPmsm} has been motivated by several recent contributions that
+  account for these estimation problems. Estimation and statistical
+  inference for transition probabilities can be performed using
+  \pkg{TPmsm}. The \pkg{TPmsm} package provides seven different
+  approaches to three-state illness-death modeling. In two of these
+  approaches the transition probabilities are estimated conditionally
+  on current or past covariate measures. Two real data examples are
+  included for illustration of software usage.
+}
+
+\Keywords{survival, Kaplan-Meier, multi-state model, illness-death model, transition probabilities}
+
+\Address{
+  Artur Ara\'ujo\\
+  School of Health and Related Research\\
+  The University of Sheffield\\
+  Regent Court\\
+  30 Regent Street\\
+  Sheffield\\
+  S1 4DA\\
+  United Kingdom\\
+  E-mail: \email{artur.stat@gmail.com}\\
+
+  Lu\'{\i}s Meira-Machado\\
+  Department of Mathematics and Applications\\
+  Centre of Mathematics\\
+  University of Minho\\
+  4810-058 Azur\'{e}m, Guimar\~{a}es, Portugal\\
+  Telephone: +351/253510400\\
+  Fax:       +351/253510401\\
+  E-mail: \email{lmachado@math.uminho.pt}
+}
+
+\begin{document}
+
+A version of this manuscript has been published online in the
+\emph{Journal of Statistical Software}, on Dec.\ 2014, with \doi{10.18637/jss.v062.i04}.
+
+\vspace*{-0.35cm}
+
+\section{Introduction}
+In many longitudinal studies it is often of interest to investigate
+time to a certain event. In medicine the event is an ultimate
+outcome, such as diagnosis of ``death'' of the patient or ``relapse of
+the disease''. In addition to this primary event of interest one may
+observe also a number of intermediate (``transient'') states, such as
+``local recurrence'' and ``distant metastasis'' in cancer studies.
+Analysis of such studies where individuals may experience several
+events can be successfully performed using a multi-state model
+(MSM). An MSM is a stochastic process $(X(t), t \in T )$ with a finite
+state space, where $X(t)$ represents the state occupied by the process
+at time $t \geq 0$. Graphically, these models are represented by
+diagrams with rectangular boxes and arrows between them indicating
+respectively possible states and possible transitions. In general, the
+future state transitions of an MSM may depend on past events. However,
+for the special case of a Markov model the past and future are
+independent given its present state. There exists an extensive
+literature on MSMs. Main contributions include books by
+\citet{Andersen93} and \citet{Hougaard2000}. Recent reviews on this
+topic may be found in the papers by \citet{Hougaard1999},
+\citet{Commenges1999}, \citet{Andersen2002}, \citet{PutterTutorial}
+and \citet{MeiraMachado2009}.
+
+The simplest form of an MSM is the mortality model for survival
+analysis with only two states ``alive'' and ``dead'' with a single
+transition. Other common models include the progressive three-state
+model, the illness-death model and the competing risks model. The
+illness-death model is probably the most used model in the literature,
+in particular for studying progression of many diseases.  This model
+describes the dynamics of healthy subjects who may move to an
+intermediate ``diseased'' state before entering into a terminal
+absorbing state. Many longitudinal medical data with multiple
+endpoints can be reduced to this structure. Thus, methods developed
+for the illness-death model have a wide range of applications.  There
+are several issues of interest in an illness-death multi-state model:
+study of the relationship between covariates and disease evolution;
+estimation of transition probabilities; state occupation
+probabilities; distributions of time spent in each state, among other
+topics. In this paper we will focus on the inference for the
+transition probabilities. These quantities provide estimates of the
+clinical prognosis of a patient at a given point in disease
+progression, allowing long-term predictions of the process.
+
+\citet{AJ1978} introduced a nonparametric estimator for these
+quantities for non-homogeneous Markov models. Their estimation method
+extends the Kaplan-Meier estimator \citep{KM58} to Markov chains. As
+for the Kaplan-Meier estimator, the standard error of the
+Aalen-Johansen estimator may be large when the censoring is heavy,
+particularly with a small sample size. To overcome this problem,
+\citet{Moreira} propose a modification of Aalen-Johansen estimator
+based on presmoothing \citep{Dikta1998}, which allows for a variance
+reduction in the presence of censoring. In a recent paper,
+\citet{MeiraMachado2006} introduce a substitute for the Aalen-Johansen
+estimator in the case of a non-Markov illness-death model. They show
+that when the Markov assumption does not hold, their estimator may
+behave much better than the Aalen-Johansen which may be systematically
+biased. The idea behind their estimator is to weight the data by the
+Kaplan-Meier weights pertaining to the distribution of the total
+survival time of the process. However, by removing the Markov
+condition, the proposed substitute for the Aalen-Johansen estimator
+provides undesirably large standard errors. This problem becomes worse
+when there is a large proportion of censored data. In order to
+overcome this problem, \citet{Amorim2011} propose a modification of
+the Meira-Machado estimator based on presmoothing. Other estimators
+were proposed to estimate the transition probabilities. A valid
+estimator was provided by \citet{VanKeilegom2011} for a progressive
+three-state model. This methodology assumes that the vector of gap
+times (time in State 1 and time in State 2) satisfies the
+nonparametric location-scale regression model, allowing for the
+transfer of tail information from lightly censored areas to heavily
+ones. All these approaches assume independent censoring and do not
+account for the influence of covariates. To this regard in a recent
+work, in a regression setup, \citet{MMSomnath2012} introduce feasible
+estimation methods for the transition probabilities in an
+illness-death model conditionally on current or past covariate
+measures.
+
+Software for multi-state survival analysis has been developed
+recently. A comprehensive list of the available packages at the
+Comprehensive \proglang{R} Archive Network (CRAN) can be seen in the
+CRAN task view ``Survival Analysis'' \citep{Allignol}. An issue of the
+\emph{Journal of Statistical Software}, entirely devoted to these
+models, was published in 2011 \citep{Putter:2011}. In \proglang{R}
+\citep{R} several packages provide functions for estimating the
+transition probabilities. The \pkg{timereg} package \citep{timereg1,
+  timereg2} can be used to obtain the cumulative incidence probability
+of a specific cause of failure in competing risks data. It also
+provides an estimate of its variance at each fixed time point, and
+constructs $(1-\alpha)100\%$ simultaneous confidence bands over a
+given time interval. The package \pkg{cmprsk} \citep{Gray} can also be
+used to obtain the same quantities. The package \pkg{etm} \citep{etm}
+computes and displays the transition probabilities for the
+Aalen-Johansen estimator. This package also features a Greenwood-type
+estimator of the covariance matrix. The package \pkg{msm}
+\citep{Jackson} can be used to obtain estimates for the transition
+probabilities in time-homogeneous Markov models. The package
+\pkg{p3state.msm} \citep{MMRP2011} enables the user to perform
+inference in the illness-death model. The main feature of the package
+is its ability for obtaining non-Markov estimates for the transition
+probabilities.  Finally, the \pkg{msSurv} package \citep{Ferguson} can
+be used to estimate the state occupation probabilities along with the
+corresponding variance estimates, and lower and upper confidence
+intervals. All of the existing software presents, however, some
+limitations in practice. Most software assumes the process to be
+Markovian and assumes independent censoring. Furthermore such software
+does not account for the influence of covariates. In addition, a
+comparison between different packages is rather difficult because each
+of the current programs requests its own data structure.
+
+This paper describes the \proglang{R} package \pkg{TPmsm}
+\citep{TPmsm} which is available from CRAN at
+\url{https://CRAN.R-project.org/package=TPmsm}. The package aims at
+implementing nonparametric and semiparametric estimators for the
+transition probabilities in 3-state models. The package provides the
+so-called Aalen-Johansen estimator typically assumed in Markov
+processes but it also covers alternative methods which have been
+proved to be consistent even without the Markov assumption. Inverse
+censoring probability reweighting is used in some methods to deal with
+right censoring. These approaches lead to consistent estimators even
+in the presence of dependent censoring. Finally, two different
+estimators are implemented that account for the influence of
+covariates. Bootstrap confidence bands are provided for all
+methods. In this article we explain and illustrate how numerical and
+graphical output for all methods can be obtained using the \pkg{TPmsm}
+package.
+
+In Section~\ref{sec:methods} we introduce the notation for the
+illness-death stochastic model and describe in detail the proposed
+estimation methods. In Section~\ref{sec:package} we describe the
+implementation of the methods in package \pkg{TPmsm}. Some of the
+methods are illustrated using generated data in
+Section~\ref{sec:generation}. Finally, Section~\ref{sec:example}
+illustrates the package's capabilities using two real data examples,
+and Section~\ref{sec:disc} gives some concluding remarks and proposals
+for future work.
+
+\section {Methodological background}\label{sec:methods}
+In this paper we consider the progressive illness-death model depicted
+in Figure~\ref{fig1}. We assume that all subjects are in State 1 at
+time $t = 0$, and that they may either visit State 2 at some time
+point; or not, going directly to the absorbing state (State 3). The
+stochastic behavior of the process is represented by a random vector
+$(T_{12},T_{13},T_{23})$, where $T_{hj}$ is the potential transition
+from State $h$ to State $j$, $1\leq h < j \leq 3$, in which $T_{23}$
+is the sojourn time in State 2. In this model we have two competing
+transitions $1\rightarrow 2$ and $1 \rightarrow 3$. Let the sojourn
+time in State 1 be denoted by $Z =\min(T_{12},T_{13})$. The survival
+time of the process is given by $T = I(T_{12}\leq
+T_{13})(T_{12}+T_{23})+I(T_{12}>T_{13})T_{13}$. However, censoring may
+occur due to follow-up limitations, lost cases and so on. Because of
+censoring, one observes $(\widetilde Z, \widetilde T,
+\Delta_1,\Delta)$ where $\widetilde Z=\min(Z,C)$, $\widetilde
+T=\min(T,C)$, $\Delta_1=I(Z\leq C)$ and $\Delta = I(T\leq C)$. Here $C$
+denotes the potential censoring time, which we assume to be
+independent of the process (that is, $C$ and $(Z, T)$ are assumed to
+be independent).
+
+Given two time points $s < t$, define the transition probabilities as
+$p_{hj}(s,t)=\Prob(X(t)=j|X(s)=h)$. The transition between the three
+stochastic states is illustrated in Figure~\ref{fig1}. There are
+five different transition probabilities to estimate: $p_{11}(s, t)$,
+$p_{12}(s, t)$, $p_{13}(s,t)$, $p_{22}(s,t)$ and $p_{23}(s,
+t)$. However, only three of them need to be estimated since the two
+other transition probabilities can be obtained from the following
+relations: $p_{11}(s, t)+p_{12}(s, t)+p_{13}(s,t)=1$ and
+$p_{22}(s,t)+p_{23}(s, t)=1$.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.5\textwidth]{Figure1.pdf}
+\caption {Illness-death model.}
+\label{fig1}
+\end{figure}
+
+In Markov models, the transition probabilities can be calculated from
+the transition intensities (that we shall assume exist) that we
+express as
+%
+\begin{equation*}
+\alpha_{hj}(t)=\lim_{\Delta t\rightarrow 0}\frac{p_{hj}(t,t+\Delta t)}{\Delta t}
+\end{equation*}
+%
+by solving the so-called forward Kolmogorov differential equation
+\citep{Cox65}. For the illness-death model the transition
+probabilities have explicit expressions,
+\begin{align*}
+p_{11}(s,t)&=\exp(-A_{12}(s,t)-A_{13}(s,t)),\\
+p_{22}(s,t)&=\exp(-A_{23}(s,t)),\\
+p_{12}(s,t)&=\int^t_s p_{11}(s,u)\alpha_{12}(u)p_{22}(u,t)\,\mathrm{d}u,
+\end{align*}
+where $A_{hj}(s,t)=\int^t_s \alpha_{hj}(u)\,\mathrm{d}u$ is the cumulative or integrated intensity between $s$ and $t$.
+
+In time-homogeneous Markov models the explicit expressions for the
+transition probabilities are given by
+\begin{align*}
+  p_{11}(s,t)&=\exp(-\alpha_{12}(t-s)-\alpha_{13}(t-s)),\\
+  p_{22}(s,t)&=\exp(-\alpha_{23}(t-s)),\\
+  p_{12}(s,t)&=\frac{\alpha_{12}}{\alpha_{12}+\alpha_{13}-\alpha_{23}}[\exp(-\alpha_{23}(t-s))-\exp(-(\alpha_{12}+\alpha_{13})(t-s))].
+\end{align*}
+Details about the inference for the transition intensities can be seen
+in \citet{APerme08}.
+
+The transition probabilities can also be estimated nonparametrically
+or semiparametrically using the notation shown in the top of this
+section. The expressions for the transition probabilities are given by
+\begin{align*}
+p_{11}(s,t) &=\frac{\Prob\left( Z>t\right) }{\Prob\left( Z>s\right) },&
+p_{12}(s,t) &=\frac{\Prob\left( s<Z \leq t, T>t \right) }{\Prob(Z>s)},\\
+p_{13}(s,t) &=\frac{\Prob\left( Z>s, T\leq t\right) }{\Prob\left( Z>s\right) },&
+p_{22}(s,t) &=\frac{\Prob\left( Z\leq s,T> t\right) }{\Prob\left(Z\leq s, T>s\right) },\\
+p_{23}(s,t) &=\frac{\Prob\left( Z\leq s,s<T\leq t\right) }{\Prob\left(Z\leq s,T>s\right) }.
+\end{align*}
+
+\subsection {Aalen-Johansen estimator}
+
+The transition probabilities may be estimated via the nonparametric
+(Aalen-Johansen estimator) model. This can be thought as the
+generalization of the Kaplan-Meier approach \citep{KM58} for the
+simple mortality model and was proposed by \citet{AJ1978} for general
+non-homogeneous Markov models with a finite number of states. Explicit
+formulae of the Aalen-Johansen estimator for the illness-death model
+are available \citep{Borgan1998}. Here we give alternative expressions
+for this estimator using the notation introduced above.  The
+Aalen-Johansen (\code{AJ}) estimate of the transition probability
+$p_{11}(s,t)$ is the Kaplan-Meier estimator
+%
+\begin{equation}
+\label{Eq1}
+\hat p_{11}^{\texttt{AJ}}(s,t)=\prod_{s<\widetilde Z_{i}\leq t}\left[ 1-\frac{%
+\Delta _{1i}}{n\widetilde M_{0n}(\widetilde Z_{i})}\right],
+\end{equation}
+where
+\begin{eqnarray*}
+\widetilde M_{0n} (y)=\frac{1}{n}\sum_{j=1}^{n}I(\widetilde Z_j \geq y).
+\end{eqnarray*}
+%
+Similarly, the estimate of the transition probability $p_{22}(s,t)$ is
+the Kaplan-Meier estimator
+\begin{equation}
+\label{Eq2}
+\hat p_{22}^{\texttt{AJ}}(s,t)=\prod_{s< \widetilde T_{i}\leq t,\widetilde Z_{i}< \widetilde T_{i}}\left[ 1-\frac{
+\Delta_i}{n\widetilde M_{1n}(\widetilde T_{i})}\right],
+\end{equation}
+where
+\begin{eqnarray*}
+\widetilde M_{1n} (y)=\frac{1}{n}\sum_{j=1}^{n}I(\widetilde Z_j< y \leq \widetilde T_j).
+\end{eqnarray*}
+Finally, the estimator for $p_{12}(s,t)$ is given by
+\begin{equation}
+\label{Eq3}
+\hat p_{12}^{\texttt{AJ}}(s,t)=\frac{1}{n} \sum_{i=1}^{n}\frac{\hat p_{11}^{\texttt{AJ}}(s,\widetilde Z_{i}^{-})\hat p_{22}^{\texttt{AJ}}(\widetilde{Z}_i,t)I(s < \widetilde Z_i \leq t, \widetilde{Z}_i < \widetilde{T}_i)}{n\widetilde{M}_{0n}(\widetilde{Z}_i)},
+\end{equation}
+where
+\begin{eqnarray*}
+\hat{p}_{11}^{\texttt{AJ}}(s,t^{-})=\lim_{u\uparrow t}\hat{p}_{11}^{\texttt{AJ}}(s,u).
+\end{eqnarray*}
+
+\subsection {Presmoothed Aalen-Johansen estimator}
+
+The standard error of the Aalen-Johansen estimator may be large when
+the censoring is heavy, particularly with a small sample
+size. Interestingly, the variance of the Aalen-Johansen estimator may
+be reduced by presmoothing \citep{Dikta1998}.  Presmoothing the
+Aalen-Johansen estimator \citep{Moreira} involves replacing the
+censoring indicators (in the transition probabilities $p_{11}(s,t)$
+and $p_{22}(s,t)$) by a smooth fit (e.g., using logistic
+regression). Then, the corresponding presmoothed Aalen-Johansen
+(\code{PAJ}) estimator of $p_{11}(s,t)$ is given by
+\begin{equation}
+\label{Eq4}
+\hat p_{11}^{\texttt{PAJ}}(s,t)=\prod_{s<\widetilde Z_{i}\leq t}\left[ 1-\frac{%
+m_{0n}(\widetilde Z_{i})}{n\widetilde M_{0n}(\widetilde Z_{i})}\right],
+\end{equation}
+%
+where $m_{0n}(\widetilde Z)$ stands for an estimator of the conditional probability of the event
+$\Delta_1=1$ given $\widetilde Z$; which can be estimated using
+logistic regression. The presmoothed version of (\ref{Eq2}) given by
+\begin{equation}
+\label{Eq5}
+\hat p_{22}^{\texttt{PAJ}}(s,t)=\prod_{s<\widetilde T_{i}\leq t,\widetilde Z_{i}< \widetilde T_{i}}\left[ 1-\frac{m_{1n}(\widetilde Z_{i},\widetilde T_{i})}{n\widetilde M_{1n}(\widetilde T_{i})}\right],
+\end{equation}
+%
+where $m_{1n}(\widetilde Z,\widetilde T)$ stands for an estimator of the conditional probability
+of the event $\Delta=1$ given $(\widetilde Z,\widetilde T)$ and given
+that transition $1\rightarrow 2$ is observed. Finally the transition
+probability $p_{12}(s,t)$ can be estimated by plugging (\ref{Eq4}) and
+(\ref{Eq5}) into Equation~\ref{Eq3}.
+
+In the limit case of no presmoothing, the presmoothed Aalen-Johansen
+estimator reduces to the time-honored Aalen-Johansen estimator, which
+has become the standard tool for estimating the transition
+probabilities in Markovian processes. \citet{Moreira} derive the
+consistency of the \code{PAJ} estimator which may be much more
+efficient than the original \code{AJ} estimator.
+
+The original and the presmoothed \code{AJ} estimators are consistent
+in Markov models. If the Markov property assumption is violated, then
+the consistency of the time-honored Aalen-Johansen estimator and of
+its presmoothed version cannot be ensured in general. Alternative
+methods that do not rely on the Markov assumption are presented below.
+
+\subsection {Kaplan-Meier weighted estimator}
+
+Recently \citet{MeiraMachado2006} verified that in non-Markov
+situations, the use of Aalen-Johansen estimators to empirically
+estimate the transition probabilities may be inappropriate. These
+authors propose, in the scope of the illness-death model, alternative
+``Markov-free'' estimators for the transition probabilities, which do
+not rely on the Markov assumption. The idea behind estimation is to
+use the Kaplan-Meier estimator pertaining to the distribution of the
+total time to weight the bivariate data. The proposed estimator
+(Kaplan-Meier weighted estimator, \code{KMW}) is given by
+\begin{align}
+\label{Eq6}
+\hat p_{11}^{\texttt{KMW}}(s,t)&=\frac{ \sum_{i=1}^{n}{W_{1i}I(\widetilde Z_i > t)}}{\sum_{i=1}^{n}{W_{1i}I(\widetilde Z_i > s)}},\\
+\label{Eq7}
+\hat p_{12}^{\texttt{KMW}}(s,t)&=\frac{ \sum_{i=1}^{n}{W_iI(s< \widetilde Z_i \leq t, \widetilde T_i >t)}}{\sum_{i=1}^{n}{W_{1i}I(\widetilde Z_i > s)}},\\
+\label{Eq8}
+\hat p_{22}^{\texttt{KMW}}(s,t)&=\frac{ \sum_{i=1}^{n}{W_iI(\widetilde Z_i \leq s, \widetilde T_i >t)}}{\sum_{i=1}^{n}{W_iI(\widetilde Z_i \leq s, \widetilde T_i > t)}},
+\end{align}
+%
+where $W_i$ (and $W_{1i}$) are Kaplan-Meier weights attached
+to $\widetilde T_{i}$ (respectively, $\widetilde Z_i$) when estimating
+the marginal distribution of $T$ (respectively, $Z$) from $(\widetilde
+T_{i},\Delta_{i})$'s (respectively, $(\widetilde
+Z_{i},\Delta_{1i})$). The expression for the Kaplan-Meier weights,
+$W_i$, is given by $W_i=\frac
+{\Delta_{i}}{n-i+1}\prod_{j=1}^{i-1}\left[1-\frac
+  {\Delta_{j}}{n-j+1}\right]$. \citet{MeiraMachado2006} derive large
+sample properties of these estimators which may be generalized to more
+complicated non-Markov processes.
+
+%\[
+%W_i=\frac {\Delta_{i}}{n-i+1}\prod_{j=1}^{i-1}\left[1-\frac {\Delta_{j}}{n-j+1}\right].
+%\]
+
+\subsection {Kaplan-Meier presmooth weighted estimator}
+
+Recently, \citet{Amorim2011} propose a modification of estimator
+(\ref{Eq6})--(\ref{Eq8}) based on presmoothing, which allows for a
+variance reduction in the presence of censoring. Basically, this
+method is obtained by replacing the censoring indicator variables in
+the expression of the Kaplan-Meier weights by a smooth fit of a binary
+regression. In this estimator (Kaplan-Meier presmooth weighted
+estimator, \code{KMPW}) the presmoothed Kaplan-Meier weights are given
+by
+$$W_{i}^{\star}=\frac {m(\widetilde T_{1i},\widetilde
+  T_{i})}{n-R_i+1}\prod_{j=1}^{i-1}\left[1-\frac {m(\widetilde
+    T_{1j},\widetilde T_{j})}{n-R_j+1}\right].$$ Here,
+$m(x,y)=\Prob(\Delta_2=1\vert \widetilde T_{1}=x,\widetilde
+T=y,\Delta_1=1)$. $m(\widetilde T_{1},\widetilde T)$ belongs to a
+parametric (smooth) family of binary regression curves, e.g.,
+logistic. Our package provides the results assuming that $m$ denotes a
+logistic regression model (\code{KMPW}). In practice, we assume that
+$m(x,y)=m(x,y;\beta)$ where $\beta$ is a vector of parameters which
+typically will be computed by maximizing the conditional likelihood of
+the $\Delta_2$'s given $(\widetilde T_{1},\widetilde T)$ for those
+with $\Delta_1=1$.  In the limit case of no presmoothing, the
+\code{KMPW} estimator reduces to the \code{KMW} estimator. Conditions
+under which both estimators are consistent is fully discussed in
+papers by \citet{MeiraMachado2006} and \citet{Amorim2011}. In the
+latter paper the authors compare the performance of the presmoothed
+(semiparametric) estimator with the purely nonparametric estimator
+(without presmoothing) and concluded that the presmoothed estimator
+gains efficiency. The advantages of presmoothing are more clearly seen
+with an increasing censoring degree and at the distribution's right
+tail. In general, presmoothing introduces some bias in estimation,
+while reducing the variance. This bias component is larger when there
+is some misspecification in the chosen parametric model. Importantly,
+the validity of a given model for presmoothing can be checked
+graphically or formally, by applying a goodness-of-fit test. This
+implies that the risk of introducing a large bias through a
+misspecified model can be controlled in practice.
+
+\subsection {Inverse probability of censoring weighted estimator}
+
+To account for the influence of covariates, \citet{MMSomnath2012}
+introduce estimation methods for the transition probabilities
+conditionally on current or past measures which we denote by $X$. The
+authors provide two competing nonparametric regression estimators for
+the conditional transition probabilities, $p_{hj}(s,t|X)$, both valid
+under certain regularity conditions even when the system is
+non-Markovian. The two estimators use different schemes of inverse
+censoring probability reweighting to deal with right censoring. In
+both estimators, local smoothing is done by introducing regression
+weights that are either based on a local constant (i.e.,
+Nadaraya-Watson) or a local linear regression. To introduce these
+estimators, we need to introduce first the distribution function of $C$ given $X$,
+$G_X$. Let $G_{X_i}$ denote the conditional distribution function of
+$C\mid X=X_i$ and let $\widehat G_{X_i}$ stand for its estimator. This
+can be done using the estimator introduced by \citet{Beran81},
+\begin{equation}
+\label{Eq9}
+\widehat G_x(t)= \prod_{T_{i}\leq t,\Delta_i=0}\left[  {1-\frac{NW_{0i}(x,a_n)}{\sum_{j=1}^{n}I(T_j\geq T_i)NW_{0j}(x,a_n)} }\right],
+\end{equation}
+with
+\[
+NW_{0i}(x,a_n)=\frac{K_0\left({(x-X_{i})/a_n}\right)}{\sum _{j=1}^n K_0\left({(x-X_{j})/a_n}\right)},
+\]
+%
+where $NW_{0i}(x,a_n)$ are the Nadaraya-Watson (\code{NW}) weights,
+$K_0$ is a known probability density function and $a_n$ is a sequence
+of bandwidths. This estimator reduces to the so-known Kaplan-Meier
+\citep{KM58} estimator when all weights are equal. Then, the inverse
+probability censoring weighted estimators (\code{IPCW}) are given by
+\begin{align}
+\label{Eq10}
+\hat p_{11}^{\texttt{IPCW}}(s,t|X=x)&= \frac{\sum_{i=1}^{n}{NW_{1i}(x,b_n)\frac{I(\widetilde Z_i > t)\Delta_i}{1-\hat G_{X_i}(\widetilde T^-)}}}{\sum_{i=1}^{n}{NW_{1i}(x,b_n)\frac{I(\widetilde Z_i > s)\Delta_i}{1-\hat G_{X_i}(\widetilde T^-)}}},\\
+\label{Eq11}
+\hat p_{12}^{\texttt{IPCW}}(s,t|X=x)&= \frac{\sum_{i=1}^{n}{NW_{1i}(x,b_n)\frac{I(s<\widetilde Z_i \leq t, \widetilde T_i >t)\Delta_i}{1-\hat G_{X_i}(\widetilde T^-)}}}{\sum_{i=1}^{n}{NW_{1i}(x,b_n)\frac{I(\widetilde Z_i > s)\Delta_i}{1-\hat G_{X_i}(\widetilde T^-)}}},\\
+\label{Eq12}
+\hat p_{22}^{\texttt{IPCW}}(s,t|X=x)&= \frac{\sum_{i=1}^{n}{NW_{1i}(x,b_n)\frac{I(\widetilde Z_i \leq s, \widetilde T_i >t)\Delta_i}{1-\hat G_{X_i}(\widetilde T^-)}}}{\sum_{i=1}^{n}{NW_{1i}(x,b_n)\frac{I(\widetilde Z_i \leq s, \widetilde T_i >s)\Delta_i}{1-\hat G_{X_i}(\widetilde T^-)}}},
+\end{align}
+%
+where $NW_{1i}(x,b_n)$ are \code{NW} weights as introduced above and
+$\hat G_{X_i}(\widetilde T^-)= \hat G_{x=X_i}(\widetilde
+T^-)$. Alternatively local linear weights can also be introduced.
+
+An alternative approach that also accounts for the influence of
+covariates is based on the \citet{Lin99} approach for the bivariate
+distribution function. Then, a different set of estimators
+(\code{LIN}) are given by
+\begin{align}
+\label{Eq13}
+\hat p_{11}^{\texttt{LIN}}(s,t|X=x)&=
+\frac{\sum_{i=1}^{n}{NW_{1i}(x,b_n)\frac{I(\widetilde Z_i > t)}{1-\hat
+      H_{X_i}(t^-)}}}{\sum_{i=1}^{n}{NW_{1i}(x,b_n)\frac{I(\widetilde
+      Z_i > s)}{1-\hat H_{X_i}(s^-)}}},\\
+\label{Eq14}
+\hat p_{12}^{\texttt{LIN}}(s,t|X=x)&=
+\frac{\sum_{i=1}^{n}{NW_{1i}(x,b_n)\frac{I(s<\widetilde Z_i \leq t,
+      \widetilde T_i >t)}{1-\hat
+      G_{X_i}(t^-)}}}{\sum_{i=1}^{n}{NW_{1i}(x,b_n)\frac{I(\widetilde
+      Z_i > s)}{1-\hat G_{X_i}(s^-)}}},\\
+\label{Eq15}
+\hat p_{22}^{\texttt{LIN}}(s,t|X=x)&=
+\frac{\sum_{i=1}^{n}{NW_{1i}(x,b_n)\frac{I(\widetilde Z_i \leq s,
+      \widetilde T_i >t)}{1-\hat
+      G_{X_i}(t^-)}}}{\sum_{i=1}^{n}{NW_{1i}(x,b_n)\frac{I(\widetilde
+      Z_i \leq s, \widetilde T_i >s)}{1-\hat G_{X_i}(s^-)}}},
+\end{align}
+where $\hat H_{X}$ stands for the Kaplan-Meier estimator of the
+conditional distribution of $C$ given $X$ based on the $(\widetilde
+Z_i,1-\Delta_{1i})$'s. This estimator is defined in the same way as
+$\hat G_x$.
+
+Here we assume that $C$ is independent of $(Z,T)$ given $X$; this
+assumption does not exclude the possibility of dependent
+censoring. The performance of the two estimators has been evaluated
+through simulations, showing that they are valid even when the system
+is non-Markov or conditionally non-Markov. Simulation results show
+that the general performance difference between the two methods is
+quite small, and both methods perform quite well. However, one of the
+two approaches (the LIN-based one) has the drawback of
+occasionally providing nonmonotone curves for transition probabilities
+which are indeed monotone and, therefore, its practical use is less
+recommendable.
+
+\subsection {Location-scale estimator} \label{sec:met_ls}
+
+Other estimators were proposed to estimate the transition
+probabilities. A valid estimator was provided by
+\citet{VanKeilegom2011}. This methodology assumes that the vector of
+gap times $(Z,Y)$, where $Y=T-Z$, satisfies the nonparametric
+location-scale regression model, allowing for the transfer of tail
+information from lightly censored areas to heavily ones. An automatic
+bandwidth procedure was proposed by \citet{MeiraMachadoLSRR} for this
+methodology. %Details about these methods are not given here because of space limitation.
+
+Consider the nonparametric location-scale regression model (\code{LS})
+$Y=m(Z)+\sigma(Z)\epsilon$, where the functions $m$ and $\sigma$ are
+`smooth', and $\epsilon$ is independent of $Z$. Under this model, the
+authors propose a nonparametric estimator of the distribution of the
+error variable, $F_\epsilon$, to introduce nonparametric estimators
+for the transition probabilities. They use a Kaplan-Meier estimator of
+$F_\epsilon$ based on the $(\hat E_i,\Delta_{i})$'s (where $\hat
+E_i=(\widetilde Y_i-\hat m(\widetilde Zi))/\hat \sigma(\widetilde
+Z_i)$) which is the key for the construction of an estimator for the
+conditional distribution of the second gap time, $\hat F(y|x)=\hat
+F_\epsilon(\frac{y-\hat m(x)}{\hat \sigma(x)})$. The location and
+scale functionals are estimated using an extension of the
+\citet{Beran81} estimator, which copes with censoring in the first gap
+time. Then, estimators for the transition probabilities can be
+obtained from the following expressions:
+\begin{align*}
+\hat p_{11}^{\texttt{LS}}(s,t)&={\left(1-\hat F_1(t)\right)}/{\left(1-\hat F_1(s)\right)},\\
+\hat p_{12}^{\texttt{LS}}(s,t)&=\frac{1}{1- \hat F_1(s)}\int_s^t\left[{1-\hat F(t-u|u)}\right]\hat F_1(\mathrm{d}u),\\
+\hat p_{22}^{\texttt{LS}}(s,t)&=\frac{\int_0^s \left[{1-\hat F(t-u|u)}\right]\hat F_1(\mathrm{d}u)}
+{\int_0^s \left[{1-\hat F(s-u|u)}\right]\hat F_1(\mathrm{d}u)},
+\end{align*}
+%
+where $F_1(\cdot)$ is the marginal distribution of the first gap time,
+which we may estimate by the Kaplan-Meier estimator based on the
+$(\tilde Z_{i},\Delta_{1i})$'s.
+
+Simulations reported in \citet{MeiraMachadoLSRR} suggest that the
+transfer of tail information may improve the estimation of the
+transition probabilities especially in points where the uncensored
+information is scarce. The authors compared the location-scale method
+with the estimator by \citet{MeiraMachado2006} in several
+scenarios. It was found that when the deviation from the
+location-scale model was only minor, the location-scale method
+outperforms the Kaplan-Meier weighted estimator
+\citep{MeiraMachado2006}. However, when the model deviates a lot from
+a location-scale model, the later method becomes better.  Another
+drawback of the location-scale model is that this method can only be
+used in the progressive three-state model.
+
+\subsection {Occupation probabilities}
+
+Another important target in multi-state modeling is the estimation of
+the state occupation probabilities. For the illness-death model there
+are in essence three state occupation probabilities to calculate,
+$p_{11}(0,t)$, $p_{12}(0,t)$ and $p_{13}(0,t)$. \citet{Datta2001} show
+that these quantities can be estimated using Aalen-Johansen estimators
+even when the process is not Markov. Though all methods introduced in
+the previous sections provide valid estimators for these quantities,
+the Markovian approaches (\code{AJ} and \code{PAJ}) are recommended.
+
+\section{Package description} \label{sec:package}
+
+The \pkg{TPmsm} software package contains functions that calculate
+estimates for the transition probabilities. As mentioned in
+Section~\ref{sec:methods}, this software package can be used to
+implement seven methods (\code{AJ}, \code{PAJ}, \code{KMW},
+\code{KMPW}, \code{IPCW}, \code{LIN} and \code{LS}). This software
+package is intended to be used within the statistical software program
+\proglang{R} \citep{R}. \pkg{TPmsm} is composed of several functions
+that allow users to obtain estimates and plots of the transition
+probabilities. Table~\ref{tab1} provides a summary of some of the
+functions in the package. Details on the usage of these functions can
+be obtained with the corresponding help pages.
+
+\begin {table}[h]
+\centering
+\begin{tabular} {lp{12.8cm}}
+  \hline
+  Function & Description \\ \hline
+  \code{dgpTP} & Generate data from an illness-death model (based on some known copula functions). By default returns a data set of class `\code{survTP}'. \\
+
+  \code{corrTP} & Correlation between the bivariate times for some copula \mbox{distributions}. \\
+
+  \code{survTP} & Set up adequate data set of class `\code{survTP}' for implementing all the methods.\\
+
+  \code{transAJ} & Aalen-Johansen (\code{AJ}) estimates for the transition probabilities.\\
+
+  \code{transPAJ} & Presmoothed Aalen-Johansen (\code{PAJ}) estimates for the transition probabilities.\\
+
+  \code{transKMW} & Kaplan-Meier weighted (\code{KMW}) estimates for the transition probabilities.\\
+
+  \code{transKMPW} & Kaplan-Meier presmoothed weighted (\code{KMPW}) estimates for the transition probabilities.\\
+
+  \code{transIPCW} & Inverse probability of censoring weighted (\code{IPCW}) estimates for the transition probabilities.\\
+
+  \code{transLIN} & LIN-based (\code{LIN}) estimates for the transition probabilities.\\
+
+  \code{transLS} & Location-scale (\code{LS}) estimates for the transition probabilities.\\
+
+  \code{plot} & Plots for the transition probabilities.\\
+
+  \code{setThreadsTP} & Specifies the number of threads used by default in parallel sections.\\
+
+  \code{setPackageSeedTP} & Set the initial package seed.\\
+\hline
+\end{tabular}
+\caption {Summary of functions in the package.}\label{tab1}
+\end{table}
+
+It should be noted that to apply the methods described in
+Section~\ref{sec:methods} one needs the following variables:
+\code{time1}, \code{event1}, \code{Stime} and \code{event}. A single
+covariate can also be included (they are necessary only for
+\code{IPCW} and \code{LIN} methods). The variable \code{time1}
+represents the observed time in State 1 (``healthy''), and
+\code{event1} the corresponding status/censoring indicator (if the
+survival time is a censored observation, the value is 0 and otherwise
+the value is 1). The variable \code{Stime} represents the total
+survival time (time to the absorbing state). If \code{event1 = 0},
+then the total survival time is equal to the observed time in State
+1. The variable \code{event} is the final status of the individual
+(takes the value 1 if the final event of interest is observed and 0
+otherwise).
+
+\section {Data generation} \label{sec:generation}
+
+Users may use the function \code{dgpTP} to generate data from the
+illness-death model. We assume that all individuals are in the
+``healthy'' state at time $t=0$. Therefore, the patient's history (or
+course) may be divided into two groups according to whether the
+disease occurred (that is, passing through State 2) ($1\rightarrow
+2\rightarrow 3$) or not ($1\rightarrow 3$). We separately consider
+these two possible subgroups of individuals. For the first subgroup of
+individuals, the successive gap times $\left( Z,T-Z\right) $ can be
+simulated from two of the most known copula functions: the
+Farlie-Gumbel-Morgenstern copula with exponential marginals and the
+bivariate Weibull distribution.
+
+In the following, using the \code{dgpTP} function we will simulate
+data from the illness-death model using Gumbel's bivariate exponential
+distribution (\code{dist = "exponential"}) \linebreak
+$F_{12}(x,y)=F_{1}(x)F_{2}(y)\left[ 1+\theta \left\{
+    1-F_{1}(x)\right\} \left\{ 1-F_{2}(y)\right\} \right]$ with unit
+exponential margins \linebreak (\code{dist.par = c(1, 1)}). The
+parameter $\theta$ controls for the amount of dependency between the
+gap times $\left( Z,T-Z\right)$. Theoretical correlation between the
+gap times can be obtained using the \code{corrTP} function. For the
+second subgroup of individuals (those that go directly from State 1 to
+State 3), the corresponding survival time is simulated according to an
+exponential with rate parameter 1.
+
+The computation and the implementation of the proposed estimator
+involves the construction of pointwise confidence intervals by means of a
+bootstrap approach and in some cases the choice of an appropriate bandwidth.
+Thus, some of the methods implemented in package \pkg{TPmsm} can be
+computationally demanding. To obtain the point estimation and the pointwise
+confidence intervals, efficient algorithms were developed and implemented
+in the \proglang{C} programming language. The most computationally demanding parts
+of the code, namely those that involve the bootstrap and cross-validation
+techniques, were parallelized by means of the OpenMP API. This should
+considerably increase performance on multi-core/multi-threading machines.
+To ensure the reproducibility of the results reported in the paper,
+two threads were considered (\code{setThreadsTP(2)}).
+The random number generator with multiple independent streams
+(\citep{Ecuyer99},\citep{Ecuyer02} and \citep{Karl}) was implemented
+for parallel computation of uniform pseudorandom numbers.
+Package \pkg{TPmsm} own implemementation of a random number generator
+makes it independent of \proglang{R}, requiring a different function for defining a seed.
+The function \code{setPackageSeedTP} requires a vector of six integers.
+
+<<message=FALSE>>=
+library("TPmsm");
+setThreadsTP(2);
+seed <- c(2718, 3141, 5436, 6282, 8154, 9423);
+setPackageSeedTP(seed);
+sim_data_exp <- dgpTP(n = 1000, corr = 0, dist = "exponential",
+  dist.par = c(1, 1), model.cens = "uniform", cens.par = 3,
+  state2.prob = 0.5);
+@
+
+This input command will simulate 1000 observations ($n = 1000$)
+assuming no correlation in Gumbel's bivariate exponential distribution
+(\code{corr = 0}), using an independent uniform censoring time
+(\code{model.cens = "uniform"}), according to model $U(0, 3)$
+(\code{cens.par = 3}). The use of \code{corr = 0} in Gumbel's
+bivariate exponential distribution leads to independent gap times and
+therefore to Markov data. The proportion of transitions into State 2
+is given by the argument \code{state2.prob} (a value of 1 corresponds
+to the progressive three-state model).
+
+To obtain the estimates for the methods proposed in
+Section~\ref{sec:methods} we can use the functions shown in
+Table~\ref{tab1}. As in the simulation by \citet{Amorim2011} and
+\citet{Moreira} we are going to obtain estimates for transition
+probabilities at values \code{s = 0.5108} and \code{t = 0.9163}. The
+true values for the transition probabilities are:
+$p_{11}(s,t)=\frac{\Prob(Z>t)}{\Prob(Z>s)}=0.667$,
+$p_{12}(s,t)=\frac{\Prob(s<Z\leq t, T>t)}{\Prob(Z>s)}=0.135$ and
+$p_{22}(s,t)=\frac{\Prob(Z\leq s, T>t)}{\Prob(Z\leq s,
+  T>s)}=0.666$. The following two input commands provide the estimates
+for the \code{AJ} and \code{PAJ} methods. Since the process is
+Markovian these are the recommended approaches. With these input
+commands we obtain the estimates for the transition matrix together
+with $95\%$ (\code{conf.level = 0.95}) pointwise confidence intervals
+(\code{conf = TRUE}) using 1000 bootstrap replicates (\code{n.boot =
+  1000}). The construction of the pointwise confidence intervals is
+obtained by randomly sampling the $n$ items from the original data set
+with replacement. This can be achieved using the percentile bootstrap
+interval (\code{method.boot = "percentile"}) or using the basic
+bootstrap interval (\code{method.boot = "basic"}). By default all
+functions use the percentile bootstrap method \citep{Davison97}.
+
+<<>>=
+transAJ(object = sim_data_exp, s = 0.5108, t = 0.9163, conf = TRUE,
+  conf.level = 0.95, n.boot = 1000);
+transPAJ(object = sim_data_exp, s = 0.5108, t = 0.9163, conf = TRUE,
+  conf.level = 0.95, n.boot = 1000);
+@
+
+Results reveal accuracy for both methods for which the true values are
+within the bootstrap confidence bands. The bootstrap confidence bands
+are narrower in the case of the presmoothed Aalen-Johansen estimator
+revealing less variability for this method. In general, the results
+for the lower and upper bounds of the bootstrap confidence interval
+greatly depend on the sample size of the data set and the number of
+bootstrap simulations. In this case, a second and a third set of 1000
+resamples gave similar results for the bootstrap confidence intervals,
+suggesting that the number of resamples are enough. The CPU time
+needed for running the \code{transAJ} function varies depending on
+whether bootstrap confidence bands are requested or not, the sample
+size, and the type of processor in the computer. The command presented
+above took no more than 1 second on a PC with a four Core Intel i7
+processor with 8 GB memory. The same input command but with $n=10000$
+resamples took less than a few seconds.
+
+Non-Markov data can also be generated using correlated gap times in
+Gumbel's bivariate exponential distribution. For example, using a
+maximum correlation of 25\% (using \code{corr = 1} in the \code{dgpTP}
+function) as shown below.
+
+<<>>=
+setPackageSeedTP(seed);
+sim_data_exp2 <- dgpTP(n = 1000, corr = 1, dist = "exponential",
+  dist.par = c(1, 1), model.cens = "uniform", cens.par = 3,
+  state2.prob = 0.5);
+@
+
+The following input commands provide the estimates (with bootstrap
+confidence bands) for the \code{KMW} and \code{KMPW} methods at values
+\code{s = 0.5108} and \code{t = 0.9163}. The true values for the
+transition probabilities at these values are: $p_{11}(s,t)=0.667$,
+$p_{12}(s,t)=0.134$ and $p_{22}(s,t)=0.558$. Since the process is not
+Markov these are the recommended approaches.
+
+<<>>=
+transKMW(object = sim_data_exp2, s = 0.5108, t = 0.9163, conf = TRUE,
+  conf.level = 0.95, n.boot = 1000);
+transKMPW(object = sim_data_exp2, s = 0.5108, t = 0.9163, conf = TRUE,
+  conf.level = 0.95, n.boot = 1000);
+@
+
+Results reveal that both methods perform very well. As expected, the
+presmooth method achieved less variability, with narrower bootstrap
+confidence bands. Results for the Aalen-Johansen type estimators
+(\code{AJ} and \code{PAJ}) reveal a systematic bias for the transition
+from State 2 to State 3 (results not shown).
+
+In addition to the numerical results graphical output can also be
+obtained. This will be shown in the next section using two data sets:
+the widely used and well-known colon cancer data and data from a
+bladder cancer study. Details about these data sets are given below.
+
+\section{Examples of application} \label{sec:example}
+
+To illustrate our estimators we consider two real data sets. One of
+these data sets comes from the well-known colon cancer study which is
+freely available as part of the \proglang{R} \pkg{survival} package
+\citep{survival-book,survival-package}. In addition to this data set
+we also use data from a bladder cancer study \citep{byar} conducted by
+the Veterans Administration Cooperative Urological Research Group.
+
+\subsection{Colon cancer data}
+
+For illustration, we apply some of the proposed methods of Section 2
+to data from a large clinical trial on Duke's stage III patients,
+affected by colon cancer, that underwent a curative surgery for
+colorectal cancer \citep{Moertel90}. In this study, some of these
+patients have residual cancer, which leads to disease recurrence and
+death (in some cases). From the total of 929 patients, 468 developed a
+recurrence and among these 414 died. 38 patients have died of causes
+unrelated to their disease and without evidence of recurrence. The
+remaining 423 patients contributed with censored survival times. For
+each individual, an indicator of his/her final vital status (censored
+or not), the survival times (time to recurrence, time to death) from
+the entry of the patient in the study (in days), and a vector of
+covariates including \emph{age} (in years) and \emph{recurrence}
+(coded as 1 = yes; 0 = no) were recorded.  The covariate
+\emph{recurrence} is a time-dependent covariate which can be expressed
+as an intermediate event and modeled using the illness-death model
+with states ``alive and disease-free'', ``alive with recurrence'' and
+``dead''.
+
+By including covariates depending on the history (using a Cox
+proportional hazards model), we verified that the mortality transition
+for recurring patients is affected by the time spent in the previous
+state ($p$~value $< 0.001$). This allowed us to conclude that the Markov
+assumption may be unsatisfactory for the colon cancer data set and
+that, consequently, Aalen-Johansen type estimators should not be
+used. Thus, in this section we illustrate the use of two
+``Markov-free'' estimators (\code{KMW} and \code{KMPW}) as well as two
+additional estimators (\code{IPCW} and \code{LIN}) that were proposed
+to estimate the transition probabilities conditionally on current or
+past covariate measures such as \emph{age}.
+
+Below is an excerpt of the data with one row per individual.
+
+<<>>=
+data("colonTP", package = "TPmsm");
+head( head(colonTP[ , c(1:4, 7)]) );
+@
+
+Each line represents the information from one individual in the
+study. The variable \code{time1} denotes the sojourn time in State 1
+whereas \code{Stime} is the total time of survival. \code{event1} and
+\code{event} are the corresponding indicator statuses. Among the first
+six individuals, only individual represented by line 2 remains alive
+(and without having had a recurrence) at the end of the study. All the
+remaining individuals had a recurrence and died before the end of the
+study. For example, the individual represented by line 1 had a
+recurrence at day 968 and died at day 1521. Note that \code{time1} $<$
+\code{Stime} means that a transition from State 1 to State 2 (i.e.,
+recurrence) occurred.
+
+We computed the estimated values for the transition probabilities
+$p_{hj}(s,t)$ for several pairs $(s,t)$, $s < t$. For illustration
+purposes we only report the estimated values of $p_{hj}(365,1096)$
+(one year and three years) for the \code{KMW} and \code{KMPW} methods
+with 95\% bootstrap confidence intervals.
+
+<<>>=
+colon_obj <- with( colonTP, survTP(time1, event1, Stime, event, age) );
+colon_obj_TP <- transKMW(object = colon_obj, s = 365, t = 1096,
+  conf = TRUE, conf.level = 0.95);
+colon_obj_TP;
+colon_obj2_TP <- transKMPW(object = colon_obj, s = 365, t = 1096,
+  conf = TRUE, conf.level = 0.95);
+colon_obj2_TP;
+@
+
+\begin{figure}[h]
+\centering
+<<label=Figure2, echo=FALSE, out.height='4in', out.width='4in'>>=
+colon_obj_TP <- transKMW(object = colon_obj, s = 365, conf = TRUE,
+  conf.level = 0.95);
+plot(colon_obj_TP, col = seq_len(5), lty = 1, ylab = "p_hj(365,t)");
+@
+\caption {Transition probability estimates using the \code{KMW} method. Colon cancer data.}
+\label{fig2}
+\end{figure}
+
+The outputs for the transition probabilities could be useful in
+understanding the patients' illness stage over time. Plots for these
+quantities can easily be obtained. Figure~\ref{fig2} plots the
+transition probabilities $p_{hj}(365,t)$ for all allowed transitions
+using the \code{KMW} method. This plot can be obtained using the
+following input commands:
+
+<<eval=FALSE>>=
+<<Figure2>>
+@
+
+Figure~\ref{fig3} depicts the \code{KMW} estimates of
+$p_{12}(s=365,t)$ as functions of the time (for a fixed value of
+$s=365$) together with a 95\% pointwise confidence band based on
+simple bootstrap. The estimates shown in the main curve indicate that
+this probability increases until around time $t=600$ and afterwards
+decreases.
+
+<<label=Code3, eval=FALSE>>=
+plot(colon_obj_TP,  tr.choice = "1 2", conf.int = TRUE, ylim = c(0, 0.2),
+  legend = FALSE, ylab = "p12(365,t)");
+@
+
+\begin{figure}[h]
+\centering
+<<label=Figure3, echo=FALSE, out.height='4in', out.width='4in'>>=
+<<Code3>>
+@
+\caption {Transition probability estimates, with bootstrap confidence bands, using the \code{KMW} method. Colon cancer data.}
+\label{fig3}
+\end{figure}
+
+<<label=Code4, echo=FALSE>>=
+CTP_obj <- transIPCW(colon_obj, s = 365, t = 1096, x = c(40, 68),
+  conf = TRUE, n.boot = 1000, method.boot = "percentile");
+@
+
+\begin{figure}[p]
+\centering
+<<label=Figure4, echo=FALSE, out.height='4in', out.width='4in'>>=
+plot(CTP_obj, plot.type = "c", tr.choice = "1 1", conf.int = TRUE,
+  xlab = "Age", legend = FALSE, ylab = "p11(365,1096|age)");
+@
+\caption {Evolution of the transition probability $p_{11}(365, 1096)$
+  along the covariate \code{age} with 95\% bootstrap confidence bands
+  based on the \code{IPCW} method. Colon cancer data.
+\label{fig4}}
+<<label=Figure5, echo=FALSE, out.height='4in', out.width='4in'>>=
+plot(CTP_obj, plot.type = "c", tr.choice = "1 2", conf.int = TRUE,
+  xlab = "Age", legend = FALSE, ylab = "p12(365,1096|age)");
+@
+\caption {Evolution of the transition probability $p_{12}(365, 1096)$
+  along the covariate \code{age} with 95\% bootstrap confidence bands
+  based on the \code{IPCW} method. Colon cancer data.
+\label{fig5}}
+\end{figure}
+
+Estimates for the conditional transition probabilities can be obtained
+using two methods (\code{IPCW} and \code{LIN}). Below we present the
+input command to obtain the estimates for the \code{IPCW} method for a
+vector of two \code{ages} (40 and 68). Results suggest a real
+influence of the covariate \code{age} in the survival prognosis. More
+specifically, patients with 40 years have a larger probability of
+recurrence than patients with 68 years. Note that the estimate
+obtained for those patients with 40 years is not within the bootstrap
+confidence bands obtained for those with 68 years. These insights can
+also be seen in Figures~\ref{fig4} and~\ref{fig5} which depict
+respectively the \code{IPCW} estimates of the conditional transition
+probabilities $p_{11}(365, 1096|\texttt{age})$ and $p_{12}(365,
+1096|\texttt{age})$ as functions of the covariate \code{age} together
+with a 95\% pointwise confidence band based on simple bootstrap. In
+both plots it is seen that these curves are not constant. Furthermore,
+the effects of \code{age} depicted in Figure~\ref{fig5}, suggest a
+real influence of age on survival. More specifically, patients near
+the forties have a larger probability of recurrence than older
+patients. Note that it would not be possible to include a horizontal
+line within the confidence bands in this plot. An alternative method
+that accounts for the influence of continuous covariates is the
+\code{LIN} method which is implemented in the \code{transLIN}
+function. Similarly, \code{transIPCW} can also handle one covariate.
+
+<<fig.keep='none'>>=
+<<Code4>>
+CTP_obj;
+<<Figure4>>
+<<Figure5>>
+@
+
+Alternatively, we can view all transitions in the same plot using the
+following input command (Figure~\ref{fig6}):
+
+<<label=Code6, eval=FALSE>>=
+plot(CTP_obj, plot.type = "c", col = seq_len(5), lty = 1, xlab = "Age",
+  ylab = "p_hj(365,1096|age)");
+@
+
+\begin{figure}[h]
+\centering
+<<label=Figure6, echo=FALSE, out.height='4in', out.width='4in'>>=
+<<Code6>>
+@
+\caption {Evolution of the transition probabilities $p_{hj}(365,
+  1096)$ along the covariate \code{age}, based on the \code{IPCW}
+  method. Colon cancer data.}
+\label{fig6}
+\end{figure}
+
+A contour plot of the transition probabilities can be obtained using
+the \code{contour} function; a grid of colored or gray-scale
+rectangles with colors corresponding to the values of the transition
+probabilities can be obtained using the \code{image} function. Details
+on the usage of these functions can be obtained within the
+corresponding help pages.
+
+\subsection{Example of application: Bladder cancer study} \label{sec:example2}
+
+The methods described in Section~\ref{sec:met_ls} are illustrated
+using data from a bladder cancer study \citep{byar} conducted by the
+Veterans Administration Cooperative Urological Research Group. In this
+study, patients had superficial bladder tumors that were removed by
+trans\-ure\-thral resection. Many patients had multiple recurrences (up to
+a maximum of 9) of tumors during the study, and new tumors were
+removed at each visit. For illustration purposes we re-analyze data
+from 85 individuals in the placebo and thiotepa treatment groups;
+these data are available as part of the \proglang{R} \pkg{survival}
+package. Here, only the first two recurrence times (in months) and the
+corresponding gap times, $Z$ and $Y=T-Z$, are considered. Thus, we
+have a progressive three-state model with state ``alive and
+disease-free'', ``first recurrence'' and ``second recurrence''.  From
+the total of 85 patients, 47 relapsed at least once and, among these,
+29 experienced a new
+recurrence.
+
+For large values of $s$ and $t$, the transition probabilities
+$p_{hj}(s,t)$ will be difficult to estimate in a completely
+nonparametric way. This will be particularly true in situations where
+censoring percentages are high as for our data set for which we have a
+total amount of censoring of 66\%. The location-scale method is
+appropriate for the bladder cancer data since this methodology is
+mainly relevant for estimation in the right tail of the distribution
+where the censoring effects are strong at those points (uncensored
+information is scarce).
+
+We will calculate estimates for the transition probabilities in
+several points and plot these estimates. This will be done using the
+function \code{transLS}.
+
+<<>>=
+data("bladderTP", package = "TPmsm");
+head(bladderTP);
+@
+<<label=Code7, echo=FALSE>>=
+bladderTP_obj <- with( bladderTP, survTP(time1, event1, Stime, event) );
+@
+<<label=Code8, echo=FALSE>>=
+LS2_obj <- transLS(object = bladderTP_obj, s = 3, t = 60, h = c(0.0001, 1),
+  nh = 100, ncv = 100, conf = TRUE);
+@
+
+\begin{figure}[p]
+\centering
+<<label=Figure7, echo=FALSE, out.height='4in', out.width='4in'>>=
+plot(LS2_obj, col = seq_len(5), lty = 1, ylab = "p_hj(3,t)");
+@
+\caption {Transition probability estimates using the \code{LS}
+  method. Bladder cancer data.
+\label{fig7}}
+<<label=Figure8, echo=FALSE, out.height='4in', out.width='4in'>>=
+plot(LS2_obj, tr.choice = "1 2", conf.int = TRUE, ylab = "p12(3,t)",
+  ylim = c(0, 0.325), legend = FALSE);
+@
+\caption {Transition probability estimates, with bootstrap confidence
+  bands, using the \code{LS} method. Bladder cancer data.
+\label{fig8}}
+\end{figure}
+
+We computed the estimated values for the transition probabilities
+$p_{hj}(s,t)$ for several pairs $(s,t)$, $s < t$. For illustration
+purposes we only report the estimated values of $p_{hj}(3,8)$ for the
+\code{LS} method with 95\% bootstrap confidence intervals. The success
+of the \code{LS} method greatly depends on the choice of an
+appropriate bandwidth. The selection of the optimal bandwidth is
+highly computationally intensive, but is crucial to the success of the
+location-scale method.  To select the bandwidth we use a weighted
+cross-validation error criterion, with weights based on the
+Kaplan-Meier estimator. Details about these procedures can be seen in
+the paper by \citet{MeiraMachadoLSRR}. Results for the transition
+probabilities $p_{hj}(3,8)$ shown below were obtained using a grid of
+100 bandwidth values (\code{nh = 100}) over the interval between
+0.0001 and 1 (\code{h = c(0.0001, 1)}) and considering 100
+cross-validation samples (\code{ncv = 100}).
+
+<<>>=
+<<Code7>>
+LS_obj <- transLS(object = bladderTP_obj, s = 3, t = 8, h = c(0.0001, 1),
+  nh = 100, ncv = 100, conf = TRUE);
+LS_obj;
+@
+
+Plots for the transition probabilities can also be
+obtained. Figure~\ref{fig7} plots the transition probabilities
+$p_{hj}(3,t)$ for all allowed transitions.  In Figure~\ref{fig8} we
+can see the plot for the transition probability $p_{12}(3,t)$ along
+the pointwise confidence bands using the \code{LS} method. These plots
+are obtained using the following input commands:
+
+<<eval=FALSE>>=
+<<Code8>>
+<<Figure7>>
+<<Figure8>>
+@
+
+\section {Conclusion} \label{sec:disc}
+
+This paper discusses the implementation of some newly developed
+methods for the transition probabilities in the illness-death model in
+an \proglang{R} package. The \pkg{TPmsm} package uses seven
+nonparametric and semiparametric estimators. One of these estimators
+is the Aalen-Johansen estimator \citep{AJ1978} under the assumption of
+a Markovian data generating process. A modification of the
+Aalen-Johansen estimator \citep{Moreira}, based on a preliminary
+estimation (presmoothing) of the censoring probability for the total
+time, given the available information is also implemented. This method
+allows for a variance reduction in the presence of censoring, in
+particular for situations with high percentages of censored total time
+among the uncensored subjects in State 1.
+
+If there is no evidence against the Markov condition then the time
+honored Aalen-Johansen estimator and its presmoothed version will be
+preferred. If the Markov property is violated, then the consistency of
+these estimators cannot be ensured in general. Exceptions to this are
+the estimator for the occupation probabilities. Alternative estimators
+of the transition probabilities not relying on the Markov condition
+were recently proposed \citep{MeiraMachado2006, Amorim2011} and are
+implemented in the package. As a drawback, these alternative methods
+will suffer from a larger variance in estimation, particularly when
+the sample size is small and there is a large censoring degree. One
+alternative method for these scenarios was provided by
+\citet{VanKeilegom2011} for a progressive three-state model. The key
+of this methodology is the transfer of tail information from lightly
+censored areas to heavily ones.
+
+The package also implements two methods that account for dependent
+censoring and allow for the inclusion of covariates. These two
+approaches are free from the Markov assumption. The functions
+implementing these methods use a kernel density and a bandwidth. We
+believe that the choice of the kernel density has relatively little
+impact on the estimation results. However, the use of different
+bandwidths might have a substantial effect on the performance of the
+estimators. To this end we implemented the use of the \code{dpik}
+function which is available from the \proglang{R} \pkg{KernSmooth}
+package \citep{kernsmooth}. It might be worthwhile to include other
+options and to investigate their impact on the estimation results.
+
+A function called \code{TPmsmOut} can be used to convert an object of
+class `\code{data.frame}' with the structure of the data input as
+described in Section~\ref{sec:package} to the structure of the data
+input used in the \pkg{p3state.msm} package. Essentially, this
+involves a transformation of some variables and a renaming of other
+variables. With this function users may connect the \pkg{TPmsm}
+package with the \pkg{p3state.msm} package and perform Cox-type
+multi-state regression.
+
+We plan to constantly update the \pkg{TPmsm} package to improve its
+limitations and to cope with other estimators.
+
+\section* {Acknowledgments}
+This research was financed by FEDER Funds through ``Programa
+Operacional Factores de Competitividade -- COMPETE'' and by Portuguese
+Funds through FCT -- ``Funda{\c c}{\~ a}o para a Ci{\^ e}ncia e a
+Tecnologia'', in the form of grants PTDC/MAT/104879/2008 and
+\linebreak PEst-OE/MAT/UI0013/2014. Thanks to the anonymous referee
+for comments and suggestions which have improved the presentation of
+the article.
+
+\bibliography{TPmsm}
+
+\end{document}

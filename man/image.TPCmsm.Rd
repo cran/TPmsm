@@ -4,8 +4,8 @@
 \title{image method for a TPCmsm object}
 
 \description{
-	image method for an object of class \sQuote{TPCmsm}.
-	Creates a grid of colored or gray-scale rectangles with colors corresponding to the values of the transition probabilities.
+image method for an object of class \sQuote{TPCmsm}.
+Creates a grid of colored or gray-scale rectangles with colors corresponding to the values of the transition probabilities.
 }
 
 \usage{\S3method{image}{TPCmsm}(x, image.type="tc", tr.choice, xlim, ylim, zlim=c(0, 1), col, xlab, ylab,
@@ -53,28 +53,31 @@ contour=TRUE, nlevels=20, levels=pretty(zlim, nlevels), ...)}
 }
 
 \value{
-	No value is returned.
+No value is returned.
 }
 
 \author{Artur Araújo, Javier Roca-Pardiñas and Luís Meira-Machado}
 
 \note{
-	The device is divided by the number of transitions specified by argument \code{tr.choice}.
-	Being the number of columns equal to the number of transitions.
-	If argument \code{conf.int=TRUE} the device is further divided to make room for the confidence regions.
-	In this case two rows are added, one for each side of the confidence region.
-	So if \code{conf.int=TRUE} the center row provides the image of the estimates.
-	The upper row provides the upper side of the confidence region.
-	And the lower row provides the lower side of the confidence region.
+The device is divided by the number of transitions specified by argument \code{tr.choice}.
+Being the number of columns equal to the number of transitions.
+If argument \code{conf.int=TRUE} the device is further divided to make room for the confidence regions.
+In this case two rows are added, one for each side of the confidence region.
+So if \code{conf.int=TRUE} the center row provides the image of the estimates.
+The upper row provides the upper side of the confidence region.
+And the lower row provides the lower side of the confidence region.
 }
 
 \references{
-	Meira-Machado L., de Uña-Álvarez J., Datta S. Conditional Transition Probabilities in a non-Markov Illness-death Model. Discussion Papers in Statistics and Operation Research n 11/03, 2011. Department of Statistics and Operations Research, University of Vigo (ISSN: 1888-5756, Deposito Legal VG 1402 - 2007). This file can be downloaded from: \url{http://webs.uvigo.es/depc05/reports/12_05.pdf}
+Araújo A, Meira-Machado L, Roca-Pardiñas J (2014) TPmsm: Estimation of the Transition Probabilities in
+3-State Models. \emph{Journal of Statistical Software}, \bold{62}(4), 1-29. \doi{10.18637/jss.v062.i04}
+
+Meira-Machado L., de Uña-Álvarez J., Datta S. Conditional Transition Probabilities in a non-Markov Illness-death Model. Discussion Papers in Statistics and Operation Research n 11/03, 2011. Department of Statistics and Operations Research, University of Vigo (ISSN: 1888-5756, Deposito Legal VG 1402 - 2007). \url{https://depc05.webs.uvigo.es/reports/12_05.pdf}
 }
 
 \seealso{
-	\code{\link{contour}},
-	\code{\link{image}}.
+\code{\link{contour}},
+\code{\link{image}}.
 }
 
 \examples{

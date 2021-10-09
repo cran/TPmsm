@@ -25,16 +25,21 @@
 %}
 
 \value{
-	An object of class \sQuote{survTP}.
+An object of class \sQuote{survTP}.
 
-	\sQuote{survTP} objects are implemented as a single element list \item{data}{a data.frame
-	with \code{time1}, \code{event1}, \code{Stime}, \code{event} and covariates as columns.}
+\sQuote{survTP} objects are implemented as a single element list \item{data}{a data.frame
+with \code{time1}, \code{event1}, \code{Stime}, \code{event} and covariates as columns.}
 
-	In the case of \code{is.survTP}, a logical value \code{TRUE} if \code{x}
-	inherits from class \sQuote{survTP}, otherwise \code{FALSE}.
+In the case of \code{is.survTP}, a logical value \code{TRUE} if \code{x}
+inherits from class \sQuote{survTP}, otherwise \code{FALSE}.
 }
 
 \author{Artur Araújo, Javier Roca-Pardiñas and Luís Meira-Machado}
+
+\references{
+Araújo A, Meira-Machado L, Roca-Pardiñas J (2014) TPmsm: Estimation of the Transition Probabilities in
+3-State Models. \emph{Journal of Statistical Software}, \bold{62}(4), 1-29. \doi{10.18637/jss.v062.i04}
+}
 
 \examples{
 data(bladderTP)

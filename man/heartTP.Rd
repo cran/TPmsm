@@ -5,9 +5,9 @@
 \title{More Stanford heart transplant data}
 
 \description{
-	This contains the Stanford heart transplant data in a different format.
-	The main data set is in (\code{\link{heart}}).
-	Survival of patients on the waiting list for the Stanford heart transplant program.
+This contains the Stanford heart transplant data in a different format.
+The main data set is in (\code{\link{heart}}).
+Survival of patients on the waiting list for the Stanford heart transplant program.
 }
 
 \usage{data(heartTP)}
@@ -26,7 +26,7 @@
 }
 
 \references{
-	Crowley J., Hu M. (1977) Covariance analysis of heart transplant survival data. \emph{Journal of the American Statistical Association} \bold{72(357)}, 27--36.
+Crowley J., Hu M. (1977) Covariance analysis of heart transplant survival data. \emph{Journal of the American Statistical Association} \bold{72}(357), 27--36. \doi{10.2307/2286902}
 }
 
 %\examples{

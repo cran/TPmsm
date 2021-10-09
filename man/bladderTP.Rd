@@ -5,10 +5,10 @@
 \title{Bladder cancer recurrences}
 
 \description{
-	This contains the bladder cancer recurrences data in a different format.
-	In this study, patients had superficial bladder tumors that were removed by transurethral resection.
-	Many patients had multiple recurrences (up to a maximum of 9) of tumors during the study,
-	and new tumors were removed at each visit. Only the first two recurrence times (in months) are considered.
+This contains the bladder cancer recurrences data in a different format.
+In this study, patients had superficial bladder tumors that were removed by transurethral resection.
+Many patients had multiple recurrences (up to a maximum of 9) of tumors during the study,
+and new tumors were removed at each visit. Only the first two recurrence times (in months) are considered.
 }
 
 \usage{data(bladderTP)}
@@ -32,7 +32,7 @@
 %}
 
 \references{
-	Wei L. J., Lin D. Y., Weissfeld L. (1989) Regression analysis of multivariate incomplete failure time data by modeling marginal distributions. \emph{Journal of the American Statistical Association} \bold{84(408)}, 1065--1073.
+Wei L. J., Lin D. Y., Weissfeld L. (1989) Regression analysis of multivariate incomplete failure time data by modeling marginal distributions. \emph{Journal of the American Statistical Association} \bold{84}(408), 1065--1073. \doi{10.2307/2290084}
 }
 
 %\examples{
