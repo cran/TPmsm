@@ -1,5 +1,4 @@
 
-#include <R_ext/Rdynload.h>
 #include <R_ext/Visibility.h>
 #include <Rdefines.h>
 #include <stdlib.h>

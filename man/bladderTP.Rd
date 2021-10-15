@@ -32,7 +32,7 @@ and new tumors were removed at each visit. Only the first two recurrence times (
 %}
 
 \references{
-Wei L. J., Lin D. Y., Weissfeld L. (1989) Regression analysis of multivariate incomplete failure time data by modeling marginal distributions. \emph{Journal of the American Statistical Association} \bold{84}(408), 1065--1073. \doi{10.2307/2290084}
+Wei L. J., Lin D. Y., Weissfeld L. (1989). Regression analysis of multivariate incomplete failure time data by modeling marginal distributions. \emph{Journal of the American Statistical Association}, \bold{84}(408), 1065-1073. \doi{10.2307/2290084}
 }
 
 %\examples{

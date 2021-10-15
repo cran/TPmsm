@@ -69,12 +69,12 @@ An object of class \sQuote{TPmsm}. There are methods for \code{contour}, \code{i
 \author{Artur Araújo, Javier Roca-Pardiñas and Luís Meira-Machado}
 
 \references{
-Araújo A, Meira-Machado L, Roca-Pardiñas J (2014) TPmsm: Estimation of the Transition Probabilities in
+Araújo A, Meira-Machado L, Roca-Pardiñas J (2014). TPmsm: Estimation of the Transition Probabilities in
 3-State Models. \emph{Journal of Statistical Software}, \bold{62}(4), 1-29. \doi{10.18637/jss.v062.i04}
 
-Meira Machado L. F., de Uña-Álvarez J., Cadarso-Suárez C. (2006) Nonparametric estimation of transition probabilities in a non-Markov illness-death model. \emph{Lifetime Data Anal} \bold{12}(3), 325--344. \doi{10.1007/s10985-006-9009-x}
+Meira Machado L. F., de Uña-Álvarez J., Cadarso-Suárez C. (2006). Nonparametric estimation of transition probabilities in a non-Markov illness-death model. \emph{Lifetime Data Anal}, \bold{12}(3), 325-344. \doi{10.1007/s10985-006-9009-x}
 
-Davison, A. C., Hinkley, D. V. (1997) \emph{Bootstrap Methods and their Application} Chapter 5, Cambridge University Press.
+Davison, A. C., Hinkley, D. V. (1997). \emph{Bootstrap Methods and their Application}, Chapter 5, Cambridge University Press.
 }
 
 %\note{

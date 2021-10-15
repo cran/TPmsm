@@ -32,14 +32,14 @@ then only the first six elements are used.
 \value{Invisibly returns NULL.}
 
 \references{
-Araújo A, Meira-Machado L, Roca-Pardiñas J (2014) TPmsm: Estimation of the Transition Probabilities in
+Araújo A, Meira-Machado L, Roca-Pardiñas J (2014). TPmsm: Estimation of the Transition Probabilities in
 3-State Models. \emph{Journal of Statistical Software}, \bold{62}(4), 1-29. \doi{10.18637/jss.v062.i04}
 
-Karl A. T., Eubank R., Milovanovic J., Reiser M., Young D. (2014) Using RngStreams for parallel random number generation in C++ and R. \emph{Computational Statistics} \bold{29}(5), 1301--1320. \doi{10.1007/s00180-014-0492-3}
+Karl A. T., Eubank R., Milovanovic J., Reiser M., Young D. (2014). Using RngStreams for parallel random number generation in C++ and R. \emph{Computational Statistics}, \bold{29}(5), 1301-1320. \doi{10.1007/s00180-014-0492-3}
 
-L'Ecuyer, P. (1999) Good parameters and implementations for combined multiple recursive random number generators. \emph{Operations Research} \bold{47}(1), 159–-164. \doi{10.1287/opre.47.1.159}
+L'Ecuyer, P. (1999). Good parameters and implementations for combined multiple recursive random number generators. \emph{Operations Research}, \bold{47}(1), 159–-164. \doi{10.1287/opre.47.1.159}
 
-L’Ecuyer P., Simard R., Chen E. J., Kelton W. D. (2002) An object-oriented random-number package with many long streams and substreams. \emph{Operations Research} \bold{50}(6), 1073–-1075. \doi{10.1287/opre.50.6.1073.358}
+L’Ecuyer P., Simard R., Chen E. J., Kelton W. D. (2002). An object-oriented random-number package with many long streams and substreams. \emph{Operations Research}, \bold{50}(6), 1073–-1075. \doi{10.1287/opre.50.6.1073.358}
 }
 
 \author{Artur Araújo, Javier Roca-Pardiñas and Luís Meira-Machado}

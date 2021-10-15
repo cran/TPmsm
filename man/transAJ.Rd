@@ -52,7 +52,7 @@ An object of class \sQuote{TPmsm}. There are methods for \code{contour}, \code{i
 Aalen O. O., Johansen S. (1978) An Empirical Transition Matrix for Nonhomogeneous Markov Chains Based on Censored Observations. \emph{Scandinavian Journal of Statistics} \bold{5}(3), 141--150. \url{https://www.jstor.org/stable/4615704}
 
 Araújo A, Meira-Machado L, Roca-Pardiñas J (2014) TPmsm: Estimation of the Transition Probabilities in
-3-State Models. \emph{Journal of Statistical Software}, \bold{62}(4), 1-29. \doi{10.18637/jss.v062.i04}
+3-State Models. \emph{Journal of Statistical Software}, \bold{62}(4), 1--29. \doi{10.18637/jss.v062.i04}
 
 Davison A. C., Hinkley D. V. (1997) \emph{Bootstrap Methods and their Application} Chapter 5, Cambridge University Press.
 }

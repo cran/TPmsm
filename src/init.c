@@ -2,9 +2,7 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#include <stddef.h>
 #include <stdlib.h>
-#include <R_ext/Rdynload.h>
 #include <R_ext/Visibility.h>
 #include <Rinternals.h>
 #include <Rversion.h>

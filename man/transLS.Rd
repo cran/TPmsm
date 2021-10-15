@@ -65,16 +65,16 @@ An object of class \sQuote{TPmsm}. There are methods for \code{contour}, \code{i
 \author{Artur Araújo, Javier Roca-Pardiñas and Luís Meira-Machado}
 
 \references{
-Araújo A, Meira-Machado L, Roca-Pardiñas J (2014) TPmsm: Estimation of the Transition Probabilities in
+Araújo A, Meira-Machado L, Roca-Pardiñas J (2014). TPmsm: Estimation of the Transition Probabilities in
 3-State Models. \emph{Journal of Statistical Software}, \bold{62}(4), 1-29. \doi{10.18637/jss.v062.i04}
 
-Meira-Machado L., Roca-Pardiñas J., Van Keilegom I., Cadarso-Suárez C. (2013) Bandwidth Selection for the Estimation of Transition Probabilities in the Location-Scale Progressive Three-State Model. \emph{Computational Statistics} \bold{28}(5), 2185--2210. \doi{10.1007/s00180-013-0402-0}
+Meira-Machado L., Roca-Pardiñas J., Van Keilegom I., Cadarso-Suárez C. (2013). Bandwidth Selection for the Estimation of Transition Probabilities in the Location-Scale Progressive Three-State Model. \emph{Computational Statistics}, \bold{28}(5), 2185-2210. \doi{10.1007/s00180-013-0402-0}
 
-Meira-Machado L., Roca-Pardiñas J., Van Keilegom I., Cadarso-Suárez C. Estimation of transition probabilities in a non-Markov model with successive survival times. Discussion paper 2010. \url{https://sites.uclouvain.be/IAP-Stat-Phase-V-VI/ISBApub/dp2010/DP1053.pdf}
+Meira-Machado L., Roca-Pardiñas J., Van Keilegom I., Cadarso-Suárez C. (2010). Estimation of transition probabilities in a non-Markov model with successive survival times. \url{https://sites.uclouvain.be/IAP-Stat-Phase-V-VI/ISBApub/dp2010/DP1053.pdf}
 
-Van Keilegom I., de Uña-Álvarez J., Meira-Machado L. (2011) Nonparametric location-scale models for successive survival times under dependent censoring. \emph{Journal of Statistical Planning and Inference} \bold{141}(3), 1118--1131. \doi{10.1016/j.jspi.2010.09.010}
+Van Keilegom I., de Uña-Álvarez J., Meira-Machado L. (2011). Nonparametric location-scale models for successive survival times under dependent censoring. \emph{Journal of Statistical Planning and Inference}, \bold{141}(3), 1118-1131. \doi{10.1016/j.jspi.2010.09.010}
 
-Davison, A. C., Hinkley, D. V. (1997) \emph{Bootstrap Methods and their Application} Chapter 5, Cambridge University Press.
+Davison, A. C., Hinkley, D. V. (1997). \emph{Bootstrap Methods and their Application}, Chapter 5, Cambridge University Press.
 }
 
 %\note{

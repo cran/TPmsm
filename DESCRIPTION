@@ -1,8 +1,8 @@
 Encoding: UTF-8
 Package: TPmsm
 Type: Package
-Version: 1.2.4
-Date: 2021-10-08
+Version: 1.2.5
+Date: 2021-10-10
 Title: Estimation of Transition Probabilities in Multistate Models
 Authors@R: c(
 	person(
@@ -32,16 +32,16 @@ Suggests: knitr
 VignetteBuilder: knitr
 Description: Estimation of transition probabilities for the
 	illness-death model and or the three-state progressive model.
-License: GPL-3 | file LICENSE
+License: GPL-3
 URL: https://github.com/arturstat/TPmsm
 BugReports: https://github.com/arturstat/TPmsm/issues
 LazyLoad: yes
 LazyData: yes
 NeedsCompilation: yes
-Packaged: 2021-10-08 19:36:26 UTC; User
+Packaged: 2021-10-10 21:20:17 UTC; User
 Author: Artur Araujo [aut, cre] (<https://orcid.org/0000-0003-1419-4208>),
   Javier Roca-Pardinas [aut] (<https://orcid.org/0000-0003-3107-4515>),
   Luis Meira-Machado [aut] (<https://orcid.org/0000-0002-8577-7665>)
 Maintainer: Artur Araujo <artur.stat@gmail.com>
 Repository: CRAN
-Date/Publication: 2021-10-09 15:30:17 UTC
+Date/Publication: 2021-10-15 10:20:20 UTC

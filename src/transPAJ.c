@@ -6,7 +6,6 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-#include <stddef.h>
 #include <stdlib.h>
 #include <Rdefines.h>
 #include "defines.h"

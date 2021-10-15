@@ -1,5 +1,4 @@
 
-#include <stddef.h>
 #include <Rdefines.h>
 #include "defines.h"
 #include "RngStream.h"

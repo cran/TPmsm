@@ -41,12 +41,12 @@ Where \eqn{0 < \delta \le 1}{0 < \delta \le 1} and each marginal distribution ha
 \author{Artur Araújo, Javier Roca-Pardiñas and Luís Meira-Machado}
 
 \references{
-Araújo A, Meira-Machado L, Roca-Pardiñas J (2014) TPmsm: Estimation of the Transition Probabilities in
+Araújo A, Meira-Machado L, Roca-Pardiñas J (2014). TPmsm: Estimation of the Transition Probabilities in
 3-State Models. \emph{Journal of Statistical Software}, \bold{62}(4), 1-29. \doi{10.18637/jss.v062.i04}
 
-Johnson N., Kotz S. (1972) \emph{Distributions in statistics: continuous multivariate distributions} John Wiley and Sons.
+Johnson N., Kotz S. (1972). \emph{Distributions in statistics: continuous multivariate distributions}, John Wiley and Sons.
 
-Lu J., Bhattacharya G. (1990) Some new constructions of bivariate weibull models. \emph{Annals of Institute of Statistical Mathematics} \bold{42}(3), 543--559. \doi{10.1007/BF00049307}
+Lu J., Bhattacharya G. (1990). Some new constructions of bivariate weibull models. \emph{Annals of Institute of Statistical Mathematics}, \bold{42}(3), 543-559. \doi{10.1007/BF00049307}
 }
 
 %\note{

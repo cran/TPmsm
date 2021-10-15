@@ -26,7 +26,7 @@ without defining a new thread number.
 \value{Invisibly returns the previous number of threads.}
 
 \references{
-Araújo A, Meira-Machado L, Roca-Pardiñas J (2014) TPmsm: Estimation of the Transition Probabilities in
+Araújo A, Meira-Machado L, Roca-Pardiñas J (2014). TPmsm: Estimation of the Transition Probabilities in
 3-State Models. \emph{Journal of Statistical Software}, \bold{62}(4), 1-29. \doi{10.18637/jss.v062.i04}
 
 OpenMP Architecture Review Board, OpenMP Application Program Interface Version 3.0, May 2008, p110. \url{https://www.openmp.org/wp-content/uploads/spec30.pdf}
