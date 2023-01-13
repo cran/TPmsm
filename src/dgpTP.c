@@ -108,22 +108,22 @@ static void cens2(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Generates bivariate censored gap times from some known copula functions.
+  Generates bivariate censored gap times from some known copula functions.
 
 Parameters:
-	n			sample size.
-	corr			correlation parameter.
-	dist			distribution.
-	distpar			vector of parameters for the distribution.
-	modelcens		model for censorship.
-	censpar			parameter for the censorship distribution.
-	state2prob		the proportion of individuals entering state2.
+  n                 sample size.
+  corr              correlation parameter.
+  dist              distribution.
+  distpar           vector of parameters for the distribution.
+  modelcens         model for censorship.
+  censpar           parameter for the censorship distribution.
+  state2prob        the proportion of individuals entering state2.
 
 Return value:
-	Returns an object of class 'survTP'.
+  Returns an object of class 'survTP'.
 */
 
 SEXP dgpTP(

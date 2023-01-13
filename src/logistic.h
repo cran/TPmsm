@@ -1,8 +1,9 @@
 
 typedef struct {
-	int n, *IPIV;
+	unsigned int n;
+	int *IPIV;
 	double *B, *U;
-	int lwork;
+	unsigned int lwork;
 	double *F, *W;
 } logitW;
 

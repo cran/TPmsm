@@ -4,6 +4,22 @@ Estimation of Transition Probabilities in Multistate Models.
 ## Description
 The **TPmsm** software contains functions that compute estimates for the transition probabilities in the illness-death model and or the three-state progressive model. This **R** package implements seven different estimators. Being five of them non-parametric and two of them semi-parametric (**PAJ** and **KMPW**). The implemented estimators are the Aalen-Johansen estimator (**AJ**), Presmoothed Aalen-Johansen estimator (**PAJ**), Kaplan-Meier Weighted estimator (**KMW**), Presmoothed Kalpan-Meier Weighted estimator (**KMPW**), Inverse Probability Censoring estimator (**IPCW**), Lin estimator (**LIN**) and Location-Scale estimator (**LS**). The Inverse Probability Censoring (**IPCW**) and Lin (**LIN**) estimators also permit to compute transition probabilities conditioned on a single covariate. Bootstrap confidence bands can be computed for each of the mentioned estimators. Several graphical plots of the transition probabilities with or without confidence bands can be drawn. To aid in the study of the statistical properties of the implemented estimators, functions to generate pseudo-random data for some well-known multivariate distributions were implemented.
 
+## Installation
+If you want to use the release version of the **TPmsm** package, you can install the package from CRAN as follows:
+```r
+install.packages(pkgs="TPmsm");
+```
+If you want to use the development version of the **TPmsm** package, you can install the package from GitHub via the [**remotes**](https://remotes.r-lib.org) package:
+```r
+remotes::install_github(
+  repo="arturstat/TPmsm",
+  build=TRUE,
+  build_opts="--compact-vignettes=gs+qpdf",
+  build_manual=TRUE,
+  build_vignettes=TRUE,
+);
+```
+
 ## Authors
 Artur Araújo, Javier Roca-Pardiñas <roca@uvigo.es> \
 and Luís Meira-Machado <lmachado@math.uminho.pt> \
@@ -48,11 +64,16 @@ Meira Machado L. F., de Uña-Álvarez J., Cadarso-Suárez C. (2006). Nonparametr
 
 Meira-Machado L., de Uña-Álvarez J., Datta S. (2011). Conditional Transition Probabilities in a non-Markov Illness-death Model. Discussion Papers in Statistics and Operations Research n 11/03. Department of Statistics and Operations Research, University of Vigo (ISSN: 1888-5756, Deposito Legal VG 1402-2007). <https://depc05.webs.uvigo.es/reports/12_05.pdf>
 
+Meira-Machado L., Faria S. (2014). A simulation study comparing modeling approaches in an illness-death multi-state model. *Communications in Statistics - Simulation and Computation*, **43**(5), 929-946. [doi:10.1080/03610918.2012.718841](https://doi.org/10.1080/03610918.2012.718841)
+
 Meira-Machado L., Roca-Pardiñas J. (2011). p3state.msm: Analyzing Survival Data from an Illness-Death Model. *Journal of Statistical Software*, **38**(3), 1-18. [doi:10.18637/jss.v038.i03](https://doi.org/10.18637/jss.v038.i03)
 
 Meira-Machado L., Roca-Pardiñas J., Van Keilegom I., Cadarso-Suárez C. (2013). Bandwidth Selection for the Estimation of Transition Probabilities in the Location-Scale Progressive Three-State Model. *Computational Statistics*, **28**(5), 2185-2210. [doi:10.1007/s00180-013-0402-0](https://doi.org/10.1007/s00180-013-0402-0)
 
 Meira-Machado L., Roca-Pardiñas J., Van Keilegom I. (2010). Cadarso-Suárez C. Estimation of transition probabilities in a non-Markov model with successive survival times. <https://sites.uclouvain.be/IAP-Stat-Phase-V-VI/ISBApub/dp2010/DP1053.pdf>
+
+Meira-Machado, L., Sestelo M. (2019). Estimation in the progressive illness-death model: a nonexhaustive
+review. *Biometrical Journal*, **61**(2), 245–263. [doi:10.1002/bimj.201700200](https://doi.org/10.1002/bimj.201700200)
 
 Moertel C. G., Fleming T. R., MacDonald J. S., Haller D. G., Laurie J. A., Goodman P.J., Ungerleider J.S., Emerson W.A., Tormey D.C., Glick J.H., Veeder M.H., Maillard J.A. (1990). Levamisole and fluorouracil for adjuvant therapy of resected colon carcinoma. *New England Journal of Medicine*, **322**(6), 352-358. [doi:10.1056/NEJM199002083220602](https://doi.org/10.1056/NEJM199002083220602)
 

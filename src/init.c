@@ -79,7 +79,7 @@ void attribute_visible R_init_TPmsm(DllInfo *dll) {
 	set_num_threads(global_num_procs);
 	#endif
 
-	RngArray = (RngStream*)malloc( global_num_procs*sizeof(RngStream) );
+	RngArray = (RngStream*)malloc( (unsigned int)global_num_procs*sizeof(RngStream) );
 	if (RngArray == NULL) error("R_init_TPmsm: No more memory\n");
 	RngArray_CreateStream(&global_num_threads, RngArray);
 

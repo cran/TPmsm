@@ -7,38 +7,38 @@
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes the transition probabilities:
-		p11(s,t) = P(Z>t|Z>s) = {1-P(Z<=t)}/{1-P(Z<=s)}
-		p12(s,t) = 1-p11(s,t)-p13(s,t)
-		p13(s,t) = P(T<=t|Z>s) = P(Z>s,T<=t)/{1-P(Z<=s)}
-		p23(s,t) = P(T<=t|Z<=s,T>s) = P(Z<=s,s<T<=t)/{P(Z<=s)-P(T<=s)}
+  Computes the transition probabilities:
+    p11(s,t) = P(Z>t|Z>s) = {1-P(Z<=t)}/{1-P(Z<=s)}
+    p12(s,t) = 1-p11(s,t)-p13(s,t)
+    p13(s,t) = P(T<=t|Z>s) = P(Z>s,T<=t)/{1-P(Z<=s)}
+    p23(s,t) = P(T<=t|Z<=s,T>s) = P(Z<=s,s<T<=t)/{P(Z<=s)-P(T<=s)}
 
 Parameters:
-	len[in]			pointer to length of T1, E1, S and E.
-	T1[in]			pointer to T1 first element.
-	E1[in]			pointer to E1 first element.
-	S[in]			pointer to S first element.
-	E[in]			pointer to E first element.
-	index0[in]		pointer to index0 first element.
-	index1[in]		pointer to index1 first element.
-	nt[in]			pointer to length of UT and number of rows of P.
-	UT[in]			pointer to unique times vector.
-	nb[in]			pointer to number of rows of P.
-	P[out]			pointer to a (nb)x(nt)x4 probability array.
-	b[in]			pointer to row index.
+  len[in]           pointer to length of T1, E1, S and E.
+  T1[in]            pointer to T1 first element.
+  E1[in]            pointer to E1 first element.
+  S[in]             pointer to S first element.
+  E[in]             pointer to E first element.
+  index0[in]        pointer to index0 first element.
+  index1[in]        pointer to index1 first element.
+  nt[in]            pointer to length of UT and number of rows of P.
+  UT[in]            pointer to unique times vector.
+  nb[in]            pointer to number of rows of P.
+  P[out]            pointer to a (nb)x(nt)x4 probability array.
+  b[in]             pointer to row index.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vector index0 must indicate the permutation of vector T1
-		sorted by ascending order.
-	Vector index1 must indicate the permutation of vector S
-		sorted by ascending order.
-	Vectors T1, E1, S and E must have the same length.
+  Vector index0 must indicate the permutation of vector T1
+    sorted by ascending order.
+  Vector index1 must indicate the permutation of vector S
+    sorted by ascending order.
+  Vectors T1, E1, S and E must have the same length.
 */
 
 void transKMW3I(
@@ -119,38 +119,38 @@ void transKMW3I(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes the transition probabilities:
-		p11(s,t) = P(Z>t|Z>s) = P(Z>t)/P(Z>s)
-		p12(s,t) = 1-p11(s,t)-p13(s,t)
-		p13(s,t) = P(T<=t|Z>s) = P(Z>s,T<=t)/P(Z>s)
-		p23(s,t) = P(T<=t|Z<=s,T>s) = P(Z<=s,s<T<=t)/P(Z<=s,T>s)
+  Computes the transition probabilities:
+    p11(s,t) = P(Z>t|Z>s) = P(Z>t)/P(Z>s)
+    p12(s,t) = 1-p11(s,t)-p13(s,t)
+    p13(s,t) = P(T<=t|Z>s) = P(Z>s,T<=t)/P(Z>s)
+    p23(s,t) = P(T<=t|Z<=s,T>s) = P(Z<=s,s<T<=t)/P(Z<=s,T>s)
 
 Parameters:
-	len[in]			pointer to length of T1, E1, S and E.
-	T1[in]			pointer to T1 first element.
-	E1[in]			pointer to E1 first element.
-	S[in]			pointer to S first element.
-	E[in]			pointer to E first element.
-	index0[in]		pointer to index0 first element.
-	index1[in]		pointer to index1 first element.
-	nt[in]			pointer to length of UT and number of rows of P.
-	UT[in]			pointer to unique times vector.
-	nb[in]			pointer to number of rows of P.
-	P[out]			pointer to a (nb)x(nt)x4 probability array.
-	b[in]			pointer to row index.
+  len[in]           pointer to length of T1, E1, S and E.
+  T1[in]            pointer to T1 first element.
+  E1[in]            pointer to E1 first element.
+  S[in]             pointer to S first element.
+  E[in]             pointer to E first element.
+  index0[in]        pointer to index0 first element.
+  index1[in]        pointer to index1 first element.
+  nt[in]            pointer to length of UT and number of rows of P.
+  UT[in]            pointer to unique times vector.
+  nb[in]            pointer to number of rows of P.
+  P[out]            pointer to a (nb)x(nt)x4 probability array.
+  b[in]             pointer to row index.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vector index0 must indicate the permutation of vector T1
-		sorted by ascending order.
-	Vector index1 must indicate the permutation of vector S
-		sorted by ascending order.
-	Vectors T1, E1, S and E must have the same length.
+  Vector index0 must indicate the permutation of vector T1
+    sorted by ascending order.
+  Vector index1 must indicate the permutation of vector S
+    sorted by ascending order.
+  Vectors T1, E1, S and E must have the same length.
 */
 
 void transKMW4I(

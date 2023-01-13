@@ -27,7 +27,7 @@ SEXP rsample(SEXP arg_n)
 		#pragma omp for
 		#endif
 		for (i = 0; i < *INTEGER(arg_n); i++) {
-			INTEGER(ret_i)[i] = RngStream_RandInt( RngArray[t], 1, *INTEGER(arg_n) );
+			INTEGER(ret_i)[i] = (int)RngStream_RandInt( RngArray[t], 1, (long)*INTEGER(arg_n) );
 		}
 	}
 	UNPROTECT(1);

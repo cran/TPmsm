@@ -18,22 +18,22 @@
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes a transition probability vector based
-		on the Kaplan-Meier weights estimator.
+  Computes a transition probability vector based
+    on the Kaplan-Meier weights estimator.
 
 Parameters:
-	object			an object of class 'KMW1' or class 'KMW2'.
-	UT			unique times vector.
-	nboot			number of bootstrap samples.
-	methodest		an integer indicating the desired method.
+  object            an object of class 'KMW1' or class 'KMW2'.
+  UT                unique times vector.
+  nboot             number of bootstrap samples.
+  methodest         an integer indicating the desired method.
 
 Return value:
-	Returns a list where the first element is a
-		(nboot)x(nt)x4 array of transition probabilities,
-		and the second element is NULL.
+  Returns a list where the first element is a
+    (nboot)x(nt)x4 array of transition probabilities,
+    and the second element is NULL.
 */
 
 SEXP TransPROBKMW(
@@ -67,19 +67,19 @@ SEXP TransPROBKMW(
 			func = transKMW1I;
 	}
 	if (*INTEGER(nboot) > 1) nth = global_num_threads;
-	int **index0 = (int**)malloc( nth*sizeof(int*) ); // allocate memory block
+	int **index0 = (int**)malloc( (unsigned int)nth*sizeof(int*) ); // allocate memory block
 	if (index0 == NULL) error("TransPROBKMW: No more memory\n");
-	int **index1 = (int**)malloc( nth*sizeof(int*) ); // allocate memory block
+	int **index1 = (int**)malloc( (unsigned int)nth*sizeof(int*) ); // allocate memory block
 	if (index1 == NULL) error("TransPROBKMW: No more memory\n");
-	double **WORK0 = (double**)malloc( nth*sizeof(double*) ); // allocate memory block
+	double **WORK0 = (double**)malloc( (unsigned int)nth*sizeof(double*) ); // allocate memory block
 	if (WORK0 == NULL) error("TransPROBKMW: No more memory\n");
-	int **WORK1 = (int**)malloc( nth*sizeof(int*) ); // allocate memory block
+	int **WORK1 = (int**)malloc( (unsigned int)nth*sizeof(int*) ); // allocate memory block
 	if (WORK1 == NULL) error("TransPROBKMW: No more memory\n");
 	for (t = 0; t < nth; t++) { // allocate per thread memory
-		if ( ( index0[t] = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBKMW: No more memory\n");
-		if ( ( index1[t] = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBKMW: No more memory\n");
-		if ( ( WORK0[t] = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBKMW: No more memory\n");
-		if ( ( WORK1[t] = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBKMW: No more memory\n");
+		if ( ( index0[t] = (int*)malloc( (unsigned int)len*sizeof(int) ) ) == NULL ) error("TransPROBKMW: No more memory\n");
+		if ( ( index1[t] = (int*)malloc( (unsigned int)len*sizeof(int) ) ) == NULL ) error("TransPROBKMW: No more memory\n");
+		if ( ( WORK0[t] = (double*)malloc( (unsigned int)len*sizeof(double) ) ) == NULL ) error("TransPROBKMW: No more memory\n");
+		if ( ( WORK1[t] = (int*)malloc( (unsigned int)len*sizeof(int) ) ) == NULL ) error("TransPROBKMW: No more memory\n");
 	}
 	#ifdef _OPENMP
 	#pragma omp parallel num_threads(nth) private(t)

@@ -11,22 +11,22 @@
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Initialize kernel density with weights over bandwith value.
+  Initialize kernel density with weights over bandwidth value.
 
 Parameters:
-	SW[in]			pointer to a weights stype structure.
-	index[i]		pointer to index vector
-	h[in]			pointer to bandwith value.
-	K[out]			pointer to kernel density vector.
+  SW[in]            pointer to a weights stype structure.
+  index[i]          pointer to index vector
+  h[in]             pointer to bandwidth value.
+  K[out]            pointer to kernel density vector.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	The length of the vectors is read from SW->length.
+  The length of the vectors is read from SW->length.
 */
 
 static void kweight(
@@ -66,24 +66,24 @@ static void kweight(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes weights based on the gaussian kernel.
+  Computes weights based on the gaussian kernel.
 
 Parameters:
-	X[in]			pointer to covariate vector.
-	SW[in]			pointer to a weights stype structure.
-	index[i]		pointer to index vector
-	x[in]			pointer to covariate value to compute the weights at.
-	h[in]			pointer to bandwith value.
-	K[out]			pointer to kernel density vector.
+  X[in]             pointer to covariate vector.
+  SW[in]            pointer to a weights stype structure.
+  index[i]          pointer to index vector
+  x[in]             pointer to covariate value to compute the weights at.
+  h[in]             pointer to bandwidth value.
+  K[out]            pointer to kernel density vector.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	The length of the vectors is read from SW->length.
+  The length of the vectors is read from SW->length.
 */
 
 static void knormal(
@@ -106,24 +106,24 @@ static void knormal(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes weights based on the epanechnikov kernel.
+  Computes weights based on the epanechnikov kernel.
 
 Parameters:
-	X[in]			pointer to covariate vector.
-	SW[in]			pointer to a weights stype structure.
-	index[i]		pointer to index vector
-	x[in]			pointer to covariate value to compute the weights at.
-	h[in]			pointer to bandwith value.
-	K[out]			pointer to kernel density vector.
+  X[in]             pointer to covariate vector.
+  SW[in]            pointer to a weights stype structure.
+  index[i]          pointer to index vector
+  x[in]             pointer to covariate value to compute the weights at.
+  h[in]             pointer to bandwidth value.
+  K[out]            pointer to kernel density vector.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	The length of the vectors is read from SW->length.
+  The length of the vectors is read from SW->length.
 */
 
 static void kepanech(
@@ -149,24 +149,24 @@ static void kepanech(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes weights based on the tricube kernel.
+  Computes weights based on the tricube kernel.
 
 Parameters:
-	X[in]			pointer to covariate vector.
-	SW[in]			pointer to a weights stype structure.
-	index[i]		pointer to index vector
-	x[in]			pointer to covariate value to compute the weights at.
-	h[in]			pointer to bandwith value.
-	K[out]			pointer to kernel density vector.
+  X[in]             pointer to covariate vector.
+  SW[in]            pointer to a weights stype structure.
+  index[i]          pointer to index vector
+  x[in]             pointer to covariate value to compute the weights at.
+  h[in]             pointer to bandwidth value.
+  K[out]            pointer to kernel density vector.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	The length of the vectors is read from SW->length.
+  The length of the vectors is read from SW->length.
 */
 
 static void ktricube(
@@ -192,24 +192,24 @@ static void ktricube(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes weights based on the boxcar kernel.
+  Computes weights based on the boxcar kernel.
 
 Parameters:
-	X[in]			pointer to covariate vector.
-	SW[in]			pointer to a weights stype structure.
-	index[i]		pointer to index vector
-	x[in]			pointer to covariate value to compute the weights at.
-	h[in]			pointer to bandwith value.
-	K[out]			pointer to kernel density vector.
+  X[in]             pointer to covariate vector.
+  SW[in]            pointer to a weights stype structure.
+  index[i]          pointer to index vector
+  x[in]             pointer to covariate value to compute the weights at.
+  h[in]             pointer to bandwidth value.
+  K[out]            pointer to kernel density vector.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	The length of the vectors is read from SW->length.
+  The length of the vectors is read from SW->length.
 */
 
 static void kbox(
@@ -232,24 +232,24 @@ static void kbox(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes weights based on the triangular kernel.
+  Computes weights based on the triangular kernel.
 
 Parameters:
-	X[in]			pointer to covariate vector.
-	SW[in]			pointer to a weights stype structure.
-	index[i]		pointer to index vector
-	x[in]			pointer to covariate value to compute the weights at.
-	h[in]			pointer to bandwith value.
-	K[out]			pointer to kernel density vector.
+  X[in]             pointer to covariate vector.
+  SW[in]            pointer to a weights stype structure.
+  index[i]          pointer to index vector
+  x[in]             pointer to covariate value to compute the weights at.
+  h[in]             pointer to bandwidth value.
+  K[out]            pointer to kernel density vector.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	The length of the vectors is read from SW->length.
+  The length of the vectors is read from SW->length.
 */
 
 static void ktriangular(
@@ -275,24 +275,24 @@ static void ktriangular(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes weights based on the biweight kernel.
+  Computes weights based on the biweight kernel.
 
 Parameters:
-	X[in]			pointer to covariate vector.
-	SW[in]			pointer to a weights stype structure.
-	index[i]		pointer to index vector
-	x[in]			pointer to covariate value to compute the weights at.
-	h[in]			pointer to bandwith value.
-	K[out]			pointer to kernel density vector.
+  X[in]             pointer to covariate vector.
+  SW[in]            pointer to a weights stype structure.
+  index[i]          pointer to index vector
+  x[in]             pointer to covariate value to compute the weights at.
+  h[in]             pointer to bandwidth value.
+  K[out]            pointer to kernel density vector.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	The length of the vectors is read from SW->length.
+  The length of the vectors is read from SW->length.
 */
 
 static void kbiweight(
@@ -318,24 +318,24 @@ static void kbiweight(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes weights based on the triweight kernel.
+  Computes weights based on the triweight kernel.
 
 Parameters:
-	X[in]			pointer to covariate vector.
-	SW[in]			pointer to a weights stype structure.
-	index[i]		pointer to index vector
-	x[in]			pointer to covariate value to compute the weights at.
-	h[in]			pointer to bandwith value.
-	K[out]			pointer to kernel density vector.
+  X[in]             pointer to covariate vector.
+  SW[in]            pointer to a weights stype structure.
+  index[i]          pointer to index vector
+  x[in]             pointer to covariate value to compute the weights at.
+  h[in]             pointer to bandwidth value.
+  K[out]            pointer to kernel density vector.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	The length of the vectors is read from SW->length.
+  The length of the vectors is read from SW->length.
 */
 
 static void ktriweight(
@@ -361,24 +361,24 @@ static void ktriweight(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes weights based on the cosine kernel.
+  Computes weights based on the cosine kernel.
 
 Parameters:
-	X[in]			pointer to covariate vector.
-	SW[in]			pointer to a weights stype structure.
-	index[i]		pointer to index vector
-	x[in]			pointer to covariate value to compute the weights at.
-	h[in]			pointer to bandwith value.
-	K[out]			pointer to kernel density vector.
+  X[in]             pointer to covariate vector.
+  SW[in]            pointer to a weights stype structure.
+  index[i]          pointer to index vector
+  x[in]             pointer to covariate value to compute the weights at.
+  h[in]             pointer to bandwidth value.
+  K[out]            pointer to kernel density vector.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	The length of the vectors is read from SW->length.
+  The length of the vectors is read from SW->length.
 */
 
 static void kcosine(
@@ -404,16 +404,16 @@ static void kcosine(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Returns a pointer to a window or kernel function based on the inputed string.
+  Returns a pointer to a window or kernel function based on the inputted string.
 
 Parameters:
-	window			a string indicating the desired window or kernel method.
+  window            a string indicating the desired window or kernel method.
 
 Return value:
-	Returns a pointer to a window or kernel function.
+  Returns a pointer to a window or kernel function.
 */
 
 void (*kchar2ptr(SEXP window))(CdoubleCP, CstypeCP, CintCP, CdoubleCP, CdoubleCP, doubleCP) {
@@ -430,32 +430,32 @@ void (*kchar2ptr(SEXP window))(CdoubleCP, CstypeCP, CintCP, CdoubleCP, CdoubleCP
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes the Nadaraya-Watson weights.
+  Computes the Nadaraya-Watson weights.
 
 Parameters:
-	X[in]			pointer to covariate vector.
-	SW[in]			pointer to a weights stype structure.
-	index[i]		pointer to index vector
-	x[in]			pointer to covariate value to compute the weights at.
-	h[in]			pointer to bandwith value.
-	K[out]			pointer to kernel density vector.
-	kfunc[in] 		pointer to kernel density function.
+  X[in]             pointer to covariate vector.
+  SW[in]            pointer to a weights stype structure.
+  index[i]          pointer to index vector
+  x[in]             pointer to covariate value to compute the weights at.
+  h[in]             pointer to bandwidth value.
+  K[out]            pointer to kernel density vector.
+  kfunc[in]         pointer to kernel density function.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vector index must indicate the permutation of vector X
-		sorted by ascending order.
-	Actually index can indicate the permuation of another
-		vector sorted by ascending order. As long as that
-		vector is indexed to vector X. As the columns in
-		a data.frame or matrix are indexed to each other.
-	Vectors X, SW->ptr, index and K must have the same length.
-	The length of the vectors is read from SW->length.
+  Vector index must indicate the permutation of vector X
+    sorted by ascending order.
+  Actually index can indicate the permutation of another
+    vector sorted by ascending order. As long as that
+    vector is indexed to vector X. As the columns in
+    a data.frame or matrix are indexed to each other.
+  Vectors X, SW->ptr, index and K must have the same length.
+  The length of the vectors is read from SW->length.
 */
 
 void NWWeights(
@@ -480,32 +480,32 @@ void NWWeights(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes local linear weights based on a kernel density.
+  Computes local linear weights based on a kernel density.
 
 Parameters:
-	X[in]			pointer to covariate vector.
-	SW[in]			pointer to a weights stype structure.
-	index[i]		pointer to index vector
-	x[in]			pointer to covariate value to compute the weights at.
-	h[in]			pointer to bandwith value.
-	K[out]			pointer to kernel density vector.
-	kfunc[in] 		pointer to kernel density function.
+  X[in]             pointer to covariate vector.
+  SW[in]            pointer to a weights stype structure.
+  index[i]          pointer to index vector
+  x[in]             pointer to covariate value to compute the weights at.
+  h[in]             pointer to bandwidth value.
+  K[out]            pointer to kernel density vector.
+  kfunc[in]         pointer to kernel density function.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vector index must indicate the permutation of vector X
-		sorted by ascending order.
-	Actually index can indicate the permuation of another
-		vector sorted by ascending order. As long as that
-		vector is indexed to vector X. As the columns in
-		a data.frame or matrix are indexed to each other.
-	Vectors X, SW->ptr, index and K must have the same length.
-	The length of the vectors is read from SW->length.
+  Vector index must indicate the permutation of vector X
+    sorted by ascending order.
+  Actually index can indicate the permutation of another
+    vector sorted by ascending order. As long as that
+    vector is indexed to vector X. As the columns in
+    a data.frame or matrix are indexed to each other.
+  Vectors X, SW->ptr, index and K must have the same length.
+  The length of the vectors is read from SW->length.
 */
 
 void LLWeights(

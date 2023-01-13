@@ -3,31 +3,31 @@
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes vector of conditional Kaplan-Meier survival
-		probabilities of the event variable (T).
-		S(t|x) = P(T>t|X=x)
+  Computes vector of conditional Kaplan-Meier survival
+    probabilities of the event variable (T).
+    S(t|x) = P(T>t|X=x)
 
 Parameters:
-	len[in]			pointer to length of T, E, K, index and SV.
-	T[in]			pointer to T first element.
-	E[in]			pointer to E first element.
-	K[in]			pointer to K first element
-	index[in]		pointer to index first element.
-	end[in]			pointer to last index of T.
-	SV[out]			pointer to conditional survival probabilities vector.
+  len[in]           pointer to length of T, E, K, index and SV.
+  T[in]             pointer to T first element.
+  E[in]             pointer to E first element.
+  K[in]             pointer to K first element
+  index[in]         pointer to index first element.
+  end[in]           pointer to last index of T.
+  SV[out]           pointer to conditional survival probabilities vector.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vector index must indicate the permutation of vector T
-		sorted by ascending order.
-	If there is no need to have the values of vector K saved
-		for later use, it is safe to pass the very same vector
-		K as vector SV. This way memory usage is lower.
+  Vector index must indicate the permutation of vector T
+    sorted by ascending order.
+  If there is no need to have the values of vector K saved
+    for later use, it is safe to pass the very same vector
+    K as vector SV. This way memory usage is lower.
 */
 
 void wkmsurv(

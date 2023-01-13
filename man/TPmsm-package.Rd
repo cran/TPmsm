@@ -21,8 +21,8 @@ estimators, functions to generate pseudo-random data for some well-known multiva
 	\tabular{ll}{
 		Package: \tab TPmsm\cr
 		Type: \tab Package\cr
-		Version: \tab 1.2.5\cr
-		Date: \tab 2021-10-10\cr
+		Version: \tab 1.2.7\cr
+		Date: \tab 2023-01-14\cr
 		License: \tab GPL-3\cr
 		LazyLoad: \tab yes\cr
 		LazyData: \tab yes\cr
@@ -71,11 +71,16 @@ Meira Machado L. F., de Uña-Álvarez J., Cadarso-Suárez C. (2006). Nonparametr
 
 Meira-Machado L., de Uña-Álvarez J., Datta S. (2011). Conditional Transition Probabilities in a non-Markov Illness-death Model. Discussion Papers in Statistics and Operations Research n 11/03. Department of Statistics and Operations Research, University of Vigo (ISSN: 1888-5756, Deposito Legal VG 1402-2007). \url{https://depc05.webs.uvigo.es/reports/12_05.pdf}
 
+Meira-Machado L., Faria S. (2014). A simulation study comparing modeling approaches in an illness-death multi-state model. \emph{Communications in Statistics - Simulation and Computation}, \bold{43}(5), 929-946. \doi{10.1080/03610918.2012.718841}
+
 Meira-Machado L., Roca-Pardiñas J. (2011). p3state.msm: Analyzing Survival Data from an Illness-Death Model. \emph{Journal of Statistical Software}, \bold{38}(3), 1-18. \doi{10.18637/jss.v038.i03}
 
 Meira-Machado L., Roca-Pardiñas J., Van Keilegom I., Cadarso-Suárez C. (2013). Bandwidth Selection for the Estimation of Transition Probabilities in the Location-Scale Progressive Three-State Model. \emph{Computational Statistics}, \bold{28}(5), 2185-2210. \doi{10.1007/s00180-013-0402-0}
 
 Meira-Machado L., Roca-Pardiñas J., Van Keilegom I. Cadarso-Suárez C. (2010). Estimation of transition probabilities in a non-Markov model with successive survival times. \url{https://sites.uclouvain.be/IAP-Stat-Phase-V-VI/ISBApub/dp2010/DP1053.pdf}
+
+Meira-Machado, L., Sestelo M. (2019). Estimation in the progressive illness-death model: a nonexhaustive
+review. \emph{Biometrical Journal}, \bold{61}(2), 245–263. \doi{10.1002/bimj.201700200}
 
 Moertel C. G., Fleming T. R., MacDonald J. S., Haller D. G., Laurie J. A., Goodman P.J., Ungerleider J.S., Emerson W.A., Tormey D.C., Glick J.H., Veeder M.H., Maillard J.A. (1990). Levamisole and fluorouracil for adjuvant therapy of resected colon carcinoma. \emph{New England Journal of Medicine}, \bold{322}(6), 352-358. \doi{10.1056/NEJM199002083220602}
 

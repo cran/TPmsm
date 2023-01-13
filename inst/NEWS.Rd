@@ -2,6 +2,15 @@
 
 \title{NEWS file for the TPmsm package}
 
+\section{Changes in version 1.2.7}{
+  \itemize{
+    \item{Fixed compile warnings.}
+    \item{Improved bibliographic references.}
+    \item{Temporarily removed p3state.msm from Enhances field
+    of the DESCRIPTION file.}
+  }
+}
+
 \section{Changes in version 1.2.5}{
   \itemize{
     \item{Removed LICENSE file from build.}
@@ -26,7 +35,7 @@
 
 \section{Changes in version 1.2.2}{
   \itemize{
-    \item{Fixed compiler warning in "RngStream.c" source file.}
+    \item{Fixed compile warning in "RngStream.c" source file.}
     \item{Temporarily disabled OpenMP with Clang compiler in
     "transLS.c" source file.}
   }

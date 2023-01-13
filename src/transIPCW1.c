@@ -32,38 +32,38 @@
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes the transition probabilities:
-		p11(s,t) = P(Z>t|Z>s) = {1-P(Z<=t)}/{1-P(Z<=s)}
-		p12(s,t) = P(Z<=t,T>t|Z>s) = {P(Z<=t)-P(Z<=s)-P(s<Z<=t,T<=t)}/{1-P(Z<=s)}
-		p13(s,t) = 1-p11(s,t)-p12(s,t)
-		p22(s,t) = P(Z<=t,T>t|Z<=s,T>s) = {P(Z<=s)-P(Z<=s,T<=t)}/{P(Z<=s)-P(T<=s)}
+  Computes the transition probabilities:
+    p11(s,t) = P(Z>t|Z>s) = {1-P(Z<=t)}/{1-P(Z<=s)}
+    p12(s,t) = P(Z<=t,T>t|Z>s) = {P(Z<=t)-P(Z<=s)-P(s<Z<=t,T<=t)}/{1-P(Z<=s)}
+    p13(s,t) = 1-p11(s,t)-p12(s,t)
+    p22(s,t) = P(Z<=t,T>t|Z<=s,T>s) = {P(Z<=s)-P(Z<=s,T<=t)}/{P(Z<=s)-P(T<=s)}
 
 Parameters:
-	len[in]			pointer to length of T1, E1, S and E.
-	T1[in]			pointer to T1 first element.
-	E1[in]			pointer to E1 first element.
-	S[in]			pointer to S first element.
-	E[in]			pointer to E first element.
-	index0[in]		pointer to index0 first element.
-	index1[in]		pointer to index1 first element.
-	nt[in]			pointer to length of UT and number of rows of P.
-	UT[in]			pointer to unique times vector.
-	nb[in]			pointer to number of rows of P.
-	P[out]			pointer to a (nb)x(nt)x4 probability array.
-	b[in]			pointer to row index.
+  len[in]           pointer to length of T1, E1, S and E.
+  T1[in]            pointer to T1 first element.
+  E1[in]            pointer to E1 first element.
+  S[in]             pointer to S first element.
+  E[in]             pointer to E first element.
+  index0[in]        pointer to index0 first element.
+  index1[in]        pointer to index1 first element.
+  nt[in]            pointer to length of UT and number of rows of P.
+  UT[in]            pointer to unique times vector.
+  nb[in]            pointer to number of rows of P.
+  P[out]            pointer to a (nb)x(nt)x4 probability array.
+  b[in]             pointer to row index.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vector index0 must indicate the permutation of vector T1
-		sorted by ascending order.
-	Vector index1 must indicate the permutation of vector S
-		sorted by ascending order.
-	Vectors T1, E1, S and E must have the same length.
+  Vector index0 must indicate the permutation of vector T1
+    sorted by ascending order.
+  Vector index1 must indicate the permutation of vector S
+    sorted by ascending order.
+  Vectors T1, E1, S and E must have the same length.
 */
 
 static void transIPCW1I(
@@ -177,38 +177,38 @@ static void transIPCW1I(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes the transition probabilities:
-		p11(s,t) = P(Z>t|Z>s) = P(Z>t)/P(Z>s)
-		p12(s,t) = P(Z<=t,T>t|Z>s) = P(s<Z<=t,T>t)/P(Z>s)
-		p13(s,t) = 1-p11(s,t)-p12(s,t)
-		p22(s,t) = P(Z<=t,T>t|Z<=s,T>s) = P(Z<=s,T>t)/P(Z<=s,T>s)
+  Computes the transition probabilities:
+    p11(s,t) = P(Z>t|Z>s) = P(Z>t)/P(Z>s)
+    p12(s,t) = P(Z<=t,T>t|Z>s) = P(s<Z<=t,T>t)/P(Z>s)
+    p13(s,t) = 1-p11(s,t)-p12(s,t)
+    p22(s,t) = P(Z<=t,T>t|Z<=s,T>s) = P(Z<=s,T>t)/P(Z<=s,T>s)
 
 Parameters:
-	len[in]			pointer to length of T1, E1, S and E.
-	T1[in]			pointer to T1 first element.
-	E1[in]			pointer to E1 first element.
-	S[in]			pointer to S first element.
-	E[in]			pointer to E first element.
-	index0[in]		pointer to index0 first element.
-	index1[in]		pointer to index1 first element.
-	nt[in]			pointer to length of UT and number of rows of P.
-	UT[in]			pointer to unique times vector.
-	nb[in]			pointer to number of rows of P.
-	P[out]			pointer to a (nb)x(nt)x4 probability array.
-	b[in]			pointer to row index.
+  len[in]           pointer to length of T1, E1, S and E.
+  T1[in]            pointer to T1 first element.
+  E1[in]            pointer to E1 first element.
+  S[in]             pointer to S first element.
+  E[in]             pointer to E first element.
+  index0[in]        pointer to index0 first element.
+  index1[in]        pointer to index1 first element.
+  nt[in]            pointer to length of UT and number of rows of P.
+  UT[in]            pointer to unique times vector.
+  nb[in]            pointer to number of rows of P.
+  P[out]            pointer to a (nb)x(nt)x4 probability array.
+  b[in]             pointer to row index.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vector index0 must indicate the permutation of vector T1
-		sorted by ascending order.
-	Vector index1 must indicate the permutation of vector S
-		sorted by ascending order.
-	Vectors T1, E1, S and E must have the same length.
+  Vector index0 must indicate the permutation of vector T1
+    sorted by ascending order.
+  Vector index1 must indicate the permutation of vector S
+    sorted by ascending order.
+  Vectors T1, E1, S and E must have the same length.
 */
 
 static void transIPCW2I(
@@ -321,22 +321,22 @@ static void transIPCW2I(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes a transition probability vector based
-		on the inverse probability of censoring estimator.
+  Computes a transition probability vector based
+    on the inverse probability of censoring estimator.
 
 Parameters:
-	object			an object of class 'IPCW1'.
-	UT			unique times vector.
-	nboot			number of bootstrap samples.
-	methodest		an integer indicating the desired method.
+  object            an object of class 'IPCW1'.
+  UT                unique times vector.
+  nboot             number of bootstrap samples.
+  methodest         an integer indicating the desired method.
 
 Return value:
-	Returns a list where the first element is a
-		(nboot)x(nt)x4 array of transition probabilities,
-		and the second element is NULL.
+  Returns a list where the first element is a
+    (nboot)x(nt)x4 array of transition probabilities,
+    and the second element is NULL.
 */
 
 SEXP TransPROBIPCW1(
@@ -364,16 +364,16 @@ SEXP TransPROBIPCW1(
 			func = transIPCW1I;
 	}
 	if (*INTEGER(nboot) > 1) nth = global_num_threads;
-	int **index0 = (int**)malloc( nth*sizeof(int*) ); // allocate memory block
+	int **index0 = (int**)malloc( (unsigned int)nth*sizeof(int*) ); // allocate memory block
 	if (index0 == NULL) error("TransPROBIPCW1: No more memory\n");
-	int **index1 = (int**)malloc( nth*sizeof(int*) ); // allocate memory block
+	int **index1 = (int**)malloc( (unsigned int)nth*sizeof(int*) ); // allocate memory block
 	if (index1 == NULL) error("TransPROBIPCW1: No more memory\n");
-	double **WORK = (double**)malloc( nth*sizeof(double*) ); // allocate memory block
+	double **WORK = (double**)malloc( (unsigned int)nth*sizeof(double*) ); // allocate memory block
 	if (WORK == NULL) error("TransPROBIPCW1: No more memory\n");
 	for (t = 0; t < nth; t++) { // allocate per thread memory
-		if ( ( index0[t] = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBIPCW1: No more memory\n");
-		if ( ( index1[t] = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBIPCW1: No more memory\n");
-		if ( ( WORK[t] = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBIPCW1: No more memory\n");
+		if ( ( index0[t] = (int*)malloc( (unsigned int)len*sizeof(int) ) ) == NULL ) error("TransPROBIPCW1: No more memory\n");
+		if ( ( index1[t] = (int*)malloc( (unsigned int)len*sizeof(int) ) ) == NULL ) error("TransPROBIPCW1: No more memory\n");
+		if ( ( WORK[t] = (double*)malloc( (unsigned int)len*sizeof(double) ) ) == NULL ) error("TransPROBIPCW1: No more memory\n");
 	}
 	#ifdef _OPENMP
 	#pragma omp parallel num_threads(nth) private(t)

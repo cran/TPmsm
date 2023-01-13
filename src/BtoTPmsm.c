@@ -12,10 +12,10 @@
 	h = VECTOR_ELT(lst, 1); \
 	register int i, j; \
 	register int64_t k; \
-	const int nt = GET_LENGTH(UT); \
+	Cint nt = GET_LENGTH(UT); \
 	SEXP mest; \
 	PROTECT( mest = allocMatrix(REALSXP, nt, 5) ); \
-	int n = 2, nb = INTEGER( GET_DIM(a3d) )[0]; \
+	int  n = 2, nb = INTEGER( GET_DIM(a3d) )[0]; \
 	double P[n], Q[n]; \
 	P[0] = ( 1-*REAL(conflevel) )/2; \
 	P[1] = ( 1+*REAL(conflevel) )/2; \
@@ -124,32 +124,32 @@ SEXP BtoTPmsm1222(
 	const char *name1 = CHAR( STRING_ELT(statenames, 0) );
 	const char *name2 = CHAR( STRING_ELT(statenames, 1) );
 	const char *name3 = CHAR( STRING_ELT(statenames, 2) );
-	i = strlen(name1), j = strlen(name2), k = strlen(name3);
-	char *name11 = (char*)malloc( (i+i+2)*sizeof(char) );
+	size_t u = strlen(name1), v = strlen(name2), w = strlen(name3);
+	char *name11 = (char*)malloc( (u+u+2)*sizeof(char) );
 	if (name11 == NULL) error("BtoTPmsm1222: No more memory\n");
 	strcpy(name11, name1);
-	strcpy(&name11[i], " ");
-	strcpy(&name11[i+1], name1);
-	char *name12 = (char*)malloc( (i+j+2)*sizeof(char) );
+	strcpy(&name11[u], " ");
+	strcpy(&name11[u+1], name1);
+	char *name12 = (char*)malloc( (u+v+2)*sizeof(char) );
 	if (name12 == NULL) error("BtoTPmsm1222: No more memory\n");
 	strcpy(name12, name1);
-	strcpy(&name12[i], " ");
-	strcpy(&name12[i+1], name2);
-	char *name13 = (char*)malloc( (i+k+2)*sizeof(char) );
+	strcpy(&name12[u], " ");
+	strcpy(&name12[u+1], name2);
+	char *name13 = (char*)malloc( (u+w+2)*sizeof(char) );
 	if (name13 == NULL) error("BtoTPmsm1222: No more memory\n");
 	strcpy(name13, name1);
-	strcpy(&name13[i], " ");
-	strcpy(&name13[i+1], name3);
-	char *name22 = (char*)malloc( (j+j+2)*sizeof(char) );
+	strcpy(&name13[u], " ");
+	strcpy(&name13[u+1], name3);
+	char *name22 = (char*)malloc( (v+v+2)*sizeof(char) );
 	if (name22 == NULL) error("BtoTPmsm1222: No more memory\n");
 	strcpy(name22, name2);
-	strcpy(&name22[j], " ");
-	strcpy(&name22[j+1], name2);
-	char *name23 = (char*)malloc( (j+k+2)*sizeof(char) );
+	strcpy(&name22[v], " ");
+	strcpy(&name22[v+1], name2);
+	char *name23 = (char*)malloc( (v+w+2)*sizeof(char) );
 	if (name23 == NULL) error("BtoTPmsm1222: No more memory\n");
 	strcpy(name23, name2);
-	strcpy(&name23[j], " ");
-	strcpy(&name23[j+1], name3);
+	strcpy(&name23[v], " ");
+	strcpy(&name23[v+1], name3);
 	BtoTPmsm2
 } // BtoTPmsm1222
 
@@ -192,31 +192,31 @@ SEXP BtoTPmsm1323(
 	const char *name1 = CHAR( STRING_ELT(statenames, 0) );
 	const char *name2 = CHAR( STRING_ELT(statenames, 1) );
 	const char *name3 = CHAR( STRING_ELT(statenames, 2) );
-	i = strlen(name1), j = strlen(name2), k = strlen(name3);
-	char *name11 = (char*)malloc( (i+i+2)*sizeof(char) );
+	size_t u = strlen(name1), v = strlen(name2), w = strlen(name3);
+	char *name11 = (char*)malloc( (u+u+2)*sizeof(char) );
 	if (name11 == NULL) error("BtoTPmsm1323: No more memory\n");
 	strcpy(name11, name1);
-	strcpy(&name11[i], " ");
-	strcpy(&name11[i+1], name1);
-	char *name12 = (char*)malloc( (i+j+2)*sizeof(char) );
+	strcpy(&name11[u], " ");
+	strcpy(&name11[u+1], name1);
+	char *name12 = (char*)malloc( (u+v+2)*sizeof(char) );
 	if (name12 == NULL) error("BtoTPmsm1323: No more memory\n");
 	strcpy(name12, name1);
-	strcpy(&name12[i], " ");
-	strcpy(&name12[i+1], name2);
-	char *name13 = (char*)malloc( (i+k+2)*sizeof(char) );
+	strcpy(&name12[u], " ");
+	strcpy(&name12[u+1], name2);
+	char *name13 = (char*)malloc( (u+w+2)*sizeof(char) );
 	if (name13 == NULL) error("BtoTPmsm1323: No more memory\n");
 	strcpy(name13, name1);
-	strcpy(&name13[i], " ");
-	strcpy(&name13[i+1], name3);
-	char *name22 = (char*)malloc( (j+j+2)*sizeof(char) );
+	strcpy(&name13[u], " ");
+	strcpy(&name13[u+1], name3);
+	char *name22 = (char*)malloc( (v+v+2)*sizeof(char) );
 	if (name22 == NULL) error("BtoTPmsm1323: No more memory\n");
 	strcpy(name22, name2);
-	strcpy(&name22[j], " ");
-	strcpy(&name22[j+1], name2);
-	char *name23 = (char*)malloc( (j+k+2)*sizeof(char) );
+	strcpy(&name22[v], " ");
+	strcpy(&name22[v+1], name2);
+	char *name23 = (char*)malloc( (v+w+2)*sizeof(char) );
 	if (name23 == NULL) error("BtoTPmsm1323: No more memory\n");
 	strcpy(name23, name2);
-	strcpy(&name23[j], " ");
-	strcpy(&name23[j+1], name3);
+	strcpy(&name23[v], " ");
+	strcpy(&name23[v+1], name3);
 	BtoTPmsm2
 } // BtoTPmsm1323

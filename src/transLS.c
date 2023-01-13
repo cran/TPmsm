@@ -29,15 +29,6 @@ typedef struct {
 	double *E0B, *E1B;
 } transLSW;
 
-#define weights \
-	order_di(T1, E1, sample0, *len, FALSE, FALSE, TRUE, a, unique0); /* get permuation */ \
-	for (aux[0] = 1, i = 0; i < *len; i++) { /* loop through the sample until last index is reached */ \
-		W[sample0[i]] = (double)E1[sample0[i]]/(*len-i); /* compute needed factor */ \
-		aux[1] = 1-W[sample0[i]]; /* factor needed for the computation */ \
-		W[sample0[i]] *= aux[0]; /* compute and save weight */ \
-		aux[0] *= aux[1]; /* compute and save factor needed for next iteration */ \
-	} \
-
 #define mean \
 	order_d(T2, sample0, *len, FALSE, FALSE, a); /* get permuation */ \
 	for (i = 0; i < u0; i++) { \
@@ -64,41 +55,41 @@ typedef struct {
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes the kernel bandwidth used by LS estimators
-		by cross-validation.
+  Computes the kernel bandwidth used by LS estimators
+    by cross-validation.
 
 Parameters:
-	T1[in]			pointer to T1 first element.
-	E1[in]			pointer to E1 first element.
-	S[in]			pointer to S first element.
-	E[in]			pointer to E first element.
-	T2[in]			pointer to T2 first element.
-	index[in]		pointer to index first element.
-	len[in]			pointer to length of index,
-					which must be lower or equal
-					than the length of vectors
-					T1, E1, S, E and T2.
-	h[in]			pointer to h first element.
-	nh[in]			pointer to number of bandwidth
-					values to test by cross-validation.
-	ncv[in]			pointer to number of
-					cross-validation samples.
-	cvfull[in]		pointer to integer indicating if full
-					cross-validation is to be done.
-	kfunc[in]		pointer to kernel density function.
-	H[out]			pointer to H first element.
-	t[in]			pointer to thread number.
-	WORK[out]		pointer to array of transLSW structures.
+  T1[in]            pointer to T1 first element.
+  E1[in]            pointer to E1 first element.
+  S[in]             pointer to S first element.
+  E[in]             pointer to E first element.
+  T2[in]            pointer to T2 first element.
+  index[in]         pointer to index first element.
+  len[in]           pointer to length of index,
+                      which must be lower or equal
+                      than the length of vectors
+                      T1, E1, S, E and T2.
+  h[in]             pointer to h first element.
+  nh[in]            pointer to number of bandwidth
+                      values to test by cross-validation.
+  ncv[in]           pointer to number of
+                      cross-validation samples.
+  cvfull[in]        pointer to integer indicating if full
+                      cross-validation is to be done.
+  kfunc[in]         pointer to kernel density function.
+  H[out]            pointer to H first element.
+  t[in]             pointer to thread number.
+  WORK[out]         pointer to array of transLSW structures.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vectors T1, E1, S, E and T2 must have the same length.
-	Cubic spline interpolation is used.
+  Vectors T1, E1, S, E and T2 must have the same length.
+  Cubic spline interpolation is used.
 */
 
 static void crossValid(
@@ -132,11 +123,11 @@ static void crossValid(
 	SW.type = INT_PTR; // type is an int pointer
 	SW.ptr.integer = E1; // hold E1 pointer in ptr union
 	SW.length = *len; // hold length of array
-  #if defined(_OPENMP) && !defined(__clang__)
+	#if defined(_OPENMP) && !defined(__clang__)
 	#pragma omp parallel if( !omp_in_parallel() ) num_threads(global_num_threads) firstprivate(tid) private(x, y, i, j, iseed, u0, h1, aux, cv1, cv2, sum)
 	#endif
 	{
-    #if defined(_OPENMP) && !defined(__clang__)
+		#if defined(_OPENMP) && !defined(__clang__)
 		if (omp_get_num_threads() != 1) tid = omp_get_thread_num(); // use the correct thread number
 		#endif
 		int *sample0 = WORK[tid].sample0;
@@ -275,36 +266,36 @@ static void crossValid(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes the mean and variance vectors respectively
-		labeled MX and SX.
+  Computes the mean and variance vectors respectively
+    labeled MX and SX.
 
 Parameters:
-	T1[in]			pointer to T1 first element.
-	SW[in]			pointer to a weights stype structure.
-	T2[in]			pointer to T2 first element.
-	E[in]			pointer to E first element.
-	index[in]		pointer to index first element.
-	len[in]			pointer to length of index,
-					which must be lower or equal
-					than the length of vectors
-					T1, SW->ptr, T2, E, MX and SX.
-	H[in]			pointer to H first element.
-	kfunc[in]		pointer to kernel density function.
-	MX[out]			pointer to MX vector.
-	SX[out]			pointer to SX vector.
-	t[in]			pointer to thread number.
-	WORK[out]		pointer to array of transLSW structures.
+  T1[in]            pointer to T1 first element.
+  SW[in]            pointer to a weights stype structure.
+  T2[in]            pointer to T2 first element.
+  E[in]             pointer to E first element.
+  index[in]         pointer to index first element.
+  len[in]           pointer to length of index,
+                      which must be lower or equal
+                      than the length of vectors
+                      T1, SW->ptr, T2, E, MX and SX.
+  H[in]             pointer to H first element.
+  kfunc[in]         pointer to kernel density function.
+  MX[out]           pointer to MX vector.
+  SX[out]           pointer to SX vector.
+  t[in]             pointer to thread number.
+  WORK[out]         pointer to array of transLSW structures.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vector index must indicate the permutation of vector T2
-		sorted by ascending order.
-	Vectors T1, SW->ptr, T2, E, MX and SX must have the same length.
+  Vector index must indicate the permutation of vector T2
+    sorted by ascending order.
+  Vectors T1, SW->ptr, T2, E, MX and SX must have the same length.
 */
 
 static void LSmeasuresI(
@@ -390,42 +381,42 @@ static void LSmeasuresI(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes the transition probabilities:
-		p11(s,t) = P(Z>t|Z>s) = P(Z>t)/P(Z>s)
-		p12(s,t) = P(Z<=t,T>t|Z>s) = P(s<Z<=t,T>t)/P(Z>s)
-		p13(s,t) = 1-p11(s,t)-p12(s,t)
-		p22(s,t) = P(Z<=t,T>t|Z<=s,T>s) = P(Z<=s,T>t)/P(Z<=s,T>s)
+  Computes the transition probabilities:
+    p11(s,t) = P(Z>t|Z>s) = P(Z>t)/P(Z>s)
+    p12(s,t) = P(Z<=t,T>t|Z>s) = P(s<Z<=t,T>t)/P(Z>s)
+    p13(s,t) = 1-p11(s,t)-p12(s,t)
+    p22(s,t) = P(Z<=t,T>t|Z<=s,T>s) = P(Z<=s,T>t)/P(Z<=s,T>s)
 
 Parameters:
-	len[in]			pointer to length of T1, E1, T2 and E.
-	T1[in]			pointer to T1 first element.
-	E1[in]			pointer to E1 first element.
-	T2[in]			pointer to T2 first element.
-	E[in]			pointer to E first element.
-	index0[in]		pointer to index0 first element.
-	index1[inout]		pointer to index1 first element.
-	nt[in]			pointer to length of UT and number of rows of P.
-	UT[in]			pointer to unique times vector.
-	nb[in]			pointer to number of rows of P.
-	P[out]			pointer to a (nb)x(nt)x4 probability array.
-	b[in]			pointer to row index.
-	kfunc[in]		pointer to kernel density function.
-	H[in]			pointer to H first element.
-	t[in]			pointer to thread number.
-	WORK[out]		pointer to array of transLSW structures.
+  len[in]           pointer to length of T1, E1, T2 and E.
+  T1[in]            pointer to T1 first element.
+  E1[in]            pointer to E1 first element.
+  T2[in]            pointer to T2 first element.
+  E[in]             pointer to E first element.
+  index0[in]        pointer to index0 first element.
+  index1[inout]     pointer to index1 first element.
+  nt[in]            pointer to length of UT and number of rows of P.
+  UT[in]            pointer to unique times vector.
+  nb[in]            pointer to number of rows of P.
+  P[out]            pointer to a (nb)x(nt)x4 probability array.
+  b[in]             pointer to row index.
+  kfunc[in]         pointer to kernel density function.
+  H[in]             pointer to H first element.
+  t[in]             pointer to thread number.
+  WORK[out]         pointer to array of transLSW structures.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vector index0 must indicate the permutation of vector T1
-		sorted by ascending order.
-	Vector index1 must indicate the permutation of vector T2
-		sorted by ascending order.
-	Vectors T1, E1, T2 and E must have the same length.
+  Vector index0 must indicate the permutation of vector T1
+    sorted by ascending order.
+  Vector index1 must indicate the permutation of vector T2
+    sorted by ascending order.
+  Vectors T1, E1, T2 and E must have the same length.
 */
 
 static void transLSI(
@@ -541,31 +532,31 @@ static void transLSI(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes a transition probability array
-		based on the Location-Scale estimator.
+  Computes a transition probability array
+    based on the Location-Scale estimator.
 
 Parameters:
-	object			an object of class 'LS'.
-	UT			unique times vector.
-	h			a vector of bandwidth values with length two.
-	nh			number of bandwidth values
-					to test by cross-validation.
-	ncv			number of cross-validation samples.
-	window			a string indicating the desired window or kernel.
-	nboot			number of bootstrap samples.
-	bootcv			if TRUE cross-validation is done for each bootstrap sample.
-	cvfull			if TRUE cross-validation is done for both location and
-					scale functions.
+  object            an object of class 'LS'.
+  UT                unique times vector.
+  h                 a vector of bandwidth values with length two.
+  nh                number of bandwidth values
+                      to test by cross-validation.
+  ncv               number of cross-validation samples.
+  window            a string indicating the desired window or kernel.
+  nboot             number of bootstrap samples.
+  bootcv            if TRUE cross-validation is done for each bootstrap sample.
+  cvfull            if TRUE cross-validation is done for both location and
+                      scale functions.
 
 Return value:
-	Returns a list where the first element is a
-		(nboot)x(nt)x4 array of transition probabilities,
-		and the second element is a vector of bandwidth
-		values used to compute the transition probability
-		estimates.
+  Returns a list where the first element is a
+    (nboot)x(nt)x4 array of transition probabilities,
+    and the second element is a vector of bandwidth
+    values used to compute the transition probability
+    estimates.
 */
 
 SEXP TransPROBLS(
@@ -586,7 +577,7 @@ SEXP TransPROBLS(
 	S = VECTOR_ELT(data, 2);
 	E = VECTOR_ELT(data, 3);
 	int len = GET_LENGTH(T1), nt = GET_LENGTH(UT), b, t, nth = 1;
-	double *T2 = (double*)malloc( len*sizeof(double) ); // allocate memory block
+	double *T2 = (double*)malloc( (unsigned int)len*sizeof(double) ); // allocate memory block
 	if (T2 == NULL) error("TransPROBLS: No more memory\n");
 	for (b = 0; b < len; b++) T2[b] = REAL(S)[b]-REAL(T1)[b];
 	Kfunc kfunc = kchar2ptr(window); // declare and get pointer to function
@@ -594,28 +585,28 @@ SEXP TransPROBLS(
 	PROTECT( P = alloc3DArray(REALSXP, *INTEGER(nboot), nt, 4) );
 	PROTECT( H = NEW_NUMERIC(2) );
 	PROTECT( list = NEW_LIST(2) );
-	transLSW *WORK = (transLSW*)malloc( global_num_threads*sizeof(transLSW) ); // allocate memory block
+	transLSW *WORK = (transLSW*)malloc( (unsigned int)global_num_threads*sizeof(transLSW) ); // allocate memory block
 	if (WORK == NULL) error("TransPROBLS: No more memory\n");
 	for (t = 0; t < global_num_threads; t++) { // allocate per thread memory
-		if ( ( WORK[t].sample0 = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBLS: No more memory\n");
-		if ( ( WORK[t].sample1 = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBLS: No more memory\n");
-		if ( ( WORK[t].unique0 = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBLS: No more memory\n");
-		if ( ( WORK[t].K = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBLS: No more memory\n");
-		if ( ( WORK[t].MX = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBLS: No more memory\n");
-		if ( ( WORK[t].a = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBLS: No more memory\n");
-		if ( ( WORK[t].b = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBLS: No more memory\n");
-		if ( ( WORK[t].c = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBLS: No more memory\n");
-		if ( ( WORK[t].E0B = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBLS: No more memory\n");
-		if ( ( WORK[t].E1B = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBLS: No more memory\n");
+		if ( ( WORK[t].sample0 = (int*)malloc( (unsigned int)len*sizeof(int) ) ) == NULL ) error("TransPROBLS: No more memory\n");
+		if ( ( WORK[t].sample1 = (int*)malloc( (unsigned int)len*sizeof(int) ) ) == NULL ) error("TransPROBLS: No more memory\n");
+		if ( ( WORK[t].unique0 = (int*)malloc( (unsigned int)len*sizeof(int) ) ) == NULL ) error("TransPROBLS: No more memory\n");
+		if ( ( WORK[t].K = (double*)malloc( (unsigned int)len*sizeof(double) ) ) == NULL ) error("TransPROBLS: No more memory\n");
+		if ( ( WORK[t].MX = (double*)malloc( (unsigned int)len*sizeof(double) ) ) == NULL ) error("TransPROBLS: No more memory\n");
+		if ( ( WORK[t].a = (double*)malloc( (unsigned int)len*sizeof(double) ) ) == NULL ) error("TransPROBLS: No more memory\n");
+		if ( ( WORK[t].b = (double*)malloc( (unsigned int)len*sizeof(double) ) ) == NULL ) error("TransPROBLS: No more memory\n");
+		if ( ( WORK[t].c = (double*)malloc( (unsigned int)len*sizeof(double) ) ) == NULL ) error("TransPROBLS: No more memory\n");
+		if ( ( WORK[t].E0B = (double*)malloc( (unsigned int)len*sizeof(double) ) ) == NULL ) error("TransPROBLS: No more memory\n");
+		if ( ( WORK[t].E1B = (double*)malloc( (unsigned int)len*sizeof(double) ) ) == NULL ) error("TransPROBLS: No more memory\n");
 	}
 	if (*INTEGER(nboot) > 1) nth = global_num_threads;
-	int **index0 = (int**)malloc( nth*sizeof(int*) ); // allocate memory block
+	int **index0 = (int**)malloc( (unsigned int)nth*sizeof(int*) ); // allocate memory block
 	if (index0 == NULL) error("TransPROBLS: No more memory\n");
-	int **index1 = (int**)malloc( nth*sizeof(int*) ); // allocate memory block
+	int **index1 = (int**)malloc( (unsigned int)nth*sizeof(int*) ); // allocate memory block
 	if (index1 == NULL) error("TransPROBLS: No more memory\n");
 	for (t = 0; t < nth; t++) { // allocate per thread memory
-		if ( ( index0[t] = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBLS: No more memory\n");
-		if ( ( index1[t] = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBLS: No more memory\n");
+		if ( ( index0[t] = (int*)malloc( (unsigned int)len*sizeof(int) ) ) == NULL ) error("TransPROBLS: No more memory\n");
+		if ( ( index1[t] = (int*)malloc( (unsigned int)len*sizeof(int) ) ) == NULL ) error("TransPROBLS: No more memory\n");
 	}
 	double HC[2];
 	b = 0; // b = len, put it back to 0 or a crash might occur

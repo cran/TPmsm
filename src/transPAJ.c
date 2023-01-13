@@ -33,7 +33,7 @@
 		if (S[index1[y]] > UT[i]) { \
 			savePAJ \
 		} \
-		if (T1[index1[y]] < S[index1[y]] && M1[index1[y]]) { \
+		if (T1[index1[y]] < S[index1[y]] && M1[index1[y]] != 0) { \
 			for (j = y+1, z = 1; j < *len; j++) z += (T1[index1[j]] < S[index1[y]]); \
 			WORK[*len+y] = 1-M1[index1[y]]/z; \
 			p[2] *= WORK[*len+y]; \
@@ -42,39 +42,39 @@
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes the transition probabilities:
-		p11(s,t) = P(Z>t|Z>s) = P(Z>t)/P(Z>s)
-		p12(s,t) = P(Z<=t,T>t|Z>s) = P(s<Z<=t,T>t)/P(Z>s)
-		p13(s,t) = 1-p11(s,t)-p12(s,t)
-		p22(s,t) = P(Z<=t,T>t|Z<=s,T>s) = P(Z<=s,T>t)/P(Z<=s,T>s)
+  Computes the transition probabilities:
+    p11(s,t) = P(Z>t|Z>s) = P(Z>t)/P(Z>s)
+    p12(s,t) = P(Z<=t,T>t|Z>s) = P(s<Z<=t,T>t)/P(Z>s)
+    p13(s,t) = 1-p11(s,t)-p12(s,t)
+    p22(s,t) = P(Z<=t,T>t|Z<=s,T>s) = P(Z<=s,T>t)/P(Z<=s,T>s)
 
 Parameters:
-	len[in]			pointer to length of T1, E1, S and E.
-	T1[in]			pointer to T1 first element.
-	M0[in]			pointer to M0 first element.
-	S[in]			pointer to S first element.
-	M1[in]			pointer to M1 first element.
-	index0[in]		pointer to index0 first element.
-	index1[in]		pointer to index1 first element.
-	nt[in]			pointer to length of UT and number of rows of P.
-	UT[in]			pointer to unique times vector.
-	nb[in]			pointer to number of rows of P.
-	P[out]			pointer to a (nb)x(nt)x4 probability array.
-	b[in]			pointer to row index.
-	WORK[out]		pointer to WORK first element
+  len[in]           pointer to length of T1, E1, S and E.
+  T1[in]            pointer to T1 first element.
+  M0[in]            pointer to M0 first element.
+  S[in]             pointer to S first element.
+  M1[in]            pointer to M1 first element.
+  index0[in]        pointer to index0 first element.
+  index1[in]        pointer to index1 first element.
+  nt[in]            pointer to length of UT and number of rows of P.
+  UT[in]            pointer to unique times vector.
+  nb[in]            pointer to number of rows of P.
+  P[out]            pointer to a (nb)x(nt)x4 probability array.
+  b[in]             pointer to row index.
+  WORK[out]         pointer to WORK first element
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vector index0 must indicate the permutation of vector T1
-		sorted by ascending order.
-	Vector index1 must indicate the permutation of vector S
-		sorted by ascending order.
-	Vectors T1, M0, S and M1 must have the same length.
+  Vector index0 must indicate the permutation of vector T1
+    sorted by ascending order.
+  Vector index1 must indicate the permutation of vector S
+    sorted by ascending order.
+  Vectors T1, M0, S and M1 must have the same length.
 */
 
 static void transPAJI(
@@ -116,7 +116,7 @@ static void transPAJI(
 	for (; i < *nt; i++) { // needed for bootstrap
 		for (j = 0; j < 4; j++) P[*b+*nb*(i+*nt*j)] = P[*b+*nb*(i-1+*nt*j)];
 	}
-	for (i--; i >= 0; i--) if ( !ISNAN(P[*b+*nb*(i+*nt)]) ) break; // loop backwards while ISNAN
+	for (i--; i >= 0; i--) if ( !R_IsNaN(P[*b+*nb*(i+*nt)]) ) break; // loop backwards while NaN
 	for (i++, x = s[0]; i < *nt; i++) {
 		getIndexI(T1, index0, &UT[i], len, &x, &e[0]); // determine last index
 		x = e[0]; // save index for next search
@@ -130,7 +130,7 @@ static void transPAJI(
 		getIndexI(S, index1, &UT[i], len, &y, &e[1]); // determine last index
 		y = e[1]; // save index for next search
 		for (p[1] = 0, p[2] = 1, j = e[0]-1, k = e[1]-1; j >= s[0]; j--) { // loop backwards through the sample until first index is reached
-			if (WORK[j] == 0) continue; // don't waste time doing uneeded computations
+			if (WORK[j] == 0) continue; // don't waste time doing unneeded computations
 			getBackIndexI(S, index1, &T1[index0[j]], len, &k, &z); // determine first index
 			for (;k > z; k--) p[2] *= WORK[*len+k]; // compute transition probability
 			p[1] += WORK[j]*p[2]; // compute transition probability
@@ -147,21 +147,21 @@ static void transPAJI(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes a transition probability vector based
-		on the presmoothed Aalen-Johansen estimator.
+  Computes a transition probability vector based
+    on the presmoothed Aalen-Johansen estimator.
 
 Parameters:
-	object			an object of class 'PAJ'.
-	UT			unique times vector.
-	nboot			number of bootstrap samples.
+  object            an object of class 'PAJ'.
+  UT                unique times vector.
+  nboot             number of bootstrap samples.
 
 Return value:
-	Returns a list where the first element is a
-		(nboot)x(nt)x4 array of transition probabilities,
-		and the second element is NULL.
+  Returns a list where the first element is a
+    (nboot)x(nt)x4 array of transition probabilities,
+    and the second element is NULL.
 */
 
 SEXP TransPROBPAJ(
@@ -181,34 +181,34 @@ SEXP TransPROBPAJ(
 	PROTECT( list = NEW_LIST(2) );
 	register int j;
 	int n0 = 2, n1 = 3, maxit = 30;
-	double *J = (double*)malloc( len*sizeof(double) ); // allocate memory block
+	double *J = (double*)malloc( (unsigned int)len*sizeof(double) ); // allocate memory block
 	if (J == NULL) error("TransPROBPAJ: No more memory\n");
 	double *X0[2] = {J, REAL(T1)};
 	double *X1[3] = {J, REAL(T1), REAL(S)};
 	double epsilon = 1e-8;
 	for (j = 0; j < len; j++) J[j] = 1; // initialize J vector
 	if (*INTEGER(nboot) > 1) nth = global_num_threads;
-	int **index0 = (int**)malloc( nth*sizeof(int*) ); // allocate memory block
+	int **index0 = (int**)malloc( (unsigned int)nth*sizeof(int*) ); // allocate memory block
 	if (index0 == NULL) error("TransPROBPAJ: No more memory\n");
-	int **index1 = (int**)malloc( nth*sizeof(int*) ); // allocate memory block
+	int **index1 = (int**)malloc( (unsigned int)nth*sizeof(int*) ); // allocate memory block
 	if (index1 == NULL) error("TransPROBPAJ: No more memory\n");
-	double **M0 = (double**)malloc( nth*sizeof(double*) ); // allocate memory block
+	double **M0 = (double**)malloc( (unsigned int)nth*sizeof(double*) ); // allocate memory block
 	if (M0 == NULL) error("TransPROBPAJ: No more memory\n");
-	double **M1 = (double**)malloc( nth*sizeof(double*) ); // allocate memory block
+	double **M1 = (double**)malloc( (unsigned int)nth*sizeof(double*) ); // allocate memory block
 	if (M1 == NULL) error("TransPROBPAJ: No more memory\n");
-	int **subset = (int**)malloc( nth*sizeof(int*) ); // allocate memory block
+	int **subset = (int**)malloc( (unsigned int)nth*sizeof(int*) ); // allocate memory block
 	if (subset == NULL) error("TransPROBPAJ: No more memory\n");
-	double **WORK0 = (double**)malloc( nth*sizeof(double*) ); // allocate memory block
+	double **WORK0 = (double**)malloc( (unsigned int)nth*sizeof(double*) ); // allocate memory block
 	if (WORK0 == NULL) error("TransPROBPAJ: No more memory\n");
-	logitW **WORK = (logitW**)malloc( nth*sizeof(logitW*) ); // allocate memory block
+	logitW **WORK = (logitW**)malloc( (unsigned int)nth*sizeof(logitW*) ); // allocate memory block
 	if (WORK == NULL) error("TransPROBPAJ: No more memory\n");
 	for (t = 0; t < nth; t++) { // allocate per thread memory
-		if ( ( index0[t] = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBPAJ: No more memory\n");
-		if ( ( index1[t] = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBPAJ: No more memory\n");
-		if ( ( M0[t] = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBPAJ: No more memory\n");
-		if ( ( M1[t] = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBPAJ: No more memory\n");
-		if ( ( subset[t] = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBPAJ: No more memory\n");
-		if ( ( WORK0[t] = (double*)malloc( len*2*sizeof(double) ) ) == NULL ) error("TransPROBPAJ: No more memory\n");
+		if ( ( index0[t] = (int*)malloc( (unsigned int)len*sizeof(int) ) ) == NULL ) error("TransPROBPAJ: No more memory\n");
+		if ( ( index1[t] = (int*)malloc( (unsigned int)len*sizeof(int) ) ) == NULL ) error("TransPROBPAJ: No more memory\n");
+		if ( ( M0[t] = (double*)malloc( (unsigned int)len*sizeof(double) ) ) == NULL ) error("TransPROBPAJ: No more memory\n");
+		if ( ( M1[t] = (double*)malloc( (unsigned int)len*sizeof(double) ) ) == NULL ) error("TransPROBPAJ: No more memory\n");
+		if ( ( subset[t] = (int*)malloc( (unsigned int)len*sizeof(int) ) ) == NULL ) error("TransPROBPAJ: No more memory\n");
+		if ( ( WORK0[t] = (double*)malloc( (unsigned int)len*2*sizeof(double) ) ) == NULL ) error("TransPROBPAJ: No more memory\n");
 		WORK[t] = logitW_Create(&n1);
 	}
 	#ifdef _OPENMP

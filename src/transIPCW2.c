@@ -25,47 +25,47 @@ typedef struct {
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes the conditional transition probabilities:
-		p11(s,t|X) = P(Z>t|Z>s|X) = {1-P(Z<=t|X)}/{1-P(Z<=s|X)}
-		p12(s,t|X) = P(Z<=t,T>t|Z>s|X) = {P(Z<=t|X)-P(Z<=s|X)-P(s<Z<=t,T<=t|X)}/{1-P(Z<=s|X)}
-		p13(s,t|X) = 1-p11(s,t|X)-p12(s,t|X)
-		p22(s,t|X) = P(Z<=t,T>t|Z<=s,T>s|X) = {P(Z<=s|X)-P(Z<=s,T<=t|X)}/{P(Z<=s|X)-P(T<=s|X)}
+  Computes the conditional transition probabilities:
+    p11(s,t|X) = P(Z>t|Z>s|X) = {1-P(Z<=t|X)}/{1-P(Z<=s|X)}
+    p12(s,t|X) = P(Z<=t,T>t|Z>s|X) = {P(Z<=t|X)-P(Z<=s|X)-P(s<Z<=t,T<=t|X)}/{1-P(Z<=s|X)}
+    p13(s,t|X) = 1-p11(s,t|X)-p12(s,t|X)
+    p22(s,t|X) = P(Z<=t,T>t|Z<=s,T>s|X) = {P(Z<=s|X)-P(Z<=s,T<=t|X)}/{P(Z<=s|X)-P(T<=s|X)}
 
 Parameters:
-	len[in]			pointer to length of T1, E1, S, E, X and SW->ptr.
-	T1[in]			pointer to T1 first element.
-	E1[in]			pointer to E1 first element.
-	S[in]			pointer to S first element.
-	E[in]			pointer to E first element.
-	X[in]			pointer to X first element.
-	SW[in]			pointer to a weights stype structure.
-	index0[in]		pointer to index0 first element.
-	index1[in]		pointer to index1 first element.
-	nt[in]			pointer to length of UT and number of columns of P.
-	UT[in]			pointer to unique times vector.
-	nx[in]			pointer to length of UX and number of faces of P.
-	UX[in]			pointer to unique covariate vector.
-	h[in]			pointer to bandwidth parameter.
-	kfunc[in]		pointer to kernel density function.
-	wfunc[in]		pointer to weights function.
-	nb[in]			pointer to number of rows of P.
-	P[out]			pointer to a (nb)x(nt)x(nx)x4 probability array.
-	b[in]			pointer to row index.
-	t[in]			pointer to thread number.
-	WORK[out]		pointer to array of transIPCWW structures.
+  len[in]           pointer to length of T1, E1, S, E, X and SW->ptr.
+  T1[in]            pointer to T1 first element.
+  E1[in]            pointer to E1 first element.
+  S[in]             pointer to S first element.
+  E[in]             pointer to E first element.
+  X[in]             pointer to X first element.
+  SW[in]            pointer to a weights stype structure.
+  index0[in]        pointer to index0 first element.
+  index1[in]        pointer to index1 first element.
+  nt[in]            pointer to length of UT and number of columns of P.
+  UT[in]            pointer to unique times vector.
+  nx[in]            pointer to length of UX and number of faces of P.
+  UX[in]            pointer to unique covariate vector.
+  h[in]             pointer to bandwidth parameter.
+  kfunc[in]         pointer to kernel density function.
+  wfunc[in]         pointer to weights function.
+  nb[in]            pointer to number of rows of P.
+  P[out]            pointer to a (nb)x(nt)x(nx)x4 probability array.
+  b[in]             pointer to row index.
+  t[in]             pointer to thread number.
+  WORK[out]         pointer to array of transIPCWW structures.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vector index0 must indicate the permutation of vector T1
-		sorted by ascending order.
-	Vector index1 must indicate the permutation of vector S
-		sorted by ascending order.
-	Vectors T1, E1, S, E, X and SW->ptr must have the same length.
+  Vector index0 must indicate the permutation of vector T1
+    sorted by ascending order.
+  Vector index1 must indicate the permutation of vector S
+    sorted by ascending order.
+  Vectors T1, E1, S, E, X and SW->ptr must have the same length.
 */
 
 static void transIPCW3I(
@@ -105,8 +105,7 @@ static void transIPCW3I(
 	#pragma omp parallel if(*b < 1) num_threads(global_num_threads) private(z)
 	#endif
 	{
-		register int i, j;
-		register int64_t k;
+		register int64_t i, j, k;
 		int tid = *t;
 		int64_t k0;
 		double sum[4], p[2];
@@ -121,7 +120,9 @@ static void transIPCW3I(
 		for (j = 0; j < *nx; j++) {
 			wfunc(X, SW, index0, &UX[j], h, K, kfunc); // compute weights
 			wikmsurv(len, T1, E1, K, index0, &e[1], SV); // compute conditional survival probabilities
-			for (z = 0, sum[0] = 1; z < e[0]; z++) if (E1[index0[z]] && SV[index0[z]]) sum[0] -= K[index0[z]]/SV[index0[z]]; // compute sum
+			for (z = 0, sum[0] = 1; z < e[0]; z++) {
+			  if (E1[index0[z]] && SV[index0[z]] != 0) sum[0] -= K[index0[z]]/SV[index0[z]]; // compute sum
+			}
 			for (i = 0, k0 = *b+nbt*j, k = k0, sum[1] = 0; z < e[1]; z++) {
 				p[0] = (sum[0]-sum[1])/sum[0];
 				p[1] = sum[1]/sum[0];
@@ -132,7 +133,7 @@ static void transIPCW3I(
 					i++;
 					k += *nb;
 				}
-				if (E1[index0[z]] && SV[index0[z]]) sum[1] += K[index0[z]]/SV[index0[z]]; // compute sum
+				if (E1[index0[z]] && SV[index0[z]] != 0) sum[1] += K[index0[z]]/SV[index0[z]]; // compute sum
 			}
 			p[0] = (sum[0]-sum[1])/sum[0];
 			p[1] = sum[1]/sum[0];
@@ -143,7 +144,9 @@ static void transIPCW3I(
 				k += *nb;
 			}
 			wikmsurv(len, S, E, K, index1, &e[3], SV); // compute conditional survival probabilities
-			for (z = 0, sum[1] = 0; z < e[2]; z++) if (E[index1[z]] && SV[index1[z]]) sum[1] += K[index1[z]]/SV[index1[z]]; // compute sum
+			for (z = 0, sum[1] = 0; z < e[2]; z++) {
+			  if (E[index1[z]] && SV[index1[z]] != 0) sum[1] += K[index1[z]]/SV[index1[z]]; // compute sum
+			}
 			for (i = 0, k = k0, sum[2] = 0, sum[3] = 0; z < e[3]; z++) {
 				p[0] = sum[3]/sum[0];
 				p[1] = 1-sum[2]/(1-sum[0]-sum[1]);
@@ -160,7 +163,7 @@ static void transIPCW3I(
 					i++;
 					k += *nb;
 				}
-				if (E[index1[z]] && SV[index1[z]]) {
+				if (E[index1[z]] && SV[index1[z]] != 0) {
 					if (T1[index1[z]] <= UT[0]) sum[2] += K[index1[z]]/SV[index1[z]]; // compute sum
 					else sum[3] += K[index1[z]]/SV[index1[z]]; // compute sum
 				}
@@ -185,47 +188,47 @@ static void transIPCW3I(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes the conditional transition probabilities:
-		p11(s,t|X) = P(Z>t|Z>s|X) = P(Z>t|X)/P(Z>s|X)
-		p12(s,t|X) = P(Z<=t,T>t|Z>s|X) = P(s<Z<=t,T>t|X)/P(Z>s|X)
-		p13(s,t|X) = 1-p11(s,t|X)-p12(s,t|X)
-		p22(s,t|X) = P(Z<=t,T>t|Z<=s,T>s|X) = P(Z<=s,T>t|X)/P(Z<=s,T>s|X)
+  Computes the conditional transition probabilities:
+    p11(s,t|X) = P(Z>t|Z>s|X) = P(Z>t|X)/P(Z>s|X)
+    p12(s,t|X) = P(Z<=t,T>t|Z>s|X) = P(s<Z<=t,T>t|X)/P(Z>s|X)
+    p13(s,t|X) = 1-p11(s,t|X)-p12(s,t|X)
+    p22(s,t|X) = P(Z<=t,T>t|Z<=s,T>s|X) = P(Z<=s,T>t|X)/P(Z<=s,T>s|X)
 
 Parameters:
-	len[in]			pointer to length of T1, E1, S, E, X and SW->ptr.
-	T1[in]			pointer to T1 first element.
-	E1[in]			pointer to E1 first element.
-	S[in]			pointer to S first element.
-	E[in]			pointer to E first element.
-	X[in]			pointer to X first element.
-	SW[in]			pointer to a weights stype structure.
-	index0[in]		pointer to index0 first element.
-	index1[in]		pointer to index1 first element.
-	nt[in]			pointer to length of UT and number of columns of P.
-	UT[in]			pointer to unique times vector.
-	nx[in]			pointer to length of UX and number of faces of P.
-	UX[in]			pointer to unique covariate vector.
-	h[in]			pointer to bandwidth parameter.
-	kfunc[in]		pointer to kernel density function.
-	wfunc[in]		pointer to weights function.
-	nb[in]			pointer to number of rows of P.
-	P[out]			pointer to a (nb)x(nt)x(nx)x4 probability array.
-	b[in]			pointer to row index.
-	t[in]			pointer to thread number.
-	WORK[out]		pointer to array of transIPCWW structures.
+  len[in]           pointer to length of T1, E1, S, E, X and SW->ptr.
+  T1[in]            pointer to T1 first element.
+  E1[in]            pointer to E1 first element.
+  S[in]             pointer to S first element.
+  E[in]             pointer to E first element.
+  X[in]             pointer to X first element.
+  SW[in]            pointer to a weights stype structure.
+  index0[in]        pointer to index0 first element.
+  index1[in]        pointer to index1 first element.
+  nt[in]            pointer to length of UT and number of columns of P.
+  UT[in]            pointer to unique times vector.
+  nx[in]            pointer to length of UX and number of faces of P.
+  UX[in]            pointer to unique covariate vector.
+  h[in]             pointer to bandwidth parameter.
+  kfunc[in]         pointer to kernel density function.
+  wfunc[in]         pointer to weights function.
+  nb[in]            pointer to number of rows of P.
+  P[out]            pointer to a (nb)x(nt)x(nx)x4 probability array.
+  b[in]             pointer to row index.
+  t[in]             pointer to thread number.
+  WORK[out]         pointer to array of transIPCWW structures.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vector index0 must indicate the permutation of vector T1
-		sorted by ascending order.
-	Vector index1 must indicate the permutation of vector S
-		sorted by ascending order.
-	Vectors T1, E1, S, E, X and SW->ptr must have the same length.
+  Vector index0 must indicate the permutation of vector T1
+    sorted by ascending order.
+  Vector index1 must indicate the permutation of vector S
+    sorted by ascending order.
+  Vectors T1, E1, S, E, X and SW->ptr must have the same length.
 */
 
 static void transIPCW4I(
@@ -265,8 +268,7 @@ static void transIPCW4I(
 	#pragma omp parallel if(*b < 1) num_threads(global_num_threads) private(y)
 	#endif
 	{
-		register int i, j, z;
-		register int64_t k;
+		register int64_t i, j, k, z;
 		int tid = *t;
 		int64_t k0;
 		double sum;
@@ -282,7 +284,7 @@ static void transIPCW4I(
 			wfunc(X, SW, index0, &UX[j], h, K, kfunc); // compute weights
 			wikmsurv(len, T1, E1, K, index0, len, SV); // compute conditional survival probabilities
 			z = *len-1;
-			do {z--;} while (!SV[index0[z]] && z >= e[0]);
+			do {z--;} while (SV[index0[z]] == 0 && z >= e[0]);
 			for (sum = 0; z >= e[1]; z--) sum += K[index0[z]]*E1[index0[z]]/SV[index0[z]]; // compute sum
 			for (i = *nt-1, k0 = *b+nbt*j, k = k0+nbt-*nb; z >= e[0]; z--) {
 				while (T1[index0[z]] <= UT[i]) {
@@ -303,14 +305,14 @@ static void transIPCW4I(
 			wikmsurv(len, S, E, K, index1, len, SV); // compute conditional survival probabilities
 			for (z = e[2], y = 0; z < e[3]; z++) {
 				while (S[index1[z]] > UT[y]) y++;
-				if (E[index1[z]] && SV[index1[z]]) {
+				if (E[index1[z]] && SV[index1[z]] != 0) {
 					sum = K[index1[z]]/SV[index1[z]];
 					if (T1[index1[z]] <= UT[0]) for (k = k0+nbtx*3, i = k+*nb*y; k < i; k += *nb) P[k] += sum; // compute sum
 					else for (i = 0, k = k0+nbtx; i < y; i++) P[k+*nb*i] += (T1[index1[z]] <= UT[i])*sum; // compute sum
 				}
 			}
 			for (;z < *len; z++) {
-				if (E[index1[z]] && SV[index1[z]]) {
+				if (E[index1[z]] && SV[index1[z]] != 0) {
 					sum = K[index1[z]]/SV[index1[z]];
 					if (T1[index1[z]] <= UT[0]) for (k = k0+nbtx*3, i = k+nbt; k < i; k += *nb) P[k] += sum; // compute sum
 					else for (i = 0, k = k0+nbtx; i < *nt; i++) P[k+*nb*i] += (T1[index1[z]] <= UT[i])*sum; // compute sum
@@ -332,27 +334,27 @@ static void transIPCW4I(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes a conditional transition probability array based
-		on the inverse probability of censoring estimator.
+  Computes a conditional transition probability array based
+    on the inverse probability of censoring estimator.
 
 Parameters:
-	object			an object of class 'IPCW2'.
-	UT			unique times vector.
-	UX			unique covariate vector.
-	h			bandwidth parameter.
-	window			a string indicating the desired window or kernel.
-	methodweights		a string indicating the desired weights method.
-	nboot			number of bootstrap samples.
-	methodest		an integer indicating the desired method.
+  object            an object of class 'IPCW2'.
+  UT                unique times vector.
+  UX                unique covariate vector.
+  h                 bandwidth parameter.
+  window            a string indicating the desired window or kernel.
+  methodweights     a string indicating the desired weights method.
+  nboot             number of bootstrap samples.
+  methodest         an integer indicating the desired method.
 
 Return value:
-	Returns a list where the first element is a
-		(nboot)x(nt)x(nx)x4 array of transition probabilities,
-		and the second element is the bandwidth value used to
-		compute the conditional transition probability estimates.
+  Returns a list where the first element is a
+    (nboot)x(nt)x(nx)x4 array of transition probabilities,
+    and the second element is the bandwidth value used to
+    compute the conditional transition probability estimates.
 */
 
 SEXP TransPROBIPCW2(
@@ -393,24 +395,24 @@ SEXP TransPROBIPCW2(
 			func = transIPCW3I;
 	}
 	int b, t, nth = 1;
-	transIPCWW *WORK = (transIPCWW*)malloc( global_num_threads*sizeof(transIPCWW) ); // allocate memory block
+	transIPCWW *WORK = (transIPCWW*)malloc( (unsigned int)global_num_threads*sizeof(transIPCWW) ); // allocate memory block
 	if (WORK == NULL) error("TransPROBIPCW2: No more memory\n");
 	for (t = 0; t < global_num_threads; t++) { // allocate per thread memory
-		if ( ( WORK[t].K = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBIPCW2: No more memory\n");
-		if ( ( WORK[t].SV = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBIPCW2: No more memory\n");
+		if ( ( WORK[t].K = (double*)malloc( (unsigned int)len*sizeof(double) ) ) == NULL ) error("TransPROBIPCW2: No more memory\n");
+		if ( ( WORK[t].SV = (double*)malloc( (unsigned int)len*sizeof(double) ) ) == NULL ) error("TransPROBIPCW2: No more memory\n");
 	}
 	if (*INTEGER(nboot) > 1) nth = global_num_threads;
-	int **index0 = (int**)malloc( nth*sizeof(int*) ); // allocate memory block
+	int **index0 = (int**)malloc( (unsigned int)nth*sizeof(int*) ); // allocate memory block
 	if (index0 == NULL) error("TransPROBIPCW2: No more memory\n");
-	int **index1 = (int**)malloc( nth*sizeof(int*) ); // allocate memory block
+	int **index1 = (int**)malloc( (unsigned int)nth*sizeof(int*) ); // allocate memory block
 	if (index1 == NULL) error("TransPROBIPCW2: No more memory\n");
 	for (t = 0; t < nth; t++) { // allocate per thread memory
-		if ( ( index0[t] = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBIPCW2: No more memory\n");
-		if ( ( index1[t] = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBIPCW2: No more memory\n");
+		if ( ( index0[t] = (int*)malloc( (unsigned int)len*sizeof(int) ) ) == NULL ) error("TransPROBIPCW2: No more memory\n");
+		if ( ( index1[t] = (int*)malloc( (unsigned int)len*sizeof(int) ) ) == NULL ) error("TransPROBIPCW2: No more memory\n");
 	}
 	stype SW; // declare stype structure
 	SW.type = SINT_PTR; // type is a short int pointer
-	SW.ptr.shortinteger = (short int*)malloc( len*sizeof(short int) ); // allocate memory block
+	SW.ptr.shortinteger = (short int*)malloc( (unsigned int)len*sizeof(short int) ); // allocate memory block
 	if (SW.ptr.shortinteger == NULL) error("TransPROBIPCW2: No more memory\n");
 	SW.length = len; // hold length of array
 	for (b = 0; b < len; b++) SW.ptr.shortinteger[b] = 1; // weights should be equal to 1.0/len, however all weights equal to 1 yield an equivalent result in this case

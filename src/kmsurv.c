@@ -3,26 +3,26 @@
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes vector of Kaplan-Meier survival probabilities.
-		S(t) = P(T>t)
+  Computes vector of Kaplan-Meier survival probabilities.
+    S(t) = P(T>t)
 
 Parameters:
-	len[in]			pointer to length of T, E, index and SV.
-	T[in]			pointer to T first element.
-	E[in]			pointer to E first element.
-	index[in]		pointer to index first element.
-	end[in]			pointer to last index of T.
-	SV[out]			pointer to survival probabilities vector.
+  len[in]           pointer to length of T, E, index and SV.
+  T[in]             pointer to T first element.
+  E[in]             pointer to E first element.
+  index[in]         pointer to index first element.
+  end[in]           pointer to last index of T.
+  SV[out]           pointer to survival probabilities vector.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vector index must indicate the permutation of vector T
-		sorted by ascending order.
+  Vector index must indicate the permutation of vector T
+    sorted by ascending order.
 */
 
 void kmsurv(

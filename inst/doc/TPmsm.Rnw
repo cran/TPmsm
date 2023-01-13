@@ -5,7 +5,7 @@
 \usepackage{amsmath}
 \usepackage{MnSymbol}
 
-\author{Artur Ara\'ujo\\ University of Sheffield
+\author{Artur Ara\'ujo\\ University of Minho
   \And
   Lu\'{\i}s Meira-Machado\\ University of Minho
   \And
@@ -40,13 +40,10 @@
 
 \Address{
   Artur Ara\'ujo\\
-  School of Health and Related Research\\
-  The University of Sheffield\\
-  Regent Court\\
-  30 Regent Street\\
-  Sheffield\\
-  S1 4DA\\
-  United Kingdom\\
+  Department of Mathematics and Applications\\
+  Centre of Mathematics\\
+  University of Minho\\
+  4810-058 Azur\'{e}m, Guimar\~{a}es, Portugal\\
   E-mail: \email{artur.stat@gmail.com}\\
 
   Lu\'{\i}s Meira-Machado\\

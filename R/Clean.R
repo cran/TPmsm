@@ -1,3 +1,3 @@
 Clean <- function(object) {
-	RemoveClasses(object)
-}
+	RemoveClasses(object);
+} # Clean

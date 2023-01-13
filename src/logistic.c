@@ -1,5 +1,6 @@
 
 #include <stdlib.h>
+#include <R_ext/Arith.h>
 #include <R_ext/Error.h>
 #include <R_ext/Lapack.h>
 #include <Rmath.h>
@@ -8,26 +9,26 @@
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes the predicted values.
+  Computes the predicted values.
 
 Parameters:
-	len[in]			pointer to length of subset vector.
-	subset[in]		pointer to subset vector.
-	n[in]			pointer to length of arrays X and B.
-	X[in]			pointer to array of pointers.
-	B[in]			pointer to vector of parameters.
-	P[out]			pointer to predicted values vector.
+  len[in]           pointer to length of subset vector.
+  subset[in]        pointer to subset vector.
+  n[in]             pointer to length of arrays X and B.
+  X[in]             pointer to array of pointers.
+  B[in]             pointer to vector of parameters.
+  P[out]            pointer to predicted values vector.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vectors X and B must have the same length.
-	X must be an array of pointers to the predictor
-		variable values.
+  Vectors X and B must have the same length.
+  X must be an array of pointers to the predictor
+    variable values.
 */
 
 static void predict(
@@ -51,20 +52,20 @@ static void predict(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes the deviance of the fitted model.
+  Computes the deviance of the fitted model.
 
 Parameters:
-	len[in]			pointer to length of subset vector.
-	subset[in]		pointer to subset vector.
-	Y[in]			pointer to response values vector.
-	P[in]			pointer to predicted values vector.
-	d[out]			pointer to deviance value.
+  len[in]           pointer to length of subset vector.
+  subset[in]        pointer to subset vector.
+  Y[in]             pointer to response values vector.
+  P[in]             pointer to predicted values vector.
+  d[out]            pointer to deviance value.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 */
 
 static void deviance(
@@ -88,14 +89,14 @@ logitW *logitW_Create(
 {
 	logitW *WORK = (logitW*)malloc( sizeof(logitW) ); // allocate memory block;
 	if (WORK == NULL) error("logitW_Create: No more memory\n");
-	WORK->n = *n;
+	WORK->n = (unsigned int)*n;
 	WORK->IPIV = (int*)malloc( WORK->n*sizeof(int) ); // allocate memory block
 	if (WORK->IPIV == NULL) error("logitW_Create: No more memory\n");
 	WORK->B = (double*)malloc( WORK->n*sizeof(double) ); // allocate memory block
 	if (WORK->B == NULL) error("logitW_Create: No more memory\n");
 	WORK->U = (double*)malloc( WORK->n*sizeof(double) ); // allocate memory block
 	if (WORK->U == NULL) error("logitW_Create: No more memory\n");
-	WORK->lwork = (*n)*(*n);
+	WORK->lwork = WORK->n*WORK->n;
 	WORK->F = (double*)malloc( WORK->lwork*sizeof(double) ); // allocate memory block
 	if (WORK->F == NULL) error("logitW_Create: No more memory\n");
 	WORK->W = (double*)malloc( WORK->lwork*sizeof(double) ); // allocate memory block
@@ -117,31 +118,31 @@ void logitW_Delete(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes the predicted values from the logistic regression,
-	where Y[i]~Bernoulli(P[i]) and logit(P[i])=B[0]+B[1]*X1[i]+B[2]*X2[i]+...
+  Computes the predicted values from the logistic regression,
+    where Y[i]~Bernoulli(P[i]) and logit(P[i])=B[0]+B[1]*X1[i]+B[2]*X2[i]+...
 
 Parameters:
-	len[in]			pointer to length of subset vector.
-	subset[in]		pointer to subset vector.
-	Y[in]			pointer to response values vector.
-	P[out]			pointer to predicted values vector.
-	n[in]			pointer to length of array X.
-	X[in]			pointer to array of pointers.
-	maxit[in]		pointer to maximum number of iterations.
-	epsilon[in]		pointer to convergence parameter.
-	conv[out]		pointer to conv value.
-	WORK[out]		pointer to logitW structure.
+  len[in]           pointer to length of subset vector.
+  subset[in]        pointer to subset vector.
+  Y[in]             pointer to response values vector.
+  P[out]            pointer to predicted values vector.
+  n[in]             pointer to length of array X.
+  X[in]             pointer to array of pointers.
+  maxit[in]         pointer to maximum number of iterations.
+  epsilon[in]       pointer to convergence parameter.
+  conv[out]         pointer to conv value.
+  WORK[out]         pointer to logitW structure.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	X must be an array of pointers to the predictor
-		variable vectors.
-	If *conv == 1 the algorithm converged, if *conv == 0 it didn't.
+  X must be an array of pointers to the predictor
+    variable vectors.
+  If *conv == 1 the algorithm converged, if *conv == 0 it didn't.
 */
 
 void predict_logit(
@@ -191,7 +192,7 @@ void predict_logit(
 		}
 		predict(len, subset, n, X, WORK->B, P); // compute predicted values
 		deviance(len, subset, Y, P, &dev[1]); // compute deviance
-		if (isnan(dev[1]) || info) { // if isnan(dev[1]) the algorithm isn't converging
+		if (R_IsNaN(dev[1]) || info) { // if dev[1] is NaN the algorithm isn't converging
 			for (i = 0; i < *len; i++) P[subset[i]] = Y[subset[i]]; // in that case make the predicted values equal to the response values
 			break;
 		}

@@ -18,38 +18,38 @@
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes the transition probabilities:
-		p11(s,t) = P(Z>t|Z>s) = {1-P(Z<=t)}/{1-P(Z<=s)}
-		p12(s,t) = 1-p11(s,t)-p13(s,t)
-		p13(s,t) = P(T<=t|Z>s) = P(Z>s,T<=t)/{1-P(Z<=s)}
-		p23(s,t) = P(T<=t|Z<=s,T>s) = P(Z<=s,s<T<=t)/{P(Z<=s)-P(T<=s)}
+  Computes the transition probabilities:
+    p11(s,t) = P(Z>t|Z>s) = {1-P(Z<=t)}/{1-P(Z<=s)}
+    p12(s,t) = 1-p11(s,t)-p13(s,t)
+    p13(s,t) = P(T<=t|Z>s) = P(Z>s,T<=t)/{1-P(Z<=s)}
+    p23(s,t) = P(T<=t|Z<=s,T>s) = P(Z<=s,s<T<=t)/{P(Z<=s)-P(T<=s)}
 
 Parameters:
-	len[in]			pointer to length of T1, M0, S and M.
-	T1[in]			pointer to T1 first element.
-	M0[in]			pointer to M0 first element.
-	S[in]			pointer to S first element.
-	M[in]			pointer to M first element.
-	index0[in]		pointer to index0 first element.
-	index1[in]		pointer to index1 first element.
-	nt[in]			pointer to length of UT and number of rows of P.
-	UT[in]			pointer to unique times vector.
-	nb[in]			pointer to number of rows of P.
-	P[out]			pointer to a (nb)x(nt)x4 probability array.
-	b[in]			pointer to row index.
+  len[in]           pointer to length of T1, M0, S and M.
+  T1[in]            pointer to T1 first element.
+  M0[in]            pointer to M0 first element.
+  S[in]             pointer to S first element.
+  M[in]             pointer to M first element.
+  index0[in]        pointer to index0 first element.
+  index1[in]        pointer to index1 first element.
+  nt[in]            pointer to length of UT and number of rows of P.
+  UT[in]            pointer to unique times vector.
+  nb[in]            pointer to number of rows of P.
+  P[out]            pointer to a (nb)x(nt)x4 probability array.
+  b[in]             pointer to row index.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vector index0 must indicate the permutation of vector T1
-		sorted by ascending order.
-	Vector index1 must indicate the permutation of vector S
-		sorted by ascending order.
-	Vectors T1, M0, S and M must have the same length.
+  Vector index0 must indicate the permutation of vector T1
+    sorted by ascending order.
+  Vector index1 must indicate the permutation of vector S
+    sorted by ascending order.
+  Vectors T1, M0, S and M must have the same length.
 */
 
 static void transKMPW3I(
@@ -130,38 +130,38 @@ static void transKMPW3I(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes the transition probabilities:
-		p11(s,t) = P(Z>t|Z>s) = P(Z>t)/P(Z>s)
-		p12(s,t) = 1-p11(s,t)-p13(s,t)
-		p13(s,t) = P(T<=t|Z>s) = P(Z>s,T<=t)/P(Z>s)
-		p23(s,t) = P(T<=t|Z<=s,T>s) = P(Z<=s,s<T<=t)/P(Z<=s,T>s)
+  Computes the transition probabilities:
+    p11(s,t) = P(Z>t|Z>s) = P(Z>t)/P(Z>s)
+    p12(s,t) = 1-p11(s,t)-p13(s,t)
+    p13(s,t) = P(T<=t|Z>s) = P(Z>s,T<=t)/P(Z>s)
+    p23(s,t) = P(T<=t|Z<=s,T>s) = P(Z<=s,s<T<=t)/P(Z<=s,T>s)
 
 Parameters:
-	len[in]			pointer to length of T1, M0, S and M.
-	T1[in]			pointer to T1 first element.
-	M0[in]			pointer to M0 first element.
-	S[in]			pointer to S first element.
-	M[in]			pointer to M first element.
-	index0[in]		pointer to index0 first element.
-	index1[in]		pointer to index1 first element.
-	nt[in]			pointer to length of UT and number of rows of P.
-	UT[in]			pointer to unique times vector.
-	nb[in]			pointer to number of rows of P.
-	P[out]			pointer to a (nb)x(nt)x4 probability array.
-	b[in]			pointer to row index.
+  len[in]           pointer to length of T1, M0, S and M.
+  T1[in]            pointer to T1 first element.
+  M0[in]            pointer to M0 first element.
+  S[in]             pointer to S first element.
+  M[in]             pointer to M first element.
+  index0[in]        pointer to index0 first element.
+  index1[in]        pointer to index1 first element.
+  nt[in]            pointer to length of UT and number of rows of P.
+  UT[in]            pointer to unique times vector.
+  nb[in]            pointer to number of rows of P.
+  P[out]            pointer to a (nb)x(nt)x4 probability array.
+  b[in]             pointer to row index.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vector index0 must indicate the permutation of vector T1
-		sorted by ascending order.
-	Vector index1 must indicate the permutation of vector S
-		sorted by ascending order.
-	Vectors T1, M0, S and M must have the same length.
+  Vector index0 must indicate the permutation of vector T1
+    sorted by ascending order.
+  Vector index1 must indicate the permutation of vector S
+    sorted by ascending order.
+  Vectors T1, M0, S and M must have the same length.
 */
 
 static void transKMPW4I(
@@ -253,22 +253,22 @@ static void transKMPW4I(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes a transition probability vector based
-		on the presmoothed Kaplan-Meier weights estimator.
+  Computes a transition probability vector based
+    on the presmoothed Kaplan-Meier weights estimator.
 
 Parameters:
-	object			an object of class 'KMPW2'.
-	UT			unique times vector.
-	nboot			number of bootstrap samples.
-	methodest		an integer indicating the desired method.
+  object            an object of class 'KMPW2'.
+  UT                unique times vector.
+  nboot             number of bootstrap samples.
+  methodest         an integer indicating the desired method.
 
 Return value:
-	Returns a list where the first element is a
-		(nboot)x(nt)x4 array of transition probabilities,
-		and the second element is NULL.
+  Returns a list where the first element is a
+    (nboot)x(nt)x4 array of transition probabilities,
+    and the second element is NULL.
 */
 
 SEXP TransPROBKMPW2(
@@ -297,40 +297,40 @@ SEXP TransPROBKMPW2(
 	}
 	register int j;
 	int n0 = 2, n1 = 3, maxit = 30;
-	double *J = (double*)malloc( len*sizeof(double) ); // allocate memory block
+	double *J = (double*)malloc( (unsigned int)len*sizeof(double) ); // allocate memory block
 	if (J == NULL) error("TransPROBKMPW2: No more memory\n");
 	double *X0[2] = {J, REAL(T1)};
 	double *XM[3] = {J, REAL(T1), REAL(S)};
 	double epsilon = 1e-8;
 	for (j = 0; j < len; j++) J[j] = 1; // initialize J vector
 	if (*INTEGER(nboot) > 1) nth = global_num_threads;
-	int **index0 = (int**)malloc( nth*sizeof(int*) ); // allocate memory block
+	int **index0 = (int**)malloc( (unsigned int)nth*sizeof(int*) ); // allocate memory block
 	if (index0 == NULL) error("TransPROBKMPW2: No more memory\n");
-	int **index1 = (int**)malloc( nth*sizeof(int*) ); // allocate memory block
+	int **index1 = (int**)malloc( (unsigned int)nth*sizeof(int*) ); // allocate memory block
 	if (index1 == NULL) error("TransPROBKMPW2: No more memory\n");
-	double **M0 = (double**)malloc( nth*sizeof(double*) ); // allocate memory block
+	double **M0 = (double**)malloc( (unsigned int)nth*sizeof(double*) ); // allocate memory block
 	if (M0 == NULL) error("TransPROBKMPW2: No more memory\n");
-	double **M = (double**)malloc( nth*sizeof(double*) ); // allocate memory block
+	double **M = (double**)malloc( (unsigned int)nth*sizeof(double*) ); // allocate memory block
 	if (M == NULL) error("TransPROBKMPW2: No more memory\n");
-	int **subset0 = (int**)malloc( nth*sizeof(int*) ); // allocate memory block
+	int **subset0 = (int**)malloc( (unsigned int)nth*sizeof(int*) ); // allocate memory block
 	if (subset0 == NULL) error("TransPROBKMPW2: No more memory\n");
-	int **subset1 = (int**)malloc( nth*sizeof(int*) ); // allocate memory block
+	int **subset1 = (int**)malloc( (unsigned int)nth*sizeof(int*) ); // allocate memory block
 	if (subset1 == NULL) error("TransPROBKMPW2: No more memory\n");
-	double **WORK0 = (double**)malloc( nth*sizeof(double*) ); // allocate memory block
+	double **WORK0 = (double**)malloc( (unsigned int)nth*sizeof(double*) ); // allocate memory block
 	if (WORK0 == NULL) error("TransPROBKMPW2: No more memory\n");
-	double **WORK1 = (double**)malloc( nth*sizeof(double*) ); // allocate memory block
+	double **WORK1 = (double**)malloc( (unsigned int)nth*sizeof(double*) ); // allocate memory block
 	if (WORK1 == NULL) error("TransPROBKMPW2: No more memory\n");
-	logitW **WORK = (logitW**)malloc( nth*sizeof(logitW*) ); // allocate memory block
+	logitW **WORK = (logitW**)malloc( (unsigned int)nth*sizeof(logitW*) ); // allocate memory block
 	if (WORK == NULL) error("TransPROBKMPW2: No more memory\n");
 	for (t = 0; t < nth; t++) { // allocate per thread memory
-		if ( ( index0[t] = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBKMPW2: No more memory\n");
-		if ( ( index1[t] = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBKMPW2: No more memory\n");
-		if ( ( M0[t] = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBKMPW2: No more memory\n");
-		if ( ( M[t] = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBKMPW2: No more memory\n");
-		if ( ( subset0[t] = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBKMPW2: No more memory\n");
-		if ( ( subset1[t] = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBKMPW2: No more memory\n");
-		if ( ( WORK0[t] = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBKMPW2: No more memory\n");
-		if ( ( WORK1[t] = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBKMPW2: No more memory\n");
+		if ( ( index0[t] = (int*)malloc( (unsigned int)len*sizeof(int) ) ) == NULL ) error("TransPROBKMPW2: No more memory\n");
+		if ( ( index1[t] = (int*)malloc( (unsigned int)len*sizeof(int) ) ) == NULL ) error("TransPROBKMPW2: No more memory\n");
+		if ( ( M0[t] = (double*)malloc( (unsigned int)len*sizeof(double) ) ) == NULL ) error("TransPROBKMPW2: No more memory\n");
+		if ( ( M[t] = (double*)malloc( (unsigned int)len*sizeof(double) ) ) == NULL ) error("TransPROBKMPW2: No more memory\n");
+		if ( ( subset0[t] = (int*)malloc( (unsigned int)len*sizeof(int) ) ) == NULL ) error("TransPROBKMPW2: No more memory\n");
+		if ( ( subset1[t] = (int*)malloc( (unsigned int)len*sizeof(int) ) ) == NULL ) error("TransPROBKMPW2: No more memory\n");
+		if ( ( WORK0[t] = (double*)malloc( (unsigned int)len*sizeof(double) ) ) == NULL ) error("TransPROBKMPW2: No more memory\n");
+		if ( ( WORK1[t] = (double*)malloc( (unsigned int)len*sizeof(double) ) ) == NULL ) error("TransPROBKMPW2: No more memory\n");
 		WORK[t] = logitW_Create(&n1);
 	}
 	#ifdef _OPENMP

@@ -47,11 +47,16 @@ Araújo A, Meira-Machado L, Roca-Pardiñas J (2014). TPmsm: Estimation of the Tr
 
 Devroye L. (1986). \emph{Non-Uniform Random Variate Generation}, New York: Springer-Verlag.
 
+Johnson M. E. (1987). \emph{Multivariate Statistical Simulation}, John Wiley and Sons.
+
 Johnson N., Kotz S. (1972). \emph{Distributions in statistics: continuous multivariate distributions}, John Wiley and Sons.
 
 Lu J., Bhattacharya G. (1990). Some new constructions of bivariate weibull models. \emph{Annals of Institute of Statistical Mathematics}, \bold{42}(3), 543-559. \doi{10.1007/BF00049307}
 
-Johnson M. E. (1987). \emph{Multivariate Statistical Simulation}, John Wiley and Sons.
+Meira-Machado L., Faria S. (2014). A simulation study comparing modeling approaches in an illness-death multi-state model. \emph{Communications in Statistics - Simulation and Computation}, \bold{43}(5), 929-946. \doi{10.1080/03610918.2012.718841}
+
+Meira-Machado, L., Sestelo M. (2019). Estimation in the progressive illness-death model: a nonexhaustive
+review. \emph{Biometrical Journal}, \bold{61}(2), 245–263. \doi{10.1002/bimj.201700200}
 }
 
 %\note{

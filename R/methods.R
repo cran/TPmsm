@@ -1,31 +1,31 @@
 TransMethod <- function(object, s, t, ...) {
-	UseMethod("TransMethod")
-}
+	UseMethod("TransMethod");
+} # TransMethod
 
 TransBoot <- function(object, s, t, ...) {
-	UseMethod("TransBoot")
-}
+	UseMethod("TransBoot");
+} # TransBoot
 
 TPBoot <- function(object, UT, nboot, ...) {
-	UseMethod("TPBoot")
-}
+	UseMethod("TPBoot");
+} # TPBoot
 
 TPCBoot <- function(object, UT, UX, nboot, ...) {
-	UseMethod("TPCBoot")
-}
+	UseMethod("TPCBoot");
+} # TPCBoot
 
 TransPROB <- function(object, UT, ...) {
-	UseMethod("TransPROB")
-}
+	UseMethod("TransPROB");
+} # TransPROB
 
 toTPmsm <- function(lst, UT, s, t, statenames) {
-	UseMethod("toTPmsm")
-}
+	UseMethod("toTPmsm");
+} # toTPmsm
 
 BtoTPmsm <- function(lst, UT, s, t, statenames, nboot, conflevel, methodboot) {
-	UseMethod("BtoTPmsm")
-}
+	UseMethod("BtoTPmsm");
+} # BtoTPmsm
 
 TransMatrix <- function(x) {
-	UseMethod("TransMatrix")
-}
+	UseMethod("TransMatrix");
+} # TransMatrix

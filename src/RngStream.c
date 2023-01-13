@@ -225,7 +225,7 @@ static double U01 (RngStream g)
 
    /* Component 1 */
    p1 = a12 * g->Cg[1] - a13n * g->Cg[0];
-   k = p1 / m1;
+   k = (long)(p1 / m1);
    p1 -= k * m1;
    if (p1 < 0.0)
       p1 += m1;
@@ -235,7 +235,7 @@ static double U01 (RngStream g)
 
    /* Component 2 */
    p2 = a21 * g->Cg[5] - a23n * g->Cg[3];
-   k = p2 / m2;
+   k = (long)(p2 / m2);
    p2 -= k * m2;
    if (p2 < 0.0)
       p2 += m2;
@@ -463,7 +463,7 @@ void RngStream_GetState (RngStream g, unsigned long seed[6])
 {
    int i;
    for (i = 0; i < 6; ++i)
-      seed[i] = g->Cg[i];
+      seed[i] = (unsigned long)g->Cg[i];
 }
 
 /*-------------------------------------------------------------------------*/

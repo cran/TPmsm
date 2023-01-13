@@ -22,7 +22,8 @@ static int rcmp(
 	double y,
 	Rboolean nalast)
 {
-	int nax = ISNAN(x), nay = ISNAN(y);
+  int nax = R_IsNA(x) || R_IsNaN(x);
+  int nay = R_IsNA(y) || R_IsNaN(y);
 	if (nax && nay)	return 0;
 	if (nax)		return nalast?1:-1;
 	if (nay)		return nalast?-1:1;
@@ -76,19 +77,19 @@ static int rsub(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Sorts vector 'x'.
+  Sorts vector 'x'.
 
 Parameters:
-	x[inout]		pointer to x first element.
-	n[in]			length of x.
-	nalast[in]		if TRUE NA values are put last.
-	decreasing[in]		if TRUE sorts by descending order.
+  x[inout]          pointer to x first element.
+  n[in]             length of x.
+  nalast[in]        if TRUE NA values are put last.
+  decreasing[in]    if TRUE sorts by descending order.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 */
 
 void sort_i(
@@ -105,19 +106,19 @@ void sort_i(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Sorts vector 'x'.
+  Sorts vector 'x'.
 
 Parameters:
-	x[inout]		pointer to x first element.
-	n[in]			length of x.
-	nalast[in]		if TRUE NA values are put last.
-	decreasing[in]		if TRUE sorts by descending order.
+  x[inout]          pointer to x first element.
+  n[in]             length of x.
+  nalast[in]        if TRUE NA values are put last.
+  decreasing[in]    if TRUE sorts by descending order.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 */
 
 void sort_d(
@@ -152,23 +153,23 @@ void sort_d(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Sorts vector 'x' with vector 'indx' alongside.
+  Sorts vector 'x' with vector 'indx' alongside.
 
 Parameters:
-	x[inout]		pointer to x first element.
-	indx[inout]		pointer to indx first element.
-	n[in]			length of x and indx.
-	nalast[in]		if TRUE NA values are put last.
-	decreasing[in]		if TRUE sorts by descending order.
+  x[inout]          pointer to x first element.
+  indx[inout]       pointer to indx first element.
+  n[in]             length of x and indx.
+  nalast[in]        if TRUE NA values are put last.
+  decreasing[in]    if TRUE sorts by descending order.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vectors x and indx must have the same length.
+  Vectors x and indx must have the same length.
 */
 
 void sort_ii(
@@ -186,23 +187,23 @@ void sort_ii(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Sorts vector 'x' with vector 'indx' alongside.
+  Sorts vector 'x' with vector 'indx' alongside.
 
 Parameters:
-	x[inout]		pointer to x first element.
-	indx[inout]		pointer to indx first element.
-	n[in]			length of x and indx.
-	nalast[in]		if TRUE NA values are put last.
-	decreasing[in]		if TRUE sorts by descending order.
+  x[inout]          pointer to x first element.
+  indx[inout]       pointer to indx first element.
+  n[in]             length of x and indx.
+  nalast[in]        if TRUE NA values are put last.
+  decreasing[in]    if TRUE sorts by descending order.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vectors x and indx must have the same length.
+  Vectors x and indx must have the same length.
 */
 
 void sort_di(
@@ -221,23 +222,23 @@ void sort_di(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Sorts vector 'x' with vector 'indx' alongside.
+  Sorts vector 'x' with vector 'indx' alongside.
 
 Parameters:
-	x[inout]		pointer to x first element.
-	indx[inout]		pointer to indx first element.
-	n[in]			length of x and indx.
-	nalast[in]		if TRUE NA values are put last.
-	decreasing[in]		if TRUE sorts by descending order.
+  x[inout]          pointer to x first element.
+  indx[inout]       pointer to indx first element.
+  n[in]             length of x and indx.
+  nalast[in]        if TRUE NA values are put last.
+  decreasing[in]    if TRUE sorts by descending order.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vectors x and indx must have the same length.
+  Vectors x and indx must have the same length.
 */
 
 void sort_dd(
@@ -255,24 +256,24 @@ void sort_dd(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes the permutation that results by sorting time
-		by increasing order.
+  Computes the permutation that results by sorting time
+    by increasing order.
 
 Parameters:
-	time[in]		pointer to time first element.
-	index[out]		pointer to index first element.
-	len[in]			length of time and index.
-	nalast[in]		if TRUE NA values are put last.
-	decreasing[in]		if TRUE sorts by descending order.
+  time[in]          pointer to time first element.
+  index[out]        pointer to index first element.
+  len[in]           length of time and index.
+  nalast[in]        if TRUE NA values are put last.
+  decreasing[in]    if TRUE sorts by descending order.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vectors time and index must have the same length.
+  Vectors time and index must have the same length.
 */
 
 void order_d(
@@ -291,28 +292,28 @@ void order_d(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes the permutation that results by sorting time
-		by increasing order with event alongside,
-		where in the subsets of constant time observations,
-		event observations are sorted by decreasing order.
+  Computes the permutation that results by sorting time
+    by increasing order with event alongside,
+    where in the subsets of constant time observations,
+    event observations are sorted by decreasing order.
 
 Parameters:
-	time[in]		pointer to time first element.
-	event[in]		pointer to event first element.
-	index[inout]		pointer to index first element.
-	len[in]			length of time, event and index.
-	nalast[in]		if TRUE NA values are put last.
-	decreasing0[in]		if TRUE sorts time by descending order.
-	decreasing1[in]		if TRUE sorts event by descending order.
+  time[in]          pointer to time first element.
+  event[in]         pointer to event first element.
+  index[inout]      pointer to index first element.
+  len[in]           length of time, event and index.
+  nalast[in]        if TRUE NA values are put last.
+  decreasing0[in]   if TRUE sorts time by descending order.
+  decreasing1[in]   if TRUE sorts event by descending order.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vectors time, event and index must have the same length.
+  Vectors time, event and index must have the same length.
 */
 
 void order_di(
@@ -345,28 +346,28 @@ void order_di(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes the permutation that results by sorting time
-		by increasing order with event alongside,
-		where in the subsets of constant time observations,
-		event observations are sorted by decreasing order.
+  Computes the permutation that results by sorting time
+    by increasing order with event alongside,
+    where in the subsets of constant time observations,
+    event observations are sorted by decreasing order.
 
 Parameters:
-	time[in]		pointer to time first element.
-	event[in]		pointer to event first element.
-	index[inout]		pointer to index first element.
-	len[in]			length of time, event and index.
-	nalast[in]		if TRUE NA values are put last.
-	decreasing0[in]		if TRUE sorts time by descending order.
-	decreasing1[in]		if TRUE sorts event by descending order.
+  time[in]          pointer to time first element.
+  event[in]         pointer to event first element.
+  index[inout]      pointer to index first element.
+  len[in]           length of time, event and index.
+  nalast[in]        if TRUE NA values are put last.
+  decreasing0[in]   if TRUE sorts time by descending order.
+  decreasing1[in]   if TRUE sorts event by descending order.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vectors time, event and index must have the same length.
+  Vectors time, event and index must have the same length.
 */
 
 void order_dd(

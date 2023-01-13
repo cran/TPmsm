@@ -3,30 +3,30 @@
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	This function reads bidimensional data in a way
-		identical to how humans read a cartesian plot.
-		In this case a step function is considered.
+  This function reads bidimensional data in a way
+    identical to how humans read a cartesian plot.
+  In this case a step function is considered.
 
 Parameters:
-	X[in]			pointer to X first element.
-	Y[in]			pointer to Y first element.
-	index[in]		pointer to index first element.
-	len[in]			pointer to length of X, Y and index.
-	i[inout]		pointer to index to start the search.
-	a[in]			pointer to abscissa value to read the ordinate at.
-	o[out]			pointer to ordinate value.
+  X[in]             pointer to X first element.
+  Y[in]             pointer to Y first element.
+  index[in]         pointer to index first element.
+  len[in]           pointer to length of X, Y and index.
+  i[inout]          pointer to index to start the search.
+  a[in]             pointer to abscissa value to read the ordinate at.
+  o[out]            pointer to ordinate value.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vectors X, Y and index must have the same length.
-	For this function to work properly vector index
-		must indicate the permutation of vector X
-		sorted by ascending order.
+  Vectors X, Y and index must have the same length.
+  For this function to work properly vector index
+    must indicate the permutation of vector X
+    sorted by ascending order.
 */
 
 void getOrdinateI(
@@ -53,25 +53,25 @@ void getOrdinateI(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes first e index of a vector T where T[index[e]] > t.
+  Computes first e index of a vector T where T[index[e]] > t.
 
 Parameters:
-	T[in]			pointer to T first element.
-	index[in]		pointer to index first element.
-	t[in]			pointer to t value.
-	len[in]			pointer to length of T and index.
-	i[in]			pointer to index to start the search.
-	e[out]			pointer to index found.
+  T[in]             pointer to T first element.
+  index[in]         pointer to index first element.
+  t[in]             pointer to t value.
+  len[in]           pointer to length of T and index.
+  i[in]             pointer to index to start the search.
+  e[out]            pointer to index found.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vector index must indicate the permutation
-		of vector T sorted by ascending order.
+  Vector index must indicate the permutation
+    of vector T sorted by ascending order.
 */
 
 void getIndexI(
@@ -82,7 +82,7 @@ void getIndexI(
 	CintCP i,
 	intCP e)
 {
-	if (*i >= *len) *e = *len;
+	if (*i > *len-1) *e = *len-1; // should never happen
 	else {
 		if (*i < 0) {
 			*e = (*len-1)/2; // the midpoint
@@ -100,26 +100,26 @@ void getIndexI(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes last e index of a vector T where T[index[e]] <= t.
-	The search is done backwards.
+  Computes last e index of a vector T where T[index[e]] <= t.
+  The search is done backwards.
 
 Parameters:
-	T[in]			pointer to T first element.
-	index[in]		pointer to index first element.
-	t[in]			pointer to t value.
-	len[in]			pointer to length of T and index.
-	i[in]			pointer to index to start the search.
-	e[out]			pointer to index found.
+  T[in]             pointer to T first element.
+  index[in]         pointer to index first element.
+  t[in]             pointer to t value.
+  len[in]           pointer to length of T and index.
+  i[in]             pointer to index to start the search.
+  e[out]            pointer to index found.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vector index must indicate the permutation
-		of vector T sorted by ascending order.
+  Vector index must indicate the permutation
+    of vector T sorted by ascending order.
 */
 
 void getBackIndexI(
@@ -130,12 +130,15 @@ void getBackIndexI(
 	CintCP i,
 	intCP e)
 {
-	if (*i < 0) *e = -1;
+	if (*i < 0) *e = 0; // should never happen
 	else {
 		if (*i < *len) {
-			*e = (*len-1+*i)/2; // the midpoint
+			*e = *i/2; // the midpoint
 			if (T[index[*e]] < *t) *e = *i;
-		} else *e = *len-1;
+		} else {
+			*e = (*len-1)/2; // the midpoint
+			if (T[index[*e]] < *t) *e = *len-1;
+		}
 		for (; *e >= 0; (*e)--) {
 			if (T[index[*e]] <= *t) break; // find index
 		}

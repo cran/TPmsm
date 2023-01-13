@@ -5,23 +5,23 @@
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Concatenates vectors T1 and S and then computes the unique
-		times between a given time s and a given time t.
+  Concatenates vectors T1 and S and then computes the unique
+    times between a given time s and a given time t.
 
 Parameters:
-	len[in]			pointer to length of T1 and S.
-	T1[in]			pointer to T1 first element.
-	S[in]			pointer to S first element.
-	s[in]			pointer to s time.
-	t[in]			pointer to t time.
-	n[inout]		pointer to length of UT.
-	UT[out]			pointer to unique times vector.
+  len[in]           pointer to length of T1 and S.
+  T1[in]            pointer to T1 first element.
+  S[in]             pointer to S first element.
+  s[in]             pointer to s time.
+  t[in]             pointer to t time.
+  n[inout]          pointer to length of UT.
+  UT[out]           pointer to unique times vector.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 */
 
 static void uniqueTS(
@@ -54,21 +54,21 @@ static void uniqueTS(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Concatenates X and x and computes it's unique vector.
+  Concatenates X and x and computes it's unique vector.
 
 Parameters:
-	len[in]			pointer to length of X.
-	X[in]			pointer to X first element.
-	nx[in]			pointer to length of x.
-	x[in]			pointer to x first element.
-	UX[out]			pointer to unique vector.
-	n[out]			pointer to length of UX.
+  len[in]           pointer to length of X.
+  X[in]             pointer to X first element.
+  nx[in]            pointer to length of x.
+  x[in]             pointer to x first element.
+  UX[out]           pointer to unique vector.
+  n[out]            pointer to length of UX.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 */
 
 static void uniqueX(
@@ -91,19 +91,19 @@ static void uniqueX(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Concatenates vectors T1 and S and then computes the unique
-		times between a given time s and a given time t.
+  Concatenates vectors T1 and S and then computes the unique
+    times between a given time s and a given time t.
 
 Parameters:
-	object			an object of class 'survTP' or 'survTPC'.
-	s			first time value to compute the probability at.
-	t			second time value to compute the probability at.
+  object            an object of class 'survTP' or 'survTPC'.
+  s                 first time value to compute the probability at.
+  t                 second time value to compute the probability at.
 
 Return value:
-	Returns a vector of unique times.
+  Returns a vector of unique times.
 */
 
 SEXP uniqueTIME(
@@ -126,17 +126,17 @@ SEXP uniqueTIME(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Concatenates X and x and computes it's unique vector.
+  Concatenates X and x and computes it's unique vector.
 
 Parameters:
-	object			an object of class 'survTPC'.
-	x			single covariate value.
+  object            an object of class 'survTPC'.
+  x                 single covariate value.
 
 Return value:
-	Returns a vector of unique covariate values.
+  Returns a vector of unique covariate values.
 */
 
 SEXP uniqueCOV(

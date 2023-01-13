@@ -33,7 +33,7 @@ SEXP rset_seed(SEXP arg_seed)
 	if ( !isNull(arg_seed) ) {
 		for (i = 0; i < global_num_threads; i++) {
 			for (j = 0; j < 6; j++)
-				seed[j]= REAL( VECTOR_ELT(arg_seed, i) )[j];
+				seed[j]= (unsigned long)REAL( VECTOR_ELT(arg_seed, i) )[j];
 			RngStream_SetSeed(RngArray[i], seed);
 		}
 	}

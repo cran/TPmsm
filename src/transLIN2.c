@@ -25,47 +25,47 @@ typedef struct {
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes the conditional transition probabilities:
-		p11(s,t|X) = P(Z>t|Z>s|X) = P(Z>t|X)/P(Z>s|X)
-		p12(s,t|X) = P(Z<=t,T>t|Z>s|X) = P(s<Z<=t,T>t|X)/P(Z>s|X)
-		p13(s,t|X) = 1-p11(s,t|X)-p12(s,t|X)
-		p22(s,t|X) = P(Z<=t,T>t|Z<=s,T>s|X) = P(Z<=s,T>t|X)/P(Z<=s,T>s|X)
+  Computes the conditional transition probabilities:
+    p11(s,t|X) = P(Z>t|Z>s|X) = P(Z>t|X)/P(Z>s|X)
+    p12(s,t|X) = P(Z<=t,T>t|Z>s|X) = P(s<Z<=t,T>t|X)/P(Z>s|X)
+    p13(s,t|X) = 1-p11(s,t|X)-p12(s,t|X)
+    p22(s,t|X) = P(Z<=t,T>t|Z<=s,T>s|X) = P(Z<=s,T>t|X)/P(Z<=s,T>s|X)
 
 Parameters:
-	len[in]			pointer to length of T1, E1, S, E, X and SW->ptr.
-	T1[in]			pointer to T1 first element.
-	E1[in]			pointer to E1 first element.
-	S[in]			pointer to S first element.
-	E[in]			pointer to E first element.
-	X[in]			pointer to X first element.
-	SW[in]			pointer to a weights stype structure.
-	index0[in]		pointer to index0 first element.
-	index1[in]		pointer to index1 first element.
-	nt[in]			pointer to length of UT and number of columns of P.
-	UT[in]			pointer to unique times vector.
-	nx[in]			pointer to length of UX and number of faces of P.
-	UX[in]			pointer to unique covariate vector.
-	h[in]			pointer to bandwidth parameter.
-	kfunc[in]		pointer to kernel density function.
-	wfunc[in]		pointer to weights function.
-	nb[in]			pointer to number of rows of P.
-	P[out]			pointer to a (nb)x(nt)x(nx)x4 probability array.
-	b[in]			pointer to row index.
-	t[in]			pointer to thread number.
-	WORK[out]		pointer to array of transLINW structures.
+  len[in]           pointer to length of T1, E1, S, E, X and SW->ptr.
+  T1[in]            pointer to T1 first element.
+  E1[in]            pointer to E1 first element.
+  S[in]             pointer to S first element.
+  E[in]             pointer to E first element.
+  X[in]             pointer to X first element.
+  SW[in]            pointer to a weights stype structure.
+  index0[in]        pointer to index0 first element.
+  index1[in]        pointer to index1 first element.
+  nt[in]            pointer to length of UT and number of columns of P.
+  UT[in]            pointer to unique times vector.
+  nx[in]            pointer to length of UX and number of faces of P.
+  UX[in]            pointer to unique covariate vector.
+  h[in]             pointer to bandwidth parameter.
+  kfunc[in]         pointer to kernel density function.
+  wfunc[in]         pointer to weights function.
+  nb[in]            pointer to number of rows of P.
+  P[out]            pointer to a (nb)x(nt)x(nx)x4 probability array.
+  b[in]             pointer to row index.
+  t[in]             pointer to thread number.
+  WORK[out]         pointer to array of transLINW structures.
 
 Return value:
-	This function doesn't return a value.
+  This function doesn't return a value.
 
 Remarks:
-	Vector index0 must indicate the permutation of vector T1
-		sorted by ascending order.
-	Vector index1 must indicate the permutation of vector S
-		sorted by ascending order.
-	Vectors T1, E1, S, E, X and SW->ptr must have the same length.
+  Vector index0 must indicate the permutation of vector T1
+    sorted by ascending order.
+  Vector index1 must indicate the permutation of vector S
+    sorted by ascending order.
+  Vectors T1, E1, S, E, X and SW->ptr must have the same length.
 */
 
 static void transLIN2I(
@@ -207,26 +207,26 @@ static void transLIN2I(
 
 /*
 Author:
-	Artur Araujo <artur.stat@gmail.com>
+  Artur Araujo <artur.stat@gmail.com>
 
 Description:
-	Computes a conditional transition probability array based
-		on the LIN estimator.
+  Computes a conditional transition probability array based
+    on the LIN estimator.
 
 Parameters:
-	object			an object of class 'LIN2'.
-	UT			unique times vector.
-	UX			unique covariate vector.
-	h			bandwidth parameter.
-	window			a string indicating the desired window or kernel.
-	methodweights		a string indicating the desired weights method.
-	nboot			number of bootstrap samples.
+  object            an object of class 'LIN2'.
+  UT                unique times vector.
+  UX                unique covariate vector.
+  h                 bandwidth parameter.
+  window            a string indicating the desired window or kernel.
+  methodweights     a string indicating the desired weights method.
+  nboot             number of bootstrap samples.
 
 Return value:
-	Returns a list where the first element is a
-		(nboot)x(nt)x(nx)x4 array of transition probabilities,
-		and the second element is the bandwidth value used to
-		compute the conditional transition probability estimates.
+  Returns a list where the first element is a
+    (nboot)x(nt)x(nx)x4 array of transition probabilities,
+    and the second element is the bandwidth value used to
+    compute the conditional transition probability estimates.
 */
 
 SEXP TransPROBLIN2(
@@ -258,24 +258,24 @@ SEXP TransPROBLIN2(
 	PROTECT( P = allocArray(REALSXP, dims) );
 	PROTECT( list = NEW_LIST(2) );
 	int b, t, nth = 1;
-	transLINW *WORK = (transLINW*)malloc( global_num_threads*sizeof(transLINW) ); // allocate memory block
+	transLINW *WORK = (transLINW*)malloc( (unsigned int)global_num_threads*sizeof(transLINW) ); // allocate memory block
 	if (WORK == NULL) error("TransPROBLIN2: No more memory\n");
 	for (t = 0; t < global_num_threads; t++) { // allocate per thread memory
-		if ( ( WORK[t].K = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBLIN2: No more memory\n");
-		if ( ( WORK[t].SV = (double*)malloc( len*sizeof(double) ) ) == NULL ) error("TransPROBLIN2: No more memory\n");
+		if ( ( WORK[t].K = (double*)malloc( (unsigned int)len*sizeof(double) ) ) == NULL ) error("TransPROBLIN2: No more memory\n");
+		if ( ( WORK[t].SV = (double*)malloc( (unsigned int)len*sizeof(double) ) ) == NULL ) error("TransPROBLIN2: No more memory\n");
 	}
 	if (*INTEGER(nboot) > 1) nth = global_num_threads;
-	int **index0 = (int**)malloc( nth*sizeof(int*) ); // allocate memory block
+	int **index0 = (int**)malloc( (unsigned int)nth*sizeof(int*) ); // allocate memory block
 	if (index0 == NULL) error("TransPROBLIN2: No more memory\n");
-	int **index1 = (int**)malloc( nth*sizeof(int*) ); // allocate memory block
+	int **index1 = (int**)malloc( (unsigned int)nth*sizeof(int*) ); // allocate memory block
 	if (index1 == NULL) error("TransPROBLIN2: No more memory\n");
 	for (t = 0; t < nth; t++) { // allocate per thread memory
-		if ( ( index0[t] = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBLIN2: No more memory\n");
-		if ( ( index1[t] = (int*)malloc( len*sizeof(int) ) ) == NULL ) error("TransPROBLIN2: No more memory\n");
+		if ( ( index0[t] = (int*)malloc( (unsigned int)len*sizeof(int) ) ) == NULL ) error("TransPROBLIN2: No more memory\n");
+		if ( ( index1[t] = (int*)malloc( (unsigned int)len*sizeof(int) ) ) == NULL ) error("TransPROBLIN2: No more memory\n");
 	}
 	stype SW; // declare stype structure
 	SW.type = SINT_PTR; // type is a short int pointer
-	SW.ptr.shortinteger = (short int*)malloc( len*sizeof(short int) ); // allocate memory block
+	SW.ptr.shortinteger = (short int*)malloc( (unsigned int)len*sizeof(short int) ); // allocate memory block
 	if (SW.ptr.shortinteger == NULL) error("TransPROBLIN2: No more memory\n");
 	SW.length = len; // hold length of array
 	for (b = 0; b < len; b++) SW.ptr.shortinteger[b] = 1; // weights should be equal to 1.0/len, however all weights equal to 1 yield an equivalent result in this case
