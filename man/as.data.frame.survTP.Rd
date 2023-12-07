@@ -35,17 +35,23 @@ Meira-Machado L., Roca-Pardiñas J. (2011). p3state.msm: Analyzing Survival Data
 }
 
 \examples{
+# Set the number of threads
+nth <- setThreadsTP(2);
+
 # Example for the "TPmsm" format
 weiTP <- dgpTP(n=100, corr=1, dist="weibull", dist.par=c(2, 7, 2, 7),
-model.cens="exponential", cens.par = 6, state2.prob=0.6)
-weidata <- as.data.frame(weiTP)
-head(weidata)
+model.cens="exponential", cens.par = 6, state2.prob=0.6);
+weidata <- as.data.frame(weiTP);
+head(weidata);
 
 # Example for the "etm" format
 expTP <- dgpTP(n=100, corr=1, dist="exponential", dist.par=c(1, 1),
-model.cens="uniform", cens.par=3, state2.prob=0.5)
-expdata <- as.data.frame(expTP, package="etm")
-head(expdata)
+model.cens="uniform", cens.par=3, state2.prob=0.5);
+expdata <- as.data.frame(expTP, package="etm");
+head(expdata);
+
+# Restore the number of threads
+setThreadsTP(nth);
 }
 
 \keyword{manip}

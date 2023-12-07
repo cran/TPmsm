@@ -39,9 +39,9 @@ Meira-Machado L., Roca-Pardiñas J. (2011). p3state.msm: Analyzing Survival Data
 }
 
 \examples{
-data(heartTP)
-heartP3 <- TPmsmOut( heartTP, c("time1", "event1", "Stime", "event") )
-head(heartP3)
+data(heartTP);
+heartP3 <- TPmsmOut( heartTP, c("time1", "event1", "Stime", "event") );
+head(heartP3);
 }
 
 \keyword{manip}

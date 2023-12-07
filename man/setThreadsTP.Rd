@@ -52,10 +52,10 @@ RNG streams are recreated. For more details see \code{\link{setPackageSeedTP}}.
 
 \examples{
 # Set the number of threads
-nth <- setThreadsTP(2)
+nth <- setThreadsTP(2);
 
 # Restore the number of threads
-setThreadsTP(nth)
+setThreadsTP(nth);
 }
 
 \keyword{environment}

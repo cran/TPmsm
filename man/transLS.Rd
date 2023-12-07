@@ -94,23 +94,23 @@ Davison, A. C., Hinkley, D. V. (1997). \emph{Bootstrap Methods and their Applica
 
 \examples{
 # Set the number of threads
-nth <- setThreadsTP(2)
+nth <- setThreadsTP(2);
 
 # Create survTP object
-data(bladderTP)
-bladderTP_obj <- with(bladderTP, survTP(time1, event1, Stime, event))
+data(bladderTP);
+bladderTP_obj <- with( bladderTP, survTP(time1, event1, Stime, event) );
 
 # Compute transition probabilities
-LS0 <- transLS(object=bladderTP_obj, s=5, t=59, h=c(0.25, 2.5), nh=25, ncv=50, conf=FALSE)
-print(LS0)
+LS0 <- transLS(object=bladderTP_obj, s=5, t=59, h=c(0.25, 2.5), nh=25, ncv=50, conf=FALSE);
+print(LS0);
 
 # Compute transition probabilities with confidence band
-h <- with( LS0, c( rep(h[1], 2), rep(h[2], 2) ) )
+h <- with( LS0, c( rep(h[1], 2), rep(h[2], 2) ) );
 transLS(object=bladderTP_obj, s=5, t=59, h=h, conf=TRUE,
-conf.level=0.95, method.boot="percentile", boot.cv=FALSE)
+conf.level=0.95, method.boot="percentile", boot.cv=FALSE);
 
 # Restore the number of threads
-setThreadsTP(nth)
+setThreadsTP(nth);
 }
 
 \keyword{dplot}

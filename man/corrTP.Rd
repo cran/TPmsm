@@ -61,10 +61,10 @@ Lu J., Bhattacharya G. (1990). Some new constructions of bivariate weibull model
 
 \examples{
 # Example for the bivariate Weibull distribution
-corrTP(dist = "weibull", corr = 0.5, dist.par = c(2, 7, 2, 7))
+corrTP( dist = "weibull", corr = 0.5, dist.par = c(2, 7, 2, 7) );
 
 # Example for the bivariate Exponential distribution
-corrTP(dist = "exponential", corr = 1, dist.par = c(1, 1))
+corrTP( dist = "exponential", corr = 1, dist.par = c(1, 1) );
 }
 
 \keyword{distribution}

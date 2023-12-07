@@ -125,28 +125,28 @@ Davison, A. C., Hinkley, D. V. (1997). \emph{Bootstrap Methods and their Applica
 
 \examples{
 # Set the number of threads
-nth <- setThreadsTP(2)
+nth <- setThreadsTP(2);
 
 # Create survTP object with age as covariate
-data(heartTP)
-heartTP_obj <- with(heartTP, survTP(time1, event1, Stime, event, age=age))
+data(heartTP);
+heartTP_obj <- with( heartTP, survTP(time1, event1, Stime, event, age=age) );
 
 # Compute unconditioned transition probabilities
-transIPCW(object=heartTP_obj, s=33, t=412)
+transIPCW(object=heartTP_obj, s=33, t=412);
 
 # Compute unconditioned transition probabilities with confidence band
 transIPCW(object=heartTP_obj, s=33, t=412, conf=TRUE, conf.level=0.9,
-method.boot="basic", method.est=2)
+method.boot="basic", method.est=2);
 
 # Compute conditional transition probabilities
-transIPCW(object=heartTP_obj, s=33, t=412, x=0)
+transIPCW(object=heartTP_obj, s=33, t=412, x=0);
 
 # Compute conditional transition probabilities with confidence band
 transIPCW(object=heartTP_obj, s=33, t=412, x=0, conf=TRUE, conf.level=0.95,
-n.boot=100, method.boot="percentile", method.est=2)
+n.boot=100, method.boot="percentile", method.est=2);
 
 # Restore the number of threads
-setThreadsTP(nth)
+setThreadsTP(nth);
 }
 
 \keyword{dplot}

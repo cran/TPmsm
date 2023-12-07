@@ -74,21 +74,21 @@ Davison A. C., Hinkley D. V. (1997) \emph{Bootstrap Methods and their Applicatio
 
 \examples{
 # Set the number of threads
-nth <- setThreadsTP(2)
+nth <- setThreadsTP(2);
 
 # Create survTP object
-data(heartTP)
-heartTP_obj <- with(heartTP, survTP(time1, event1, Stime, event))
+data(heartTP);
+heartTP_obj <- with( heartTP, survTP(time1, event1, Stime, event) );
 
 # Compute transition probabilities
-transAJ(object=heartTP_obj, s=33, t=412)
+transAJ(object=heartTP_obj, s=33, t=412);
 
 # Compute transition probabilities with confidence band
 transAJ(object=heartTP_obj, s=33, t=412, conf=TRUE, conf.level=0.9,
-method.boot="percentile")
+method.boot="percentile");
 
 # Restore the number of threads
-setThreadsTP(nth)
+setThreadsTP(nth);
 }
 
 \keyword{dplot}

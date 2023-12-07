@@ -2,12 +2,26 @@
 
 \title{NEWS file for the TPmsm package}
 
+\section{Changes in version 1.2.12}{
+  \itemize{
+    \item{Modified examples in order to pass CRAN checks.}
+  }
+}
+
+\section{Changes in version 1.2.8}{
+  \itemize{
+    \item{Fixed compile warnings in "RngStream.c" file.}
+    \item{Updated CITATION file.}
+    \item{Added p3state.msm to Enhances field of DESCRIPTION file.}
+  }
+}
+
 \section{Changes in version 1.2.7}{
   \itemize{
     \item{Fixed compile warnings.}
     \item{Improved bibliographic references.}
     \item{Temporarily removed p3state.msm from Enhances field
-    of the DESCRIPTION file.}
+    of DESCRIPTION file.}
   }
 }
 
@@ -35,9 +49,9 @@
 
 \section{Changes in version 1.2.2}{
   \itemize{
-    \item{Fixed compile warning in "RngStream.c" source file.}
+    \item{Fixed compile warning in "RngStream.c" file.}
     \item{Temporarily disabled OpenMP with Clang compiler in
-    "transLS.c" source file.}
+    "transLS.c" file.}
   }
 }
 
